@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="shapes:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/shapes_jar</output-path>
+    <root id="archive" name="shapes.jar">
+      <element id="module-output" name="shapes" />
+    </root>
+  </artifact>
+</component>
