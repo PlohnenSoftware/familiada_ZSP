@@ -5,11 +5,12 @@ pygame.init()
 surface = pygame.display.set_mode((750, 500), pygame.RESIZABLE)
 pygame.display.set_caption("Example resizable window")
 stroke = 20
+letter_matrix = [['A' for _ in range(29)] for _ in range(10)]
 
 while True:
     surface.fill((0,0,255))
 
-    letter_matrix = [['A' for _ in range(29)] for _ in range(10)]
+    
 
     # determine responsive width and height of the rectangles
     if surface.get_width() < surface.get_height()*(192/108):
@@ -33,8 +34,8 @@ while True:
     myfont = pygame.font.Font("familiada.ttf", round(block_height * 0.8))
 
     # Draw black rectangles on the surface.
-    for i in range(0,10):
-        for j in range(0,29):
+    for i in range(10):
+        for j in range(29):
             pos_x = block_x + 50 + (block_width+3)*j
             pos_y = block_y + 50 + (block_height+3)*i
             label = myfont.render(letter_matrix[i][j], 1, (255,255,0))
