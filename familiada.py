@@ -9,6 +9,9 @@ stroke = 20
 while True:
     surface.fill((0,0,255))
 
+    twoja_tablica = [['' for _ in range(10)] for _ in range(10)]
+    print(twoja_tablica)
+
     # determine responsive width and height of the rectangles
     if surface.get_width() < surface.get_height()*(192/108):
         block_width = (surface.get_width()-125-(28*2))/29
