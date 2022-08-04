@@ -9,8 +9,7 @@ stroke = 20
 while True:
     surface.fill((0,0,255))
 
-    twoja_tablica = [['' for _ in range(10)] for _ in range(10)]
-    print(twoja_tablica)
+    letter_matrix = [['A' for _ in range(29)] for _ in range(10)]
 
     # determine responsive width and height of the rectangles
     if surface.get_width() < surface.get_height()*(192/108):
@@ -30,17 +29,17 @@ while True:
 
     # Draw a grey rectangle around the game board
     pygame.draw.rect(surface, (81,81,81), (stroke,stroke, surface.get_width()-stroke*2,surface.get_height()-stroke*2))
-
-    myfont = pygame.font.Font("familiada.ttf", 150)
+    
+    myfont = pygame.font.Font("familiada.ttf", round(block_height * 0.8))
 
     # Draw black rectangles on the surface.
     for i in range(0,10):
         for j in range(0,29):
             pos_x = block_x + 50 + (block_width+3)*j
             pos_y = block_y + 50 + (block_height+3)*i
-            label = myfont.render("PIOTROLNICZEK FAPA", 1, (255,255,0))
+            label = myfont.render(letter_matrix[i][j], 1, (255,255,0))
             pygame.draw.rect(surface, (0,0,0), (pos_x, pos_y, block_width, block_height))
-            surface.blit(label, (100, 100))
+            surface.blit(label, (pos_x, pos_y))
 
     pygame.display.update()
     for event in pygame.event.get():
