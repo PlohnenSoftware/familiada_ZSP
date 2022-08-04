@@ -20,7 +20,7 @@ while True:
     # height = width * 1.5
 
     if surface.get_width() < surface.get_height()*(192/108):
-        block_width = (surface.get_width()-100-(28*2))/29
+        block_width = (surface.get_width()-125-(28*2))/29
         block_height = block_width*3/2
     else:
         block_height = (surface.get_height()-100-(9*2))/10
