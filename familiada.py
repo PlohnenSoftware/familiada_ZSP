@@ -34,7 +34,6 @@ while True:
             pygame.draw.rect(surface, (0,0,0), (block_x + 50 +(block_width+3)*j, block_y + 50 + (block_height+3)*i, block_width, block_height))
 
 
-
     myfont = pygame.font.SysFont("monospace", 15)
     label = myfont.render("Some text!", 1, (255,255,0))
     surface.blit(label, (100, 100))
@@ -51,3 +50,4 @@ while True:
         if event.type == pygame.VIDEORESIZE:
             # There's some code to add back window content here.
             surface = pygame.display.set_mode((event.w, event.h), pygame.RESIZABLE)
+            
