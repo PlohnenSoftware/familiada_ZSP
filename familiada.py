@@ -9,6 +9,9 @@ stroke = 20
 while True:
     surface.fill((0,0,255))
 
+    twoja_tablica = [['' for _ in range(10)] for _ in range(10)]
+    print(twoja_tablica)
+
     # determine responsive width and height of the rectangles
     if surface.get_width() < surface.get_height()*(192/108):
         block_width = (surface.get_width()-125-(28*2))/29
@@ -39,7 +42,6 @@ while True:
             pygame.draw.rect(surface, (0,0,0), (pos_x, pos_y, block_width, block_height))
             surface.blit(label, (100, 100))
 
-
     pygame.display.update()
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -52,3 +54,4 @@ while True:
         if event.type == pygame.VIDEORESIZE:
             # There's some code to add back window content here.
             surface = pygame.display.set_mode((event.w, event.h), pygame.RESIZABLE)
+            
