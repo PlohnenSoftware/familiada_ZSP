@@ -32,7 +32,11 @@ while True:
     for i in range(0,10):
         for j in range(0,29):
             pygame.draw.rect(surface, (0,0,0), (50 +(block_width+3)*j, 50 + (block_height+3)*i, block_width, block_height))
+    myfont = pygame.font.SysFont("monospace", 15)
 
+        # render text
+    label = myfont.render("Some text!", 1, (255,255,0))
+    surface.blit(label, (100, 100))
 
     pygame.display.update()
     for event in pygame.event.get():
