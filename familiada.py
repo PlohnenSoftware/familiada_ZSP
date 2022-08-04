@@ -13,9 +13,9 @@ while True:
     # Draw a red rectangle that resizes with the window.
     pygame.draw.rect(surface, (81,81,81), (stroke,stroke, surface.get_width()-stroke*2,surface.get_height()-stroke*2))
 
-    for i in range(1,11):
-        for j in range(1,30):
-            pygame.draw.rect(surface, (100,200,100), (stroke+i*(surface.get_width()-stroke*2)/10,stroke+j*(surface.get_height()-stroke*2)/30, (surface.get_width()-stroke*2)/10,(surface.get_height()-stroke*2)/30))
+    for i in range(0,10):
+        for j in range(0,28):
+            pygame.draw.rect(surface, (0,0,0), (50 +((surface.get_height()/12.3)/1.45+5)*j, 50 + (surface.get_height()/12.3+5)*i, (surface.get_height()/12.3)/1.45, surface.get_height()/12.3))
 
 
     pygame.display.update()
