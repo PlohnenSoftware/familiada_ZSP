@@ -30,13 +30,10 @@ while True:
 
     # Draw a grey rectangle around the game board
     pygame.draw.rect(surface, (81,81,81), (stroke,stroke, surface.get_width()-stroke*2,surface.get_height()-stroke*2))
-<<<<<<< HEAD
     
     myfont = pygame.font.Font("familiada.ttf", round(block_height * 0.75))
-=======
     letter_hight = round(block_height * 0.8)
     myfont = pygame.font.Font("familiada.ttf", letter_hight)
->>>>>>> 6b46aa25cc21c51b758166ce7878aead1dd1eecc
 
     # Draw black rectangles on the surface.
     for i in range(10):
