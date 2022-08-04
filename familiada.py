@@ -9,9 +9,6 @@ letter_matrix = [['A' for _ in range(29)] for _ in range(10)]
 
 while True:
     surface.fill((0,0,255))
-
-    
-
     # determine responsive width and height of the rectangles
     if surface.get_width() < surface.get_height()*(192/108):
         block_width = (surface.get_width()-125-(28*2))/29
@@ -31,8 +28,7 @@ while True:
     # Draw a grey rectangle around the game board
     pygame.draw.rect(surface, (81,81,81), (stroke,stroke, surface.get_width()-stroke*2,surface.get_height()-stroke*2))
     
-    myfont = pygame.font.Font("familiada.ttf", round(block_height * 0.75))
-    letter_hight = round(block_height * 0.8)
+    letter_hight = round(block_height * 0.75)
     myfont = pygame.font.Font("familiada.ttf", letter_hight)
 
     # Draw black rectangles on the surface.
@@ -41,7 +37,7 @@ while True:
             pos_x = block_x + 50 + (block_width+3)*j
             pos_y = block_y + 50 + (block_height+3)*i
             label = myfont.render(letter_matrix[i][j], 1, (255,255,0))
-            pygame.draw.rect(surface, (41,41,41), (pos_x, pos_y, block_width, block_height))
+            pygame.draw.rect(surface, (0,0,0), (pos_x, pos_y, block_width, block_height))
             surface.blit(label, (pos_x+block_width*0.1, pos_y+block_height/2-letter_hight/2))
 
     pygame.display.update()
