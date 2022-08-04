@@ -94,12 +94,12 @@ public class Main extends JFrame implements ActionListener {
     int punkty_druzyna1;
     int punkty_druzyna2;
 
-    String[] haslo11 = {"CHORWACJA", "NAUCZYĆ SIĘ", "MILIONERZY", "FRANCUSKI", "BIEGUN"};
-    String[] haslo22 = {"GRECJA", "W PIÓRNIKU", "FAMILIADA", "HISZPAŃSKI", "KOREA"};
-    String[] haslo33 = {"TURCJA", "W RĘKAWIE", "1 Z 10", "WŁOSKI", "PÓŁKULA"};
-    String[] haslo44 = {"WŁOCHY", "POZA/NAUCZYCIELA", "JAKA TO MELODIA", "ANGIELSKI", "WIATR"};
-    String[] haslo55 = {"HISZPANIA", "TELEFON", "KOŁO FORTUNY", "NIEMIECKI", "AMERYKA"};
-    String[] haslo66 = {"BUŁGARIA", "W DŁUGOPISIE", "KOCHAM CIĘ POLSKI", "JAPOŃSKI", "MORZE"};
+    String[] haslo11 = {"CHORWACJA", "NAUCZYC SIE", "MILIONERZY", "FRANCUSKI", "BIEGUN"};
+    String[] haslo22 = {"GRECJA", "W PIORNIKU", "FAMILIADA", "HISZPANSKI", "KOREA"};
+    String[] haslo33 = {"TURCJA", "W REKAWIE", "1 Z 10", "WLOSKI", "POLKULA"};
+    String[] haslo44 = {"WLOCHY", "POZA/NAUCZYCIELA", "JAKA TO MELODIA", "ANGIELSKI", "WIATR"};
+    String[] haslo55 = {"HISZPANIA", "TELEFON", "KOLO FORTUNY", "NIEMIECKI", "AMERYKA"};
+    String[] haslo66 = {"BULGARIA", "W DLUGOPISIE", "KOCHAM CIE POLSKI", "JAPONSKI", "MORZE"};
 
     public static void main(String[] args){
         Main funk =new Main();
@@ -121,27 +121,27 @@ public class Main extends JFrame implements ActionListener {
         //frame2.add(new TestPane1());
         frame2.pack();
         frame2.setSize(800, 600);
-        I = new JButton("1 hasło");
+        I = new JButton("1 hasLo");
         I.setBounds(50, 50, 95, 30);
         I.addActionListener(this);
         frame2.add(I);
-        II = new JButton("2 hasło");
+        II = new JButton("2 hasLo");
         II.setBounds(50, 100, 95, 30);
         II.addActionListener(this);
         frame2.add(II);
-        III = new JButton("3 hasło");
+        III = new JButton("3 hasLo");
         III.setBounds(50, 150, 95, 30);
         III.addActionListener(this);
         frame2.add(III);
-        IV = new JButton("4 hasło");
+        IV = new JButton("4 hasLo");
         IV.setBounds(50, 200, 95, 30);
         IV.addActionListener(this);
         frame2.add(IV);
-        V = new JButton("5 hasło");
+        V = new JButton("5 hasLo");
         V.setBounds(50, 250, 95, 30);
         V.addActionListener(this);
         frame2.add(V);
-        VI = new JButton("6 hasło");
+        VI = new JButton("6 hasLo");
         VI.setBounds(50, 300, 95, 30);
         VI.addActionListener(this);
         frame2.add(VI);
@@ -161,7 +161,7 @@ public class Main extends JFrame implements ActionListener {
         JButton round3 = new JButton("3 runda");
         JButton round4 = new JButton("4 runda");
         JButton round5 = new JButton("5 runda");
-        JButton finnal = new JButton("finał");
+        JButton finnal = new JButton("finaL");
         round1.setBounds(50, 10, 95, 30);
         round2.setBounds(150, 10, 95, 30);
         round3.setBounds(250, 10, 95, 30);
@@ -481,8 +481,8 @@ public class Main extends JFrame implements ActionListener {
                 if (pkt2) napisy2.drawString(String.valueOf(pk2), 1260, 290);
                 napisy3.drawString(haslo3, 215, 360);
                 if (pkt3) napisy3.drawString(String.valueOf(pk3), 1260, 360);
-                if (haslo4.equals("4.POZA ZASIĘGIEM WZROKU NAUCZYCIELA")) {
-                    napisy4.drawString("4.POZA ZASIĘGIEM WZROKU", 465, 430);
+                if (haslo4.equals("4.POZA ZASIEGIEM WZROKU NAUCZYCIELA")) {
+                    napisy4.drawString("4.POZA ZASIEGIEM WZROKU", 465, 430);
                     napisy4.drawString("NAUCZYCIELA", 215, 430);
                 } else {
                     napisy4.drawString(haslo4, 215, 430);
@@ -655,42 +655,42 @@ public class Main extends JFrame implements ActionListener {
 
     public void actionPerformed(ActionEvent e){
         Graphics g;
-        if(e.getActionCommand().equals("1 hasło")){
+        if(e.getActionCommand().equals("1 hasLo")){
             haslo1 = "1."+haslo11[runda-1];
             pk1 = punkt1[runda-1];
             pkt1 = true;
             suma = suma + punkt1[runda-1];
             frame.repaint();
         }
-        if(e.getActionCommand().equals("2 hasło")){
+        if(e.getActionCommand().equals("2 hasLo")){
             haslo2 = "2."+haslo22[runda-1];
             pk2 = punkt2[runda-1];
             pkt2 = true;
             suma = suma + punkt2[runda-1];
             frame.repaint();
         }
-        if(e.getActionCommand().equals("3 hasło")){
+        if(e.getActionCommand().equals("3 hasLo")){
             haslo3 = "3."+haslo33[runda-1];
             pk3 = punkt3[runda-1];
             pkt3 = true;
             suma = suma + punkt3[runda-1];
             frame.repaint();
         }
-        if(e.getActionCommand().equals("4 hasło")){
+        if(e.getActionCommand().equals("4 hasLo")){
             haslo4 = "4."+haslo44[runda-1];
             pk4 = punkt4[runda-1];
             pkt4 = true;
             suma = suma + punkt4[runda-1];
             frame.repaint();
         }
-        if(e.getActionCommand().equals("5 hasło")){
+        if(e.getActionCommand().equals("5 hasLo")){
             haslo5 = "5."+haslo55[runda-1];
             pk5 = punkt5[runda-1];
             pkt5 = true;
             suma = suma + punkt5[runda-1];
             frame.repaint();
         }
-        if(e.getActionCommand().equals("6 hasło")){
+        if(e.getActionCommand().equals("6 hasLo")){
             haslo6 = "6."+haslo66[runda-1];
             pk6 = punkt6[runda-1];
             pkt6 = true;
@@ -762,7 +762,7 @@ public class Main extends JFrame implements ActionListener {
             suma = 0;
             frame.repaint();
         }
-        if(e.getActionCommand().equals("finał")){
+        if(e.getActionCommand().equals("finaL")){
             runda = 6;
             fhaslo1 = "~~~~~~~~~~";
             fhaslo2 = "~~~~~~~~~~";
