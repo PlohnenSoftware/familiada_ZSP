@@ -7,8 +7,7 @@ with open('dane.csv', 'r') as f:
     for line in lines:
         line = line[:-1].split(',')
         round_data = []
-        no_questions = len(line)
-        for i in range(0, no_questions, 2):
+        for i in range(0, len(line), 2):
             answer = line[i]
             points = line[i+1]
             round_data.append((answer, points))
