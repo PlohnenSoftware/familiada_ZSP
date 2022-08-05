@@ -1,4 +1,4 @@
-import pygame, sys
+import pygame, sys, tkinter, asyncio
 
 pygame.init()
 # Create the window, saving it to a variable.
@@ -6,6 +6,22 @@ surface = pygame.display.set_mode((750, 500), pygame.RESIZABLE)
 pygame.display.set_caption("Example resizable window")
 stroke = 20
 letter_matrix = [['A' for _ in range(29)] for _ in range(10)]
+
+
+window = tkinter.Tk()
+window.title("Login")
+window.geometry("200x120")
+label = tkinter.Label(window,text="usernane")
+inputUser = tkinter.Entry(window)
+labelPassword = tkinter.Label(window, text="Password")
+inputPassword = tkinter.Entry(window)
+
+button = tkinter.Button(window,text="Go")
+label.pack() 
+inputUser.pack() 
+labelPassword.pack() 
+inputPassword.pack()
+window.mainloop() 
 
 while True:
     surface.fill((0,0,255))
@@ -38,7 +54,7 @@ while True:
             pos_y = block_y + 50 + (block_height+3)*i
             label = myfont.render(letter_matrix[i][j], 1, (255,255,0))
             pygame.draw.rect(surface, (0,0,0), (pos_x, pos_y, block_width, block_height))
-            surface.blit(label, (pos_x+block_width*0.1, pos_y+block_height/2-letter_hight/2))
+            surface.blit(label, (pos_x+block_width*0.145, pos_y+block_height/2-letter_hight/2))
 
     pygame.display.update()
     for event in pygame.event.get():
