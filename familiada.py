@@ -28,9 +28,9 @@ class Blackboard:
             self.letter_matrix[start_row-i+2][start_col+i] = '#'
 
     def draw_gross_x(self,start_row,start_col):
-        for j in range(0,5,4):
-            for i in range(0,3,2):
-                self.write_horizontally('#',start_row+j,start_col+i)
+        for j in range(2):
+            for i in range(2):
+                self.write_horizontally('#',start_row+j*4,start_col+i*2)
         self.draw_small_x(start_row+1,start_col)
 
         
