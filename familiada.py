@@ -99,7 +99,7 @@ while running:
 
     # Draw a grey rectangle around the game board
     pygame.draw.rect(surface, (81,81,81), (game1.stroke,game1.stroke, surface.get_width()-game1.stroke*2,surface.get_height()-game1.stroke*2))
-    
+
     letter_hight = round(block_height * 0.75)
     myfont = pygame.font.Font("familiada.ttf", letter_hight)
 
