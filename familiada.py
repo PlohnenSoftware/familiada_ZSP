@@ -27,6 +27,7 @@ pygame.display.set_caption("Familiada")
 programIcon = pygame.image.load("familiada.ico")
 pygame.display.set_icon(programIcon)
 
+# Create the second window
 window1 = tkinter.Tk()
 window1.title("Familiada - reżyserka")
 window1.iconbitmap("familiada.ico")
@@ -37,18 +38,23 @@ label = tkinter.Label(window1,text="usernane")
 inputUser = tkinter.Entry(window1)
 labelPassword = tkinter.Label(window1, text="Password")
 inputPassword = tkinter.Entry(window1)
-
-button = tkinter.Button(window1,text="Go", command=lambda: game1.write_horizontally(inputPassword.get(), 1, 0))
+button = tkinter.Button(window1,text="Go", command=lambda: pygame.mixer.Sound.play(correct_sound))
 label.pack() 
 inputUser.pack() 
 labelPassword.pack() 
 inputPassword.pack()
 button.pack()
 
-game1 = Blackboard(20)
+#import pygame SFX
+pygame.mixer.init()
+correct_sound = pygame.mixer.Sound("sfx/correct.wav")
+wrong_sound = pygame.mixer.Sound("sfx/incorrect.wav")
+dubel_sound = pygame.mixer.Sound("sfx/dubel.wav")
 
+#initalize game matrix object
+game1 = Blackboard(20)
 game1.fill("-")
- 
+
 def exit_app(tkwindow):
     tkwindow.destroy()
     pygame.display.quit()
@@ -101,6 +107,3 @@ while True:
                 surface = pygame.display.set_mode((event.w, event.h), pygame.RESIZABLE)
     except:
         break         
-
-
-
