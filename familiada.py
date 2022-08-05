@@ -19,20 +19,22 @@ class Blackboard:
 
 
 
-def write_obj(type,napis,row,col):
-    match type:
-        case 1:
-            letter_matrix[row][col] = napis
-        case 2:
-            letters = list(napis)
-            for i in range(len(letters)):
-                letter_matrix[row][col+i] = letters[i]
-        case 3:
-            letters = list(napis)
-            for i in range(len(letters)):
-                letter_matrix[row+i][col] = letters[i]
-        # case 4:
-        #     letter_matrix = [['' for _ in range(29)] for _ in range(10)]
+# write a word horizontally to the matrix
+def write_horizontally(word, start_row, start_col, matrix):
+    letters = list(word)
+    for i, letter in enumerate(letters):
+        matrix[start_row][start_col+i] = letter
+    return matrix
+
+# write a word vertically to the matrix
+def write_vertically(word, row, col, matrix):
+    letters = list(word)
+    for i in range(len(letters)):
+        matrix[row+i][col] = letters[i]
+    return matrix
+
+def create_matrix():
+    return [['' for _ in range(29)] for _ in range(10)]
 
 
 window = tkinter.Tk()
@@ -50,9 +52,6 @@ labelPassword.pack()
 inputPassword.pack()
 button.pack()
 
-
-write_obj(2,"faper",2,5)
-write_obj(3,"faper",4,8)
 
 while True:
     surface.fill((0,0,255))
