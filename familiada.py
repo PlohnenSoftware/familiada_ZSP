@@ -1,16 +1,30 @@
-import pygame, sys, tkinter, asyncio
-
+import pygame, sys, tkinter, threading
 pygame.init()
 # Create the window, saving it to a variable.
-surface = pygame.display.set_mode((750, 500), pygame.RESIZABLE)
-pygame.display.set_caption("Example resizable window")
+surface = pygame.display.set_mode((800, 600), pygame.RESIZABLE)
+pygame.display.set_caption("Familiada")
 stroke = 20
-letter_matrix = [['A' for _ in range(29)] for _ in range(10)]
+letter_matrix = [['' for _ in range(29)] for _ in range(10)]
+
+def write_obj(type,napis,row,col):
+    match type:
+        case 1:
+            letter_matrix[row][col] = napis
+        case 2:
+            letters = list(napis)
+            for i in range(len(letters)):
+                letter_matrix[row][col+i] = letters[i]
+        case 3:
+            letters = list(napis)
+            for i in range(len(letters)):
+                letter_matrix[row+i][col] = letters[i]
+        # case 4:
+        #     letter_matrix = [['' for _ in range(29)] for _ in range(10)]
 
 
 window = tkinter.Tk()
-window.title("Login")
-window.geometry("200x120")
+window.title("Familiada - reżyserka")
+window.geometry("400x200")
 label = tkinter.Label(window,text="usernane")
 inputUser = tkinter.Entry(window)
 labelPassword = tkinter.Label(window, text="Password")
@@ -21,7 +35,11 @@ label.pack()
 inputUser.pack() 
 labelPassword.pack() 
 inputPassword.pack()
-window.mainloop() 
+button.pack()
+
+
+write_obj(2,"faper",2,5)
+write_obj(3,"faper",4,8)
 
 while True:
     surface.fill((0,0,255))
@@ -47,16 +65,17 @@ while True:
     letter_hight = round(block_height * 0.75)
     myfont = pygame.font.Font("familiada.ttf", letter_hight)
 
-    # Draw black rectangles on the surface.
+    # Draw black rectangles & letters on the surface.
     for i in range(10):
         for j in range(29):
             pos_x = block_x + 50 + (block_width+3)*j
             pos_y = block_y + 50 + (block_height+3)*i
             label = myfont.render(letter_matrix[i][j], 1, (255,255,0))
             pygame.draw.rect(surface, (0,0,0), (pos_x, pos_y, block_width, block_height))
-            surface.blit(label, (pos_x+block_width*0.145, pos_y+block_height/2-letter_hight/2))
+            surface.blit(label, (pos_x+block_width*0.146, pos_y+block_height/2-letter_hight/2))
 
     pygame.display.update()
+    window.update() 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
@@ -68,4 +87,6 @@ while True:
         if event.type == pygame.VIDEORESIZE:
             # There's some code to add back window content here.
             surface = pygame.display.set_mode((event.w, event.h), pygame.RESIZABLE)
-            
+
+
+
