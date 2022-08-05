@@ -5,10 +5,11 @@ surface = pygame.display.set_mode((800, 600), pygame.RESIZABLE)
 pygame.display.set_caption("Familiada")
 stroke = 20
 
+# de facto matrix
 class Blackboard:
-  def __init__(self,stroke):
-    self.letter_matrix = [['' for _ in range(29)] for _ in range(10)]
-    self.stroke = stroke
+    def __init__(self,stroke):
+        self.letter_matrix = [['' for _ in range(29)] for _ in range(10)]
+        self.stroke = stroke
 
     # write a word horizontally to the matrix
     def write_horizontally(self,word, start_row, start_col,):
