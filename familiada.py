@@ -22,10 +22,16 @@ class Blackboard:
     def fill(self,char = ''):
         self.letter_matrix = [[char for _ in range(29)] for _ in range(10)]
 
-    def draw_x(self,start_row,start_col):
+    def draw_small_x(self,start_row,start_col):
         for i in range(3):
             self.letter_matrix[start_row+i][start_col+i] = '#'
             self.letter_matrix[start_row-i+2][start_col+i] = '#'
+
+    def draw_gross_x(self,start_row,start_col):
+        for i in range(0,5,4):
+            for i in range(0,3,2):
+                self.write_horizontally('#',start_row,start_col+i)
+        self.draw_small_x(start_row+1,start_col)
 
         
 
@@ -73,7 +79,7 @@ label = tkinter.Label(window1,text="usernane")
 inputUser = tkinter.Entry(window1)
 labelPassword = tkinter.Label(window1, text="Password")
 inputPassword = tkinter.Entry(window1)
-button = tkinter.Button(window1,text="Go", command=lambda: game1.gross_cross(0,0))
+button = tkinter.Button(window1,text="Go", command=lambda: game1.draw_gross_x(3,2))
 label.pack() 
 inputUser.pack() 
 labelPassword.pack() 
