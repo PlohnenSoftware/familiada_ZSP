@@ -1,4 +1,20 @@
 import pygame, sys, tkinter
+
+# Create a list containing tuples of answers and points for every round
+with open('dane.csv', 'r') as f:
+    answers = []
+    lines = f.readlines()
+    for line in lines:
+        line = line[:-1].split(',')
+        round_data = []
+        no_questions = len(line)
+        for i in range(0, no_questions, 2):
+            answer = line[i]
+            points = line[i+1]
+            round_data.append((answer, points))
+        answers.append(round_data)
+
+
 class Blackboard:
     def __init__(self,stroke):
         self.letter_matrix = [['' for _ in range(29)] for _ in range(10)]
