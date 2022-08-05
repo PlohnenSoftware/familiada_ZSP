@@ -1,18 +1,5 @@
 import pygame, sys, tkinter
-
-# Create a list containing tuples of answers and points for every round
-with open('dane.csv', 'r') as f:
-    answers = []
-    lines = f.readlines()
-    for line in lines:
-        line = line[:-1].split(',')
-        round_data = []
-        for i in range(0, len(line), 2):
-            answer = line[i]
-            points = line[i+1]
-            round_data.append((answer, points))
-        answers.append(round_data)
-
+from tkinter import messagebox
 
 class Blackboard:
     def __init__(self,stroke):
@@ -33,7 +20,34 @@ class Blackboard:
 
     # fill whole board with one character        
     def fill(self,char = ''):
-        self.letter_matrix = [[char for _ in range(29)] for _ in range(10)]      
+        self.letter_matrix = [[char for _ in range(29)] for _ in range(10)]
+        
+
+def exit_app(tkwindow):
+    tkwindow.destroy()
+    pygame.display.quit()
+    pygame.quit()
+    sys.exit()
+
+# Create a list containing tuples of answers and points for every round
+try:
+    with open('dane.csv', 'r') as f:
+        answers = []
+        lines = f.readlines()
+        for line in lines:
+            line = line[:-1].split(',')
+            round_data = []
+            for i in range(0, len(line), 2):
+                answer = line[i]
+                points = line[i+1]
+                round_data.append((answer, points))
+            answers.append(round_data)
+except FileNotFoundError:
+    if messagebox.showerror("ERROR", "There is no file named 'dane.csv' in the current directory"):
+        sys.exit()
+    
+
+
 
 # Create the window, saving it to a variable.
 pygame.init()
@@ -71,12 +85,6 @@ intro_music = pygame.mixer.Sound("sfx/show_music.wav")
 #initalize game matrix object
 game1 = Blackboard(20)
 # game1.fill("-")
-
-def exit_app(tkwindow):
-    tkwindow.destroy()
-    pygame.display.quit()
-    pygame.quit()
-    sys.exit()
 
 running = True
 while running:
