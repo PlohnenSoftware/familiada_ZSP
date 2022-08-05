@@ -24,9 +24,12 @@ class Blackboard:
 pygame.init()
 surface = pygame.display.set_mode((800, 600), pygame.RESIZABLE)
 pygame.display.set_caption("Familiada")
+programIcon = pygame.image.load("familiada.ico")
+pygame.display.set_icon(programIcon)
 
 window1 = tkinter.Tk()
 window1.title("Familiada - reżyserka")
+window1.iconbitmap("familiada.ico")
 window1.geometry("400x200")
 window1.configure(background='#f0f0f0')
 window1.protocol("WM_DELETE_WINDOW", lambda:exit_app(window1))
