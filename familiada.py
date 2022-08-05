@@ -1,10 +1,23 @@
-import pygame, sys, tkinter, threading
+import pygame, sys, tkinter
 pygame.init()
 # Create the window, saving it to a variable.
 surface = pygame.display.set_mode((800, 600), pygame.RESIZABLE)
 pygame.display.set_caption("Familiada")
 stroke = 20
-letter_matrix = [['' for _ in range(29)] for _ in range(10)]
+
+
+
+class Blackboard:
+  def __init__(self):
+    self.letter_matrix = [['' for _ in range(29)] for _ in range(10)]
+
+    
+
+
+
+
+
+
 
 def write_obj(type,napis,row,col):
     match type:
