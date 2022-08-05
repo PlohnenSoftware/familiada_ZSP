@@ -19,7 +19,7 @@ class Blackboard:
     # fill whole board with one character        
     def fill(self,char = ''):
         self.letter_matrix = [[char for _ in range(29)] for _ in range(10)]      
- 
+
 # Create the window, saving it to a variable.
 pygame.init()
 surface = pygame.display.set_mode((800, 600), pygame.RESIZABLE)
@@ -63,7 +63,8 @@ def exit_app(tkwindow):
     pygame.quit()
     sys.exit()
 
-while True:
+running = True
+while running:
     surface.fill((0,0,255))
     # determine responsive width and height of the rectangles
     if surface.get_width() < surface.get_height()*(192/108):
@@ -107,5 +108,7 @@ while True:
             if event.type == pygame.VIDEORESIZE:
                 # There's some code to add back window content here.
                 surface = pygame.display.set_mode((event.w, event.h), pygame.RESIZABLE)
-    except:
-        break         
+                
+    # quit the game if window is closed
+    except pygame.error:
+        sys.exit()
