@@ -21,6 +21,18 @@ class Blackboard:
     # fill whole board with one character        
     def fill(self,char = ''):
         self.letter_matrix = [[char for _ in range(29)] for _ in range(10)]
+
+    def gross_cross(self,start_row,start_col):
+        self.write_horizontally('#',start_row,start_col)
+        self.write_horizontally('#',start_row,start_col+2)
+        self.write_horizontally('#',start_row+1,start_col)
+        self.write_horizontally('#',start_row+1,start_col+2)
+        self.write_horizontally('#',start_row+2,start_col+1)
+        self.write_horizontally('#',start_row+3,start_col)
+        self.write_horizontally('#',start_row+3,start_col+2)
+        self.write_horizontally('#',start_row+4,start_col)
+        self.write_horizontally('#',start_row+4,start_col+2)
+
         
 
 def exit_app(tkwindow):
@@ -67,7 +79,7 @@ label = tkinter.Label(window1,text="usernane")
 inputUser = tkinter.Entry(window1)
 labelPassword = tkinter.Label(window1, text="Password")
 inputPassword = tkinter.Entry(window1)
-button = tkinter.Button(window1,text="Go", command=lambda: pygame.mixer.Sound.play(intro_music))
+button = tkinter.Button(window1,text="Go", command=lambda: game1.gross_cross(2,6))
 label.pack() 
 inputUser.pack() 
 labelPassword.pack() 
