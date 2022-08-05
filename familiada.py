@@ -1,45 +1,48 @@
-import pygame, sys, tkinter
+import pygame
+import sys
+import tkinter
 from tkinter import messagebox
 
+
 class Blackboard:
-    def __init__(self,stroke):
+    def __init__(self, stroke):
         self.letter_matrix = [['' for _ in range(29)] for _ in range(10)]
         self.stroke = stroke
 
     # write a word horizontally to the matrix
-    def write_horizontally(self,word, start_row, start_col,):
+    def write_horizontally(self, word, start_row, start_col,):
         letters = list(word)
         for i, letter in enumerate(letters):
             self.letter_matrix[start_row][start_col+i] = letter
 
     # write a word vertically to the matrix
-    def write_vertically(self,word, start_row, start_col):
+    def write_vertically(self, word, start_row, start_col):
         letters = list(word)
         for i, letter in enumerate(letters):
-            self.letter_matrix[start_row+i][start_col] = letter   
+            self.letter_matrix[start_row+i][start_col] = letter
 
-    # fill whole board with one character        
-    def fill(self,char = ''):
+    # fill whole board with one character
+    def fill(self, char=''):
         self.letter_matrix = [[char for _ in range(29)] for _ in range(10)]
 
-    def draw_small_x(self,start_row,start_col):
+    def draw_small_x(self, start_row, start_col):
         for i in range(3):
             self.letter_matrix[start_row+i][start_col+i] = '#'
             self.letter_matrix[start_row-i+2][start_col+i] = '#'
 
-    def draw_gross_x(self,start_row,start_col):
+    def draw_gross_x(self, start_row, start_col):
         for j in range(2):
             for i in range(2):
-                self.write_horizontally('#',start_row+j*4,start_col+i*2)
-        self.draw_small_x(start_row+1,start_col)
+                self.write_horizontally('#', start_row+j*4, start_col+i*2)
+        self.draw_small_x(start_row+1, start_col)
 
-        
 
 def exit_app(tkwindow):
     tkwindow.destroy()
     pygame.display.quit()
     pygame.quit()
     sys.exit()
+
 
 # Create a list containing tuples of answers and points for every round
 try:
@@ -57,8 +60,6 @@ try:
 except FileNotFoundError:
     if messagebox.showerror("ERROR", "There is no file named 'dane.csv' in the current directory"):
         sys.exit()
-    
-
 
 
 # Create the window, saving it to a variable.
@@ -74,19 +75,19 @@ window1.title("Familiada - reżyserka")
 window1.iconbitmap("familiada.ico")
 window1.geometry("400x200")
 window1.configure(background='#f0f0f0')
-window1.protocol("WM_DELETE_WINDOW", lambda:exit_app(window1))
-label = tkinter.Label(window1,text="usernane")
+window1.protocol("WM_DELETE_WINDOW", lambda: exit_app(window1))
+label = tkinter.Label(window1, text="usernane")
 inputUser = tkinter.Entry(window1)
 labelPassword = tkinter.Label(window1, text="Password")
 inputPassword = tkinter.Entry(window1)
-button = tkinter.Button(window1,text="Go", command=lambda: game1.draw_gross_x(3,2))
-label.pack() 
-inputUser.pack() 
-labelPassword.pack() 
+button = tkinter.Button(window1, text="Go", command=lambda: game1.draw_gross_x(3, 2))
+label.pack()
+inputUser.pack()
+labelPassword.pack()
 inputPassword.pack()
 button.pack()
 
-#import pygame SFX
+# import pygame SFX
 pygame.mixer.init()
 correct_sound = pygame.mixer.Sound("sfx/correct.wav")
 wrong_sound = pygame.mixer.Sound("sfx/incorrect.wav")
@@ -94,13 +95,13 @@ dubel_sound = pygame.mixer.Sound("sfx/dubel.wav")
 ending_music = pygame.mixer.Sound("sfx/final_ending.wav")
 intro_music = pygame.mixer.Sound("sfx/show_music.wav")
 
-#initalize game matrix object
+# initalize game matrix object
 game1 = Blackboard(20)
 # game1.fill("-")
 
 running = True
 while running:
-    surface.fill((0,0,255))
+    surface.fill((0, 0, 255))
     # determine responsive width and height of the rectangles
     if surface.get_width() < surface.get_height()*(192/108):
         block_width = (surface.get_width()-125-(28*2))/29
@@ -118,7 +119,7 @@ while running:
         block_y = 0
 
     # Draw a grey rectangle around the game board
-    pygame.draw.rect(surface, (81,81,81), (game1.stroke,game1.stroke, surface.get_width()-game1.stroke*2,surface.get_height()-game1.stroke*2))
+    pygame.draw.rect(surface, (81, 81, 81), (game1.stroke, game1.stroke, surface.get_width()-game1.stroke*2, surface.get_height()-game1.stroke*2))
 
     letter_hight = round(block_height * 0.75)
     myfont = pygame.font.Font("familiada.ttf", letter_hight)
@@ -128,13 +129,13 @@ while running:
         for j in range(29):
             pos_x = block_x + 50 + (block_width+3)*j
             pos_y = block_y + 50 + (block_height+3)*i
-            label = myfont.render(game1.letter_matrix[i][j], 1, (255,255,0))
-            pygame.draw.rect(surface, (0,0,0), (pos_x, pos_y, block_width, block_height))
+            label = myfont.render(game1.letter_matrix[i][j], 1, (255, 255, 0))
+            pygame.draw.rect(surface, (0, 0, 0), (pos_x, pos_y, block_width, block_height))
             surface.blit(label, (pos_x+block_width*0.146, pos_y+block_height/2-letter_hight/2))
 
-    #refresh windows
+    # refresh windows
     pygame.display.update()
-    window1.update() 
+    window1.update()
     try:
         for event in pygame.event.get():
             if event.type == pygame.QUIT or event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
@@ -143,7 +144,7 @@ while running:
             if event.type == pygame.VIDEORESIZE:
                 # There's some code to add back window content here.
                 surface = pygame.display.set_mode((event.w, event.h), pygame.RESIZABLE)
-                
+
     # quit the game if window is closed
     except pygame.error:
         sys.exit()
