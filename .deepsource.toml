@@ -1,13 +1,16 @@
 version = 1
 
 [[analyzers]]
-name = "javascript"
-enabled = false
-
-[[analyzers]]
 name = "python"
 enabled = true
 
   [analyzers.meta]
   runtime_version = "3.x.x"
-  
+
+[[transformers]]
+name = "black"
+enabled = true
+
+[[transformers]]
+name = "autopep8"
+enabled = true
