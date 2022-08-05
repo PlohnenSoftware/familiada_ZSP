@@ -5,37 +5,22 @@ surface = pygame.display.set_mode((800, 600), pygame.RESIZABLE)
 pygame.display.set_caption("Familiada")
 stroke = 20
 
-
-
 class Blackboard:
-  def __init__(self):
+  def __init__(self,stroke):
     self.letter_matrix = [['' for _ in range(29)] for _ in range(10)]
+    self.stroke = stroke
 
-    
-
-
-
-
-
-
-
-# write a word horizontally to the matrix
-def write_horizontally(word, start_row, start_col, matrix):
-    letters = list(word)
-    for i, letter in enumerate(letters):
-        matrix[start_row][start_col+i] = letter
-    return matrix
-
-# write a word vertically to the matrix
-def write_vertically(word, row, col, matrix):
-    letters = list(word)
-    for i in range(len(letters)):
-        matrix[row+i][col] = letters[i]
-    return matrix
-
-def create_matrix():
-    return [['' for _ in range(29)] for _ in range(10)]
-
+    # write a word horizontally to the matrix
+    def write_horizontally(self,word, start_row, start_col,):
+        letters = list(word)
+        for i, letter in enumerate(letters):
+            self.letter_matrix[start_row][start_col+i] = letter
+    # write a word horizontally to the matrix
+    def write_horizontally(self,word, start_row, start_col):
+        letters = list(word)
+        for i, letter in enumerate(letters):
+            self.letter_matrix[start_row+i][start_col] = letter     
+ 
 
 window = tkinter.Tk()
 window.title("Familiada - reżyserka")
