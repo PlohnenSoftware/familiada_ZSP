@@ -58,7 +58,7 @@ class Blackboard:
             self.draw_small_x(2, 26)
             pygame.mixer.Sound.play(wrong_sound)
 
-    def round_init(self,round_number):
+    def round_init(self, round_number):
         answer_number = len(self.answers[round_number])
         if answer_number in (1, 2):
             row_coords = 3
@@ -68,8 +68,7 @@ class Blackboard:
             row_coords = 1
         self.write_vertically([str(i) for i in range(1, answer_number + 1)], row_coords, 4)
         for i in range(answer_number):
-            self.write_horizontally("________________ --",row_coords+i,6)
-
+            self.write_horizontally("________________ --", row_coords + i, 6)
 
 
 def exit_app(tkwindow):
@@ -78,7 +77,8 @@ def exit_app(tkwindow):
     pygame.quit()
     sys.exit()
 
-#initialize main game object
+
+# initialize main game object
 game1 = Blackboard(20)
 
 # Create a list containing tuples of answers and points for every round
