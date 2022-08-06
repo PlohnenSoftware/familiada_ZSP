@@ -9,8 +9,8 @@ class Blackboard:
     def __init__(self, stroke):
         self.letter_matrix = [["" for _ in range(29)] for _ in range(10)]
         self.stroke = stroke
-        self.current_round = 0
         self.answers = []
+        self.tabs = []
 
     # Write a word horizontally to the matrix
     def write_hor(self, word, start_row, start_col):
@@ -61,13 +61,18 @@ class Blackboard:
                 self.draw_small_x(2, 26)
             pygame.mixer.Sound.play(wrong_sound)
 
-    def round_init(self, round_number):
+    def calculate_coords(self, round_number):
         # get and set some parameters of the round
-        no_answers = len(self.answers[round_number - 1])
-        self.current_round = round_number
+        no_answers = len(self.answers[round_number])
 
         # Center the answers on the blackboard
         row_coords = 1 + (floor((6 - no_answers) / 2) if no_answers < 7 else 0)
+        
+        return no_answers,row_coords
+
+    def round_init(self, round_number):
+
+        no_answers, row_coords = self.calculate_coords(round_number)
 
         # Write the indices of the answers to the blackboard
         self.write_ver([str(i) for i in range(1, no_answers + 1)], row_coords, 3)
@@ -77,6 +82,18 @@ class Blackboard:
             self.write_hor("_________________ --", row_coords + i, 5)
         # write sum
         self.write_hor("suma   0", row_coords + no_answers + 1, 17)
+    
+    #print selected answer for selected round
+    def round_init(self, round_number):
+        no_answers, row_coords = self.calculate_coords(round_number)
+
+
+        # Write blank spaces to the blackboard
+        for i in range(no_answers):
+            self.write_hor("_________________ --", row_coords + i, 5)
+        # write sum
+        self.write_hor("suma   0", row_coords + no_answers + 1, 17)
+
 
 
 def exit_app(tkwindow):
@@ -124,16 +141,37 @@ window1.iconbitmap("familiada.ico")
 window1.geometry("400x200")
 window1.configure(background="#f0f0f0")
 window1.protocol("WM_DELETE_WINDOW", lambda: exit_app(window1))
-label = tkinter.Label(window1, text="usernane")
-inputUser = tkinter.Entry(window1)
-labelPassword = tkinter.Label(window1, text="Password")
-inputPassword = tkinter.Entry(window1)
-button = tkinter.Button(window1, text="Go", command=lambda: pygame.mixer.Sound.play(ending_music))
+
+tabControl = ttk.Notebook(window1)  
+tab1 = ttk.Frame(tabControl)
+  
+
+label = tkinter.Label(tab1, text="usernane")
 label.pack()
+
+inputUser = tkinter.Entry(tab1)
 inputUser.pack()
+
+labelPassword = tkinter.Label(tab1, text="Password")
 labelPassword.pack()
+
+inputPassword = tkinter.Entry(tab1)
 inputPassword.pack()
+
+button = tkinter.Button(tab1, text="Go", command=lambda: pygame.mixer.Sound.play(ending_music))
+button2 = tkinter.Button(tab1, text="Go", command=lambda: game1.round_init(3))
 button.pack()
+button2.pack()
+
+for i in range(len(game1.answers)):
+    game1.tabs.append(ttk.Frame(tabControl))
+    for j in range(len(game1.answers[i])):
+        round_button = tkinter.Button(game1.tabs[i], text=f'odpowiedz:{game1.answers[i][j][0]} {game1.answers[i][j][1]}', command=lambda: pygame.mixer.Sound.play(ending_music))
+        round_button.pack()
+    tabControl.add(game1.tabs[i], text='Round'+str(i+1))
+
+tabControl.add(tab1, text ='SFX')
+tabControl.pack(expand = 1, fill ="both")
 
 # Import pygame SFX
 pygame.mixer.init()
@@ -169,6 +207,10 @@ while True:
     rectangle_dimensions = (game1.stroke, game1.stroke, rectangle_width, rectangle_height)
     pygame.draw.rect(surface, rectangle_rgb, rectangle_dimensions)
     letter_hight = round(block_height * 0.75)
+
+    #anti-bug fix
+    if letter_hight < 2:
+        letter_hight = 2
 
     # Set the font
     myfont = pygame.font.Font("familiada.ttf", letter_hight)
