@@ -10,12 +10,7 @@ class Blackboard:
         self.stroke = stroke
 
     # Write a word horizontally to the matrix
-    def write_horizontally(
-        self,
-        word,
-        start_row,
-        start_col,
-    ):
+    def write_horizontally(self,word,start_row,start_col,):
         letters = list(word)
         for i, letter in enumerate(letters):
             self.letter_matrix[start_row][start_col + i] = letter
@@ -40,6 +35,22 @@ class Blackboard:
         for j in range(2):
             for i in range(2):
                 self.write_horizontally("#", start_row + j * 4, start_col + i * 2)
+    
+    def big_lost(self,team):
+        if team == 'L':
+            self.draw_gross_x(3, 0)
+            pygame.mixer.Sound.play(wrong_sound)
+        elif team == 'R':
+            self.draw_gross_x(3, 26)
+            pygame.mixer.Sound.play(wrong_sound)
+    
+    def lost(self,team):
+        if team == 'L':
+            self.draw_small_x(2, 0)
+            pygame.mixer.Sound.play(wrong_sound)
+        elif team == 'R':
+            self.draw_small_x(2, 26)
+            pygame.mixer.Sound.play(wrong_sound)
 
 
 def exit_app(tkwindow):
@@ -89,7 +100,7 @@ label = tkinter.Label(window1, text="usernane")
 inputUser = tkinter.Entry(window1)
 labelPassword = tkinter.Label(window1, text="Password")
 inputPassword = tkinter.Entry(window1)
-button = tkinter.Button(window1, text="Go", command=lambda: game1.draw_gross_x(3, 2))
+button = tkinter.Button(window1, text="Go", command=lambda: game1.big_lost("R"))
 label.pack()
 inputUser.pack()
 labelPassword.pack()
@@ -101,6 +112,7 @@ pygame.mixer.init()
 correct_sound = pygame.mixer.Sound("sfx/correct.wav")
 wrong_sound = pygame.mixer.Sound("sfx/incorrect.wav")
 dubel_sound = pygame.mixer.Sound("sfx/dubel.wav")
+bravo_sound = pygame.mixer.Sound("sfx/bravo.wav")
 ending_music = pygame.mixer.Sound("sfx/final_ending.wav")
 intro_music = pygame.mixer.Sound("sfx/show_music.wav")
 
