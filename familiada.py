@@ -11,18 +11,15 @@ class Blackboard:
         self.answers = []
 
     # Write a word horizontally to the matrix
-    def write_horizontally(
-        self,
-        word,
-        start_row,
-        start_col,
-    ):
+    def write_horizontally(self, word, start_row, start_col):
+        word = str(word)
         letters = list(word)
         for i, letter in enumerate(letters):
             self.letter_matrix[start_row][start_col + i] = letter
 
     # Write a word vertically to the matrix
     def write_vertically(self, word, start_row, start_col):
+        word = str(word)
         letters = list(word)
         for i, letter in enumerate(letters):
             self.letter_matrix[start_row + i][start_col] = letter
@@ -41,6 +38,10 @@ class Blackboard:
         for j in range(2):
             for i in range(2):
                 self.write_horizontally("#", start_row + j * 4, start_col + i * 2)
+        
+    def show_round(self, round_data):
+        numbers = "".join(str(x) for x in range(1, len(round_data)+1))
+        self.write_vertically(numbers, 2, 3)
 
     def big_lost(self, team):
         if team == "L":
