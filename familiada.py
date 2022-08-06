@@ -9,6 +9,7 @@ class Blackboard:
     def __init__(self, stroke):
         self.letter_matrix = [["" for _ in range(29)] for _ in range(10)]
         self.stroke = stroke
+        self.current_round = 0
         self.answers = []
 
     # Write a word horizontally to the matrix
@@ -44,36 +45,43 @@ class Blackboard:
                 self.write_horizontally("#", start_row + j * 4, start_col + i * 2)
 
     def big_lost(self, team):
-        if team == "L":
-            self.draw_gross_x(3, 0)
-            pygame.mixer.Sound.play(wrong_sound)
-        elif team == "R":
-            self.draw_gross_x(3, 26)
+        if team not in ("L", "R"):
+            exception = ValueError("Team must be either 'L' or 'R'")
+            raise exception
+        else:
+            if team == "L":
+                self.draw_gross_x(3, 0)
+            else:
+                self.draw_gross_x(3, 26)
             pygame.mixer.Sound.play(wrong_sound)
 
     def lost(self, team):
-        if team == "L":
-            self.draw_small_x(2, 0)
-            pygame.mixer.Sound.play(wrong_sound)
-        elif team == "R":
-            self.draw_small_x(2, 26)
+        if team not in ("L", "R"):
+            exception = ValueError("Team must be either 'L' or 'R'")
+            raise exception
+        else:
+            if team == "L":
+                self.draw_small_x(2, 0)
+            else:
+                self.draw_small_x(2, 26)
             pygame.mixer.Sound.play(wrong_sound)
 
-    def round_init(self,round_number):
-        no_answers = len(self.answers[round_number])
-        
+    def round_init(self, round_number):
+        # get and set some parameters of the round
+        no_answers = len(self.answers[round_number - 1])
+        self.current_round = round_number
+
         # Center the answers on the blackboard
-        center_int = floor((6 - no_answers) / 2) if no_answers < 7 else 0
-        row_coords = 1 + center_int
+        row_coords = 1 + (floor((6 - no_answers) / 2) if no_answers < 7 else 0)
 
         # Write the indices of the answers to the blackboard
-        numbers = "".join(str(x) for x in range(1, len(round_data)+1))
-        self.write_vertically(numbers, row_coords, 3)
+        self.write_vertically([str(i) for i in range(1, no_answers + 1)], row_coords, 3)
 
         # Write blank spaces to the blackboard
         for i in range(no_answers):
-            self.write_horizontally("________________ --",row_coords+i,6)
-
+            self.write_horizontally("_________________ --", row_coords + i, 5)
+        # write sum
+        self.write_horizontally("suma   0", row_coords + no_answers + 1, 17)
 
 
 def exit_app(tkwindow):
@@ -82,12 +90,13 @@ def exit_app(tkwindow):
     pygame.quit()
     sys.exit()
 
-#initialize main game object
+
+# initialize main game object
 game1 = Blackboard(20)
 
 # Create a list containing tuples of answers and points for every round
 try:
-    with open("dane.csv", "r") as f:
+    with open("dane.csv", "r+") as f:
         lines = f.readlines()
         for line in lines:
             line = line[:-1].split(",")
@@ -124,7 +133,7 @@ label = tkinter.Label(window1, text="usernane")
 inputUser = tkinter.Entry(window1)
 labelPassword = tkinter.Label(window1, text="Password")
 inputPassword = tkinter.Entry(window1)
-button = tkinter.Button(window1, text="Go", command=lambda: game1.round_init(2))
+button = tkinter.Button(window1, text="Go", command=lambda: pygame.mixer.Sound.play(ending_music))
 label.pack()
 inputUser.pack()
 labelPassword.pack()
@@ -137,11 +146,8 @@ correct_sound = pygame.mixer.Sound("sfx/correct.wav")
 wrong_sound = pygame.mixer.Sound("sfx/incorrect.wav")
 dubel_sound = pygame.mixer.Sound("sfx/dubel.wav")
 bravo_sound = pygame.mixer.Sound("sfx/bravo.wav")
-ending_music = pygame.mixer.Sound("sfx/final_ending.wav")
-intro_music = pygame.mixer.Sound("sfx/show_music.wav")
-
-# Initalize game matrix object
-
+ending_music = pygame.mixer.Sound("sfx/final_ending.flac")
+intro_music = pygame.mixer.Sound("sfx/show_music.flac")
 
 while True:
     surface.fill((0, 0, 255))
