@@ -1,2 +1,2 @@
 pygame
-autopep8
+pyinstaller
