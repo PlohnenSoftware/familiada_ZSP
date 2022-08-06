@@ -60,11 +60,11 @@ class Blackboard:
 
     def round_init(self,round_number):
         answer_number = len(self.answers[round_number])
-        if answer_number == 1 or 2:
+        if answer_number in (1, 2):
             row_coords = 3
-        elif answer_number == 3 or 4:
+        elif answer_number in (3, 4):
             row_coords = 2
-        elif answer_number == 5 or 6 or 7:
+        elif answer_number in (5, 6, 7):
             row_coords = 1
         self.write_vertically([str(i) for i in range(1, answer_number + 1)], row_coords, 4)
         for i in range(answer_number):
@@ -120,7 +120,7 @@ label = tkinter.Label(window1, text="usernane")
 inputUser = tkinter.Entry(window1)
 labelPassword = tkinter.Label(window1, text="Password")
 inputPassword = tkinter.Entry(window1)
-button = tkinter.Button(window1, text="Go", command=lambda: game1.round_init(1))
+button = tkinter.Button(window1, text="Go", command=lambda: game1.round_init(2))
 label.pack()
 inputUser.pack()
 labelPassword.pack()
