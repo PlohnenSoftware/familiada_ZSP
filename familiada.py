@@ -13,18 +13,13 @@ class Blackboard:
         self.answers = []
 
     # Write a word horizontally to the matrix
-    def write_horizontally(
-        self,
-        word,
-        start_row,
-        start_col,
-    ):
+    def write_hor(self,word,start_row,start_col):
         letters = list(word)
         for i, letter in enumerate(letters):
             self.letter_matrix[start_row][start_col + i] = letter
 
     # Write a word vertically to the matrix
-    def write_vertically(self, word, start_row, start_col):
+    def write_ver(self, word, start_row, start_col):
         letters = list(word)
         for i, letter in enumerate(letters):
             self.letter_matrix[start_row + i][start_col] = letter
@@ -42,7 +37,7 @@ class Blackboard:
         self.draw_small_x(start_row + 1, start_col)
         for j in range(2):
             for i in range(2):
-                self.write_horizontally("#", start_row + j * 4, start_col + i * 2)
+                self.write_hor("#", start_row + j * 4, start_col + i * 2)
 
     def big_lost(self, team):
         if team not in ("L", "R"):
@@ -75,13 +70,13 @@ class Blackboard:
         row_coords = 1 + (floor((6 - no_answers) / 2) if no_answers < 7 else 0)
 
         # Write the indices of the answers to the blackboard
-        self.write_vertically([str(i) for i in range(1, no_answers + 1)], row_coords, 3)
+        self.write_ver([str(i) for i in range(1, no_answers + 1)], row_coords, 3)
 
         # Write blank spaces to the blackboard
         for i in range(no_answers):
-            self.write_horizontally("_________________ --", row_coords + i, 5)
+            self.write_hor("_________________ --", row_coords + i, 5)
         # write sum
-        self.write_horizontally("suma   0", row_coords + no_answers + 1, 17)
+        self.write_hor("suma   0", row_coords + no_answers + 1, 17)
 
 
 def exit_app(tkwindow):
