@@ -74,7 +74,9 @@ class Blackboard:
 
         # Write blank spaces to the blackboard
         for i in range(no_answers):
-            self.write_horizontally("________________ --",row_coords+i,6)
+            self.write_horizontally("_________________ --",row_coords+i,5)
+        #write sum
+        self.write_horizontally("suma   0",row_coords+no_answers+1,17)
 
 
 
@@ -126,7 +128,7 @@ label = tkinter.Label(window1, text="usernane")
 inputUser = tkinter.Entry(window1)
 labelPassword = tkinter.Label(window1, text="Password")
 inputPassword = tkinter.Entry(window1)
-button = tkinter.Button(window1, text="Go", command=lambda: game1.round_init(2))
+button = tkinter.Button(window1, text="Go", command=lambda: pygame.mixer.Sound.play(ending_music))
 label.pack()
 inputUser.pack()
 labelPassword.pack()
@@ -139,11 +141,8 @@ correct_sound = pygame.mixer.Sound("sfx/correct.wav")
 wrong_sound = pygame.mixer.Sound("sfx/incorrect.wav")
 dubel_sound = pygame.mixer.Sound("sfx/dubel.wav")
 bravo_sound = pygame.mixer.Sound("sfx/bravo.wav")
-ending_music = pygame.mixer.Sound("sfx/final_ending.wav")
-intro_music = pygame.mixer.Sound("sfx/show_music.wav")
-
-# Initalize game matrix object
-
+ending_music = pygame.mixer.Sound("sfx/final_ending.flac")
+intro_music = pygame.mixer.Sound("sfx/show_music.flac")
 
 while True:
     surface.fill((0, 0, 255))
