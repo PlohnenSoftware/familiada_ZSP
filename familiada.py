@@ -163,8 +163,6 @@ while True:
         block_x = (surface.get_width() - (block_width * 29) - (28 * 2) - 125) / 2
         block_y = 0
 
-    game1.show_round(game1.answers[2])
-
     # Draw a grey rectangle around the game board
     rectangle_rgb = (81, 81, 81)
     rectangle_width = surface.get_width() - game1.stroke * 2
