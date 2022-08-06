@@ -43,9 +43,8 @@ def exit_app(tkwindow):
     pygame.quit()
     sys.exit()
 
-
-answers = []
 # Create a list containing tuples of answers and points for every round
+answers = []
 try:
     with open('dane.csv', 'r') as f:
         lines = f.readlines()
@@ -147,6 +146,6 @@ while running:
                 # There's some code to add back window content here.
                 surface = pygame.display.set_mode((event.w, event.h), pygame.RESIZABLE)
 
-    # quit the game if window is closed
+    # Quit the game if the window is closed
     except pygame.error:
         sys.exit()
