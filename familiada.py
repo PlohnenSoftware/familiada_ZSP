@@ -3,7 +3,7 @@ import sys
 import tkinter
 from tkinter import messagebox
 
-
+# Blackboard class containing the matrix object used to draw characters on the screen
 class Blackboard:
     def __init__(self, stroke):
         self.letter_matrix = [['' for _ in range(29)] for _ in range(10)]
@@ -44,10 +44,10 @@ def exit_app(tkwindow):
     sys.exit()
 
 
+answers = []
 # Create a list containing tuples of answers and points for every round
 try:
     with open('dane.csv', 'r') as f:
-        answers = []
         lines = f.readlines()
         for line in lines:
             line = line[:-1].split(',')
@@ -57,6 +57,10 @@ try:
                 points = line[i+1]
                 round_data.append((answer, points))
             answers.append(round_data)
+
+        # Sort answers by points
+        for i, round_answers in enumerate(answers):
+            answers[i] = sorted(round_answers, key=lambda x: int(x[1]), reverse=True)
 except FileNotFoundError:
     if messagebox.showerror("ERROR", "There is no file named 'dane.csv' in the current directory"):
         sys.exit()
@@ -87,7 +91,7 @@ labelPassword.pack()
 inputPassword.pack()
 button.pack()
 
-# import pygame SFX
+# Import pygame SFX
 pygame.mixer.init()
 correct_sound = pygame.mixer.Sound("sfx/correct.wav")
 wrong_sound = pygame.mixer.Sound("sfx/incorrect.wav")
@@ -95,32 +99,30 @@ dubel_sound = pygame.mixer.Sound("sfx/dubel.wav")
 ending_music = pygame.mixer.Sound("sfx/final_ending.wav")
 intro_music = pygame.mixer.Sound("sfx/show_music.wav")
 
-# initalize game matrix object
+# Initalize game matrix object
 game1 = Blackboard(20)
-# game1.fill("-")
 
 running = True
 while running:
     surface.fill((0, 0, 255))
-    # determine responsive width and height of the rectangles
+    # Determine responsive width and height of the rectangles
     if surface.get_width() < surface.get_height()*(192/108):
         block_width = (surface.get_width()-125-(28*2))/29
         block_height = block_width*3/2
 
-        # move blocks to the center of the screen
+        # Move blocks to the center of the screen
         block_x = 0
         block_y = (surface.get_height() - (block_height*10) - (9*2) - 100)/2
     else:
         block_height = (surface.get_height()-100-(9*2))/10
         block_width = block_height*2/3
 
-        # move blocks to the center of the screen
+        # Move blocks to the center of the screen
         block_x = (surface.get_width() - (block_width*29) - (28*2) - 125)/2
         block_y = 0
 
     # Draw a grey rectangle around the game board
     pygame.draw.rect(surface, (81, 81, 81), (game1.stroke, game1.stroke, surface.get_width()-game1.stroke*2, surface.get_height()-game1.stroke*2))
-
     letter_hight = round(block_height * 0.75)
     myfont = pygame.font.Font("familiada.ttf", letter_hight)
 
@@ -133,7 +135,7 @@ while running:
             pygame.draw.rect(surface, (0, 0, 0), (pos_x, pos_y, block_width, block_height))
             surface.blit(label, (pos_x+block_width*0.146, pos_y+block_height/2-letter_hight/2))
 
-    # refresh windows
+    # Refresh both windows
     pygame.display.update()
     window1.update()
     try:
