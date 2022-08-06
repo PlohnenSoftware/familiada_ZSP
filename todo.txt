@@ -6,3 +6,4 @@
 #### git remote update origin --prune            #aktualizuje brancze z remota
 #### .\pipunall.ps1
 
+#### pyinstaller.exe --onefile --windowed --icon=familiada.ico familiada.py
