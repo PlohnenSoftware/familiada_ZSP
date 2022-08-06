@@ -9,19 +9,19 @@ class Blackboard:
         self.letter_matrix = [['' for _ in range(29)] for _ in range(10)]
         self.stroke = stroke
 
-    # write a word horizontally to the matrix
+    # Write a word horizontally to the matrix
     def write_horizontally(self, word, start_row, start_col,):
         letters = list(word)
         for i, letter in enumerate(letters):
             self.letter_matrix[start_row][start_col+i] = letter
 
-    # write a word vertically to the matrix
+    # Write a word vertically to the matrix
     def write_vertically(self, word, start_row, start_col):
         letters = list(word)
         for i, letter in enumerate(letters):
             self.letter_matrix[start_row+i][start_col] = letter
 
-    # fill whole board with one character
+    # Fill whole board with one character
     def fill(self, char=''):
         self.letter_matrix = [[char for _ in range(29)] for _ in range(10)]
 
@@ -31,10 +31,10 @@ class Blackboard:
             self.letter_matrix[start_row-i+2][start_col+i] = '#'
 
     def draw_gross_x(self, start_row, start_col):
+        self.draw_small_x(start_row+1, start_col)
         for j in range(2):
             for i in range(2):
                 self.write_horizontally('#', start_row+j*4, start_col+i*2)
-        self.draw_small_x(start_row+1, start_col)
 
 
 def exit_app(tkwindow):
@@ -101,8 +101,7 @@ intro_music = pygame.mixer.Sound("sfx/show_music.wav")
 # Initalize game matrix object
 game1 = Blackboard(20)
 
-running = True
-while running:
+while True:
     surface.fill((0, 0, 255))
     # Determine responsive width and height of the rectangles
     if surface.get_width() < surface.get_height()*(192/108):
@@ -121,8 +120,14 @@ while running:
         block_y = 0
 
     # Draw a grey rectangle around the game board
-    pygame.draw.rect(surface, (81, 81, 81), (game1.stroke, game1.stroke, surface.get_width()-game1.stroke*2, surface.get_height()-game1.stroke*2))
+    rectangle_rgb = (81, 81, 81)
+    rectangle_width = surface.get_width()-game1.stroke*2
+    rectangle_height = surface.get_height()-game1.stroke*2
+    rectangle_dimensions = (game1.stroke, game1.stroke, rectangle_width, rectangle_height)
+    pygame.draw.rect(surface, rectangle_rgb, rectangle_dimensions)
     letter_hight = round(block_height * 0.75)
+
+    # Set the font
     myfont = pygame.font.Font("familiada.ttf", letter_hight)
 
     # Draw black rectangles & letters on the surface.
@@ -131,7 +136,9 @@ while running:
             pos_x = block_x + 50 + (block_width+3)*j
             pos_y = block_y + 50 + (block_height+3)*i
             label = myfont.render(game1.letter_matrix[i][j], 1, (255, 255, 0))
-            pygame.draw.rect(surface, (0, 0, 0), (pos_x, pos_y, block_width, block_height))
+            rectangle_rgb = (0, 0, 0)
+            rectangle_dimensions = (pos_x, pos_y, block_width, block_height)
+            pygame.draw.rect(surface, rectangle_rgb, rectangle_dimensions)
             surface.blit(label, (pos_x+block_width*0.146, pos_y+block_height/2-letter_hight/2))
 
     # Refresh both windows
