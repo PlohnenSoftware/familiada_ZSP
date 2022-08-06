@@ -10,7 +10,12 @@ class Blackboard:
         self.stroke = stroke
 
     # Write a word horizontally to the matrix
-    def write_horizontally(self,word,start_row,start_col,):
+    def write_horizontally(
+        self,
+        word,
+        start_row,
+        start_col,
+    ):
         letters = list(word)
         for i, letter in enumerate(letters):
             self.letter_matrix[start_row][start_col + i] = letter
@@ -35,20 +40,20 @@ class Blackboard:
         for j in range(2):
             for i in range(2):
                 self.write_horizontally("#", start_row + j * 4, start_col + i * 2)
-    
-    def big_lost(self,team):
-        if team == 'L':
+
+    def big_lost(self, team):
+        if team == "L":
             self.draw_gross_x(3, 0)
             pygame.mixer.Sound.play(wrong_sound)
-        elif team == 'R':
+        elif team == "R":
             self.draw_gross_x(3, 26)
             pygame.mixer.Sound.play(wrong_sound)
-    
-    def lost(self,team):
-        if team == 'L':
+
+    def lost(self, team):
+        if team == "L":
             self.draw_small_x(2, 0)
             pygame.mixer.Sound.play(wrong_sound)
-        elif team == 'R':
+        elif team == "R":
             self.draw_small_x(2, 26)
             pygame.mixer.Sound.play(wrong_sound)
 
