@@ -8,6 +8,7 @@ class Blackboard:
     def __init__(self, stroke):
         self.letter_matrix = [["" for _ in range(29)] for _ in range(10)]
         self.stroke = stroke
+        self.answers = []
 
     # Write a word horizontally to the matrix
     def write_horizontally(
@@ -57,6 +58,19 @@ class Blackboard:
             self.draw_small_x(2, 26)
             pygame.mixer.Sound.play(wrong_sound)
 
+    def round_init(self,round_number):
+        answer_number = len(self.answers[round_number])
+        if answer_number == 1 or 2:
+            row_coords = 3
+        elif answer_number == 3 or 4:
+            row_coords = 2
+        elif answer_number == 5 or 6 or 7:
+            row_coords = 1
+        self.write_vertically([str(i) for i in range(1, answer_number + 1)], row_coords, 4)
+        for i in range(answer_number):
+            self.write_horizontally("________________ --",row_coords+i,6)
+
+
 
 def exit_app(tkwindow):
     tkwindow.destroy()
@@ -64,9 +78,10 @@ def exit_app(tkwindow):
     pygame.quit()
     sys.exit()
 
+#initialize main game object
+game1 = Blackboard(20)
 
 # Create a list containing tuples of answers and points for every round
-answers = []
 try:
     with open("dane.csv", "r") as f:
         lines = f.readlines()
@@ -77,11 +92,11 @@ try:
                 answer = line[i]
                 points = line[i + 1]
                 round_data.append((answer, points))
-            answers.append(round_data)
+            game1.answers.append(round_data)
 
         # Sort answers by points
-        for i, round_answers in enumerate(answers):
-            answers[i] = sorted(round_answers, key=lambda x: int(x[1]), reverse=True)
+        for i, round_answers in enumerate(game1.answers):
+            game1.answers[i] = sorted(round_answers, key=lambda x: int(x[1]), reverse=True)
 except FileNotFoundError:
     if messagebox.showerror("ERROR", "There is no file named 'dane.csv' in the current directory"):
         sys.exit()
@@ -105,7 +120,7 @@ label = tkinter.Label(window1, text="usernane")
 inputUser = tkinter.Entry(window1)
 labelPassword = tkinter.Label(window1, text="Password")
 inputPassword = tkinter.Entry(window1)
-button = tkinter.Button(window1, text="Go", command=lambda: game1.big_lost("R"))
+button = tkinter.Button(window1, text="Go", command=lambda: game1.round_init(1))
 label.pack()
 inputUser.pack()
 labelPassword.pack()
@@ -122,7 +137,7 @@ ending_music = pygame.mixer.Sound("sfx/final_ending.wav")
 intro_music = pygame.mixer.Sound("sfx/show_music.wav")
 
 # Initalize game matrix object
-game1 = Blackboard(20)
+
 
 while True:
     surface.fill((0, 0, 255))
