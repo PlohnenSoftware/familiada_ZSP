@@ -2,7 +2,7 @@ import pygame
 import sys
 import tkinter
 from math import floor
-from tkinter import messagebox
+from tkinter import messagebox,ttk
 
 # Blackboard class containing the matrix object used to draw characters on the screen
 class Blackboard:
