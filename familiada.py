@@ -13,7 +13,12 @@ class Blackboard:
         self.answers = []
 
     # Write a word horizontally to the matrix
-    def write_horizontally(self,word,start_row,start_col,):
+    def write_horizontally(
+        self,
+        word,
+        start_row,
+        start_col,
+    ):
         letters = list(word)
         for i, letter in enumerate(letters):
             self.letter_matrix[start_row][start_col + i] = letter
@@ -61,11 +66,11 @@ class Blackboard:
                 self.draw_small_x(2, 26)
             pygame.mixer.Sound.play(wrong_sound)
 
-    def round_init(self,round_number):
-        #get and set some parameters of the round
-        no_answers = len(self.answers[round_number-1])
+    def round_init(self, round_number):
+        # get and set some parameters of the round
+        no_answers = len(self.answers[round_number - 1])
         self.current_round = round_number
-        
+
         # Center the answers on the blackboard
         row_coords = 1 + (floor((6 - no_answers) / 2) if no_answers < 7 else 0)
 
@@ -74,10 +79,9 @@ class Blackboard:
 
         # Write blank spaces to the blackboard
         for i in range(no_answers):
-            self.write_horizontally("_________________ --",row_coords+i,5)
-        #write sum
-        self.write_horizontally("suma   0",row_coords+no_answers+1,17)
-
+            self.write_horizontally("_________________ --", row_coords + i, 5)
+        # write sum
+        self.write_horizontally("suma   0", row_coords + no_answers + 1, 17)
 
 
 def exit_app(tkwindow):
@@ -86,7 +90,8 @@ def exit_app(tkwindow):
     pygame.quit()
     sys.exit()
 
-#initialize main game object
+
+# initialize main game object
 game1 = Blackboard(20)
 
 # Create a list containing tuples of answers and points for every round
