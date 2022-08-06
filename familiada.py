@@ -58,17 +58,11 @@ class Blackboard:
             self.draw_small_x(2, 26)
             pygame.mixer.Sound.play(wrong_sound)
 
-    def round_init(self,round_number):
-        answer_number = len(self.answers[round_number])
-        if answer_number == 1 or 2:
-            row_coords = 3
-        elif answer_number == 3 or 4:
-            row_coords = 2
-        elif answer_number == 5 or 6 or 7:
-            row_coords = 1
-        self.write_vertically([str(i) for i in range(1, answer_number + 1)], row_coords, 4)
-        for i in range(answer_number):
-            self.write_horizontally("________________ --",row_coords+i,6)
+    def show_round(self, round_data):
+        numbers = "".join(str(x) for x in range(1, len(round_data)+1))
+        self.write_vertically(numbers, 2, 3)
+        for i in range(len(round_data)):
+            self.write_horizontally('---------------', 2+i, 6)
 
 
 
@@ -156,6 +150,8 @@ while True:
         # Move blocks to the center of the screen
         block_x = (surface.get_width() - (block_width * 29) - (28 * 2) - 125) / 2
         block_y = 0
+
+    game1.show_round(game1.answers[2])
 
     # Draw a grey rectangle around the game board
     rectangle_rgb = (81, 81, 81)
