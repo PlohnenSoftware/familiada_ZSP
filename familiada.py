@@ -37,9 +37,9 @@ class Blackboard:
         for j in range(2):
             for i in range(2):
                 self.write_horizontally("#", start_row + j * 4, start_col + i * 2)
-        
+
     def show_round(self, round_data):
-        numbers = "".join(str(x) for x in range(1, len(round_data)+1))
+        numbers = "".join(str(x) for x in range(1, len(round_data) + 1))
         self.write_vertically(numbers, 2, 3)
 
     def big_lost(self, team):
