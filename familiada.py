@@ -1,6 +1,7 @@
 import pygame
 import sys
 import tkinter
+from math import floor
 from tkinter import messagebox
 
 # Blackboard class containing the matrix object used to draw characters on the screen
@@ -8,15 +9,11 @@ class Blackboard:
     def __init__(self, stroke):
         self.letter_matrix = [["" for _ in range(29)] for _ in range(10)]
         self.stroke = stroke
+        self.current_round = 0
         self.answers = []
 
     # Write a word horizontally to the matrix
-    def write_horizontally(
-        self,
-        word,
-        start_row,
-        start_col,
-    ):
+    def write_horizontally(self,word,start_row,start_col,):
         letters = list(word)
         for i, letter in enumerate(letters):
             self.letter_matrix[start_row][start_col + i] = letter
@@ -43,26 +40,41 @@ class Blackboard:
                 self.write_horizontally("#", start_row + j * 4, start_col + i * 2)
 
     def big_lost(self, team):
-        if team == "L":
-            self.draw_gross_x(3, 0)
-            pygame.mixer.Sound.play(wrong_sound)
-        elif team == "R":
-            self.draw_gross_x(3, 26)
+        if team not in ("L", "R"):
+            exception = ValueError("Team must be either 'L' or 'R'")
+            raise exception
+        else:
+            if team == "L":
+                self.draw_gross_x(3, 0)
+            else:
+                self.draw_gross_x(3, 26)
             pygame.mixer.Sound.play(wrong_sound)
 
     def lost(self, team):
-        if team == "L":
-            self.draw_small_x(2, 0)
-            pygame.mixer.Sound.play(wrong_sound)
-        elif team == "R":
-            self.draw_small_x(2, 26)
+        if team not in ("L", "R"):
+            exception = ValueError("Team must be either 'L' or 'R'")
+            raise exception
+        else:
+            if team == "L":
+                self.draw_small_x(2, 0)
+            else:
+                self.draw_small_x(2, 26)
             pygame.mixer.Sound.play(wrong_sound)
 
-    def show_round(self, round_data):
-        numbers = "".join(str(x) for x in range(1, len(round_data)+1))
-        self.write_vertically(numbers, 2, 3)
-        for i in range(len(round_data)):
-            self.write_horizontally('---------------', 2+i, 6)
+    def round_init(self,round_number):
+        #get and set some parameters of the round
+        no_answers = len(self.answers[round_number-1])
+        self.current_round = round_number
+        
+        # Center the answers on the blackboard
+        row_coords = 1 + (floor((6 - no_answers) / 2) if no_answers < 7 else 0)
+
+        # Write the indices of the answers to the blackboard
+        self.write_vertically([str(i) for i in range(1, no_answers + 1)], row_coords, 3)
+
+        # Write blank spaces to the blackboard
+        for i in range(no_answers):
+            self.write_horizontally("________________ --",row_coords+i,6)
 
 
 
@@ -77,7 +89,7 @@ game1 = Blackboard(20)
 
 # Create a list containing tuples of answers and points for every round
 try:
-    with open("dane.csv", "r") as f:
+    with open("dane.csv", "r+") as f:
         lines = f.readlines()
         for line in lines:
             line = line[:-1].split(",")
@@ -114,7 +126,7 @@ label = tkinter.Label(window1, text="usernane")
 inputUser = tkinter.Entry(window1)
 labelPassword = tkinter.Label(window1, text="Password")
 inputPassword = tkinter.Entry(window1)
-button = tkinter.Button(window1, text="Go", command=lambda: game1.round_init(1))
+button = tkinter.Button(window1, text="Go", command=lambda: game1.round_init(2))
 label.pack()
 inputUser.pack()
 labelPassword.pack()
