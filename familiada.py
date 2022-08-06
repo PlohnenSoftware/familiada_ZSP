@@ -1,6 +1,7 @@
 import pygame
 import sys
 import tkinter
+from math import floor
 from tkinter import messagebox
 
 # Blackboard class containing the matrix object used to draw characters on the screen
@@ -59,15 +60,18 @@ class Blackboard:
             pygame.mixer.Sound.play(wrong_sound)
 
     def round_init(self,round_number):
-        answer_number = len(self.answers[round_number])
-        if answer_number in (1, 2):
-            row_coords = 3
-        elif answer_number in (3, 4):
-            row_coords = 2
-        elif answer_number in (5, 6, 7):
-            row_coords = 1
-        self.write_vertically([str(i) for i in range(1, answer_number + 1)], row_coords, 4)
-        for i in range(answer_number):
+        no_answers = len(self.answers[round_number])
+        
+        # Center the answers on the blackboard
+        center_int = floor((6 - no_answers) / 2) if no_answers < 7 else 0
+        row_coords = 1 + center_int
+
+        # Write the indices of the answers to the blackboard
+        numbers = "".join(str(x) for x in range(1, len(round_data)+1))
+        self.write_vertically(numbers, row_coords, 3)
+
+        # Write blank spaces to the blackboard
+        for i in range(no_answers):
             self.write_horizontally("________________ --",row_coords+i,6)
 
 
