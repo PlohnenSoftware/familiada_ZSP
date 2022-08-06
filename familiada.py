@@ -13,7 +13,7 @@ class Blackboard:
         self.answers = []
 
     # Write a word horizontally to the matrix
-    def write_hor(self,word,start_row,start_col):
+    def write_hor(self, word, start_row, start_col):
         letters = list(word)
         for i, letter in enumerate(letters):
             self.letter_matrix[start_row][start_col + i] = letter
