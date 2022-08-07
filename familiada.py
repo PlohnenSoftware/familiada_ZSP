@@ -8,7 +8,7 @@ from tkinter import messagebox, ttk, filedialog
 
 # Game data showuld be stored in a csv file called "familiada.csv" in the same directory as the program.
 # The file should contain lines of answers of every round with
-# tuples of the form (word, score) all separated by commas.
+# dicts of the form (word, score) all separated by commas.
 
 # Currently all gui texts are written in Polish.
 
@@ -74,10 +74,11 @@ class Blackboard:
         no_answers = len(self.answers[round_number])
 
         # Center the answers on the blackboard
-        row_coords = 1 + min(floor((6 - no_answers) / 2), 0)
+        row_coords = 1 + max(floor((6 - no_answers) / 2), 0)
         return no_answers, row_coords
 
     def round_init(self, round_number):
+        self.fill()
         self.sum = 0
         self.current_round = round_number
         no_answers, row_coords = self.calculate_coords(round_number)
@@ -91,13 +92,13 @@ class Blackboard:
 
         # Write the sum
         self.write_hor("suma   0", row_coords + no_answers + 1, 17)
-        for j, answer_tuple in enumerate(self.answers[round_number]):
-            answer_tuple[2] = False
+        for j, answer_dict in enumerate(self.answers[round_number]):
+            answer_dict[2] = False
 
 
     # Print selected answer for selected round
     def print_answer(self, round_number, answer_number):
-        if not self.answers[round_number][answer_number][2]:
+        if self.answers[round_number][answer_number][2]:
             return False
         if self.current_round != round_number:
             self.round_init(round_number)
@@ -119,7 +120,7 @@ def exit_app(tkwindow):
 # Initialize the main game object
 game1 = Blackboard(20)
 
-# Create a list containing tuples of answers and points for every round
+# Create a list containing dicts of answers and points for every round
 try:
     filename = filedialog.askopenfilename(initialdir="/", title="Select a file", filetypes=(("csv files", "*.csv"), ("all files", "*.*")))
     with open(filename, "r+") as f:
@@ -130,7 +131,7 @@ try:
             for i in range(0, len(line), 2):
                 round_answers = line[i]
                 points = line[i + 1]
-                round_data.append((round_answers, points, False))
+                round_data.append([round_answers, points, False])
             game1.answers.append(round_data)
 
         # Sort answers by points
@@ -182,12 +183,12 @@ button.pack()
 for i, round_answers in enumerate(game1.answers):
     tab = ttk.Frame(tabControl)
     round_button = tkinter.Button(tab, text="Inicjalizuj runde", command=lambda round=i: game1.round_init(round))
-    answer_button.pack()
+    round_button.pack()
 
     # Add buttons for every answer
-    for j, answer_tuple in enumerate(round_answers):
-        answer = answer_tuple[0]
-        points = answer_tuple[1]
+    for j, answer_dict in enumerate(round_answers):
+        answer = answer_dict[0]
+        points = answer_dict[1]
         answer_text = f"odpowiedz:{answer} {points}"
         answer_button = tkinter.Button(tab, text=answer_text, command=lambda round=i, answer=j: game1.print_answer(round, answer))
         answer_button.pack()
