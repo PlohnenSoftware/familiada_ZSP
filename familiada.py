@@ -199,9 +199,9 @@ for i, round_answers in enumerate(game1.answers):
 
     # Add buttons for every answer
     for j, answer_dict in enumerate(round_answers):
-        answer = answer_dict[0]
-        points = answer_dict[1]
-        answer_text = f"odpowiedz:{answer} {points}"
+        answer = answer_dict[0].ljust(16)
+        points = answer_dict[1].rjust(2)
+        answer_text = f"{answer} {points}"
         answer_button = tkinter.Button(tab, text=answer_text, command=lambda round=i, answer=j: game1.print_answer(round, answer))
         answer_button.pack()
     tabControl.add(tab, text="Round" + str(i + 1))
