@@ -189,9 +189,7 @@ inputPassword = tkinter.Entry(tab1)
 inputPassword.pack()
 
 button = tkinter.Button(tab1, text="Go", command=lambda: pygame.mixer.Sound.play(ending_music))
-# button2 = tkinter.Button(tab1, text="Go", command=lambda: game1.round_init(2))
 button.pack()
-# button2.pack()
 
 # Create a tab for every round
 for i, round_answers in enumerate(game1.answers):

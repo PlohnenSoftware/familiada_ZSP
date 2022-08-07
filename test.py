@@ -53,22 +53,16 @@ class Notebook:
 
         self.notebook.add(self.tab[1], text="Importation des donnees", underline=0)
         self.notebook.add(self.tab[2], text="Affichage des donnees apres traitement ")
-        # self.notebook.add(self.tab[3], text='Page 3')
-        # self.notebook.add(self.tab[4], text='Page 4')
         self.notebook.pack(fill=BOTH, expand=YES, padx=5, pady=5)
 
         # PAGE ONE CONTENTS
 
     def build_page_1(self):
         ttk.Button(self.tab[1], text="Ouvrir un fichier csv", command=self.filedialog).pack(side=LEFT, anchor=CENTER, padx=90, pady=5, fill=X, expand=1)
-        # ttk.Button(self.tab[1], text='close', command=quit).pack(side=LEFT, padx=90, fill=X, anchor=CENTER,expand=1)
 
     def filedialog(self):
         filename = filedialog.askopenfilename(initialdir="/", title="Select a file", filetypes=(("csv files", "*.csv"), ("all files", "*.*")))
         print(self.filename)
-        # os.system('python deleteNull.py')
-        # global filename
-        # filename=self.filename
         importlib.import_module("deleteNull")
 
     def build_page_2(self):
