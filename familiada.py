@@ -2,7 +2,7 @@ import pygame
 import sys
 import tkinter
 from math import floor
-from tkinter import messagebox, ttk
+from tkinter import messagebox, ttk, filedialog
 
 # The program provides a graphical interface for the game familiada.
 
@@ -111,7 +111,8 @@ game1 = Blackboard(20)
 
 # Create a list containing tuples of answers and points for every round
 try:
-    with open("dane.csv", "r+") as f:
+    filename = filedialog.askopenfilename(initialdir="/", title="Select a file", filetypes=(("csv files", "*.csv"), ("all files", "*.*")))
+    with open(filename, "r+") as f:
         lines = f.readlines()
         for line in lines:
             line = line[:-1].split(",")
