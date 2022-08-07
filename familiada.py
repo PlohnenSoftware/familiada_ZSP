@@ -91,9 +91,14 @@ class Blackboard:
 
         # Write the sum
         self.write_hor("suma   0", row_coords + no_answers + 1, 17)
+        for j, answer_tuple in enumerate(self.answers[round_number]):
+            answer_tuple[2] = False
+
 
     # Print selected answer for selected round
     def print_answer(self, round_number, answer_number):
+        if not self.answers[round_number][answer_number][2]:
+            return False
         if self.current_round != round_number:
             self.round_init(round_number)
         self.sum = int(self.answers[round_number][answer_number][1]) + self.sum
@@ -101,6 +106,7 @@ class Blackboard:
         self.write_hor(str(self.answers[round_number][answer_number][0]).ljust(16), row_coords + answer_number, 6)
         self.write_hor(str(self.answers[round_number][answer_number][1]).rjust(2), row_coords + answer_number, 23)
         self.write_hor(str(self.sum).rjust(3), row_coords + no_answers + 1, 22)
+        self.answers[round_number][answer_number][2] = True
 
 
 def exit_app(tkwindow):
@@ -124,7 +130,7 @@ try:
             for i in range(0, len(line), 2):
                 round_answers = line[i]
                 points = line[i + 1]
-                round_data.append((round_answers, points))
+                round_data.append((round_answers, points, False))
             game1.answers.append(round_data)
 
         # Sort answers by points
