@@ -106,6 +106,7 @@ def exit_app(tkwindow):
     pygame.quit()
     sys.exit()
 
+
 def terminate_error(error_description):
     if messagebox.showerror("FAMILIADA ERROR", error_description):
         sys.exit()
