@@ -136,7 +136,7 @@ if filename[-4:] != ".csv":
     terminate_error("Wrong file format, the file must be a .csv")
 
 # Create a list containing tuples of answers and points for every round
-with open(filename, "r") as f:
+with open(filename, "r+") as f:
     lines = f.readlines()
     for line in lines:
         line = line[:-1].split(",")
@@ -156,10 +156,13 @@ with open(filename, "r") as f:
         game1.answers[i] = sorted(round_answers, key=lambda x: int(x[1]), reverse=True)
 
 with open(filename, "w") as f:
+    filecontent = ""
     for round_answers in game1.answers:
         for answer in round_answers:
-            f.write(f"{answer[0]},{answer[1]}")
-        f.write("\n")
+            filecontent+=f"{answer[0]},{answer[1]},"
+        filecontent=filecontent[:-1]    
+        filecontent+="\n"
+    f.write(filecontent)
 
 
 # Create the window, saving it to a variable.
@@ -205,9 +208,9 @@ for i, round_answers in enumerate(game1.answers):
 
     # Add buttons for every answer
     for j, answer_dict in enumerate(round_answers):
-        answer = answer_dict[0]
-        points = answer_dict[1]
-        answer_text = f"odpowiedz:{answer} {points}"
+        answer = answer_dict[0].ljust(16)
+        points = answer_dict[1].rjust(2)
+        answer_text = f"{answer} {points}"
         answer_button = tkinter.Button(tab, text=answer_text, command=lambda round=i, answer=j: game1.print_answer(round, answer))
         answer_button.pack()
     tabControl.add(tab, text="Round" + str(i + 1))
