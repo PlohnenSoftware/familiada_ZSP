@@ -9,7 +9,7 @@ from tkinter import messagebox, ttk, filedialog
 
 # Game data showuld be stored in a csv file called "familiada.csv" in the same directory as the program.
 # The file should contain lines of answers of every round with
-# tuples of the form (word, score) all separated by commas.
+# dicts of the form (word, score) all separated by commas.
 
 # Currently all gui texts are written in Polish.
 
@@ -20,6 +20,7 @@ class Blackboard:
         self.stroke = stroke
         self.answers = []
         self.sum = 0
+        self.current_round = None
 
     # Write a word horizontally to the matrix
     def write_hor(self, word, start_row, start_col):
@@ -78,7 +79,9 @@ class Blackboard:
         return no_answers, row_coords
 
     def round_init(self, round_number):
+        self.fill()
         self.sum = 0
+        self.current_round = round_number
         no_answers, row_coords = self.calculate_coords(round_number)
 
         # Write the indices of the answers to the blackboard
@@ -90,14 +93,21 @@ class Blackboard:
 
         # Write the sum
         self.write_hor("suma   0", row_coords + no_answers + 1, 17)
+        for j, answer_dict in enumerate(self.answers[round_number]):
+            answer_dict[2] = False
 
     # Print selected answer for selected round
     def print_answer(self, round_number, answer_number):
+        if self.answers[round_number][answer_number][2]:
+            return False
+        if self.current_round != round_number:
+            self.round_init(round_number)
         self.sum = int(self.answers[round_number][answer_number][1]) + self.sum
         no_answers, row_coords = self.calculate_coords(round_number)
         self.write_hor(str(self.answers[round_number][answer_number][0]).ljust(16), row_coords + answer_number, 6)
         self.write_hor(str(self.answers[round_number][answer_number][1]).rjust(2), row_coords + answer_number, 23)
         self.write_hor(str(self.sum).rjust(3), row_coords + no_answers + 1, 22)
+        self.answers[round_number][answer_number][2] = True
 
 
 def exit_app(tkwindow):
@@ -137,7 +147,7 @@ with open(filename, "r+") as f:
             points = line[i + 1]
             if not points.isdigit() or int(points) not in range(100):
                 terminate_error(f"Points {points} are not valid")
-            round_data.append((round_answer, points))
+            round_data.append([round_answer, points, False])
         game1.answers.append(round_data)
 
     # Sort answers by points
@@ -178,23 +188,23 @@ inputPassword = tkinter.Entry(tab1)
 inputPassword.pack()
 
 button = tkinter.Button(tab1, text="Go", command=lambda: pygame.mixer.Sound.play(ending_music))
-button2 = tkinter.Button(tab1, text="Go", command=lambda: game1.round_init(2))
+# button2 = tkinter.Button(tab1, text="Go", command=lambda: game1.round_init(2))
 button.pack()
-button2.pack()
+# button2.pack()
 
-# Show round tabs and their content on the second window
+# Create a tab for every round
 for i, round_answers in enumerate(game1.answers):
-
-    # Create a tab for every round
     tab = ttk.Frame(tabControl)
-    for j, answer_tuple in enumerate(round_answers):
+    round_button = tkinter.Button(tab, text="Inicjalizuj runde", command=lambda round=i: game1.round_init(round))
+    round_button.pack()
 
-        # Add buttons for every answer
-        answer = answer_tuple[0]
-        points = answer_tuple[1]
+    # Add buttons for every answer
+    for j, answer_dict in enumerate(round_answers):
+        answer = answer_dict[0]
+        points = answer_dict[1]
         answer_text = f"odpowiedz:{answer} {points}"
-        round_button = tkinter.Button(tab, text=answer_text, command=lambda round=i, answer=j: game1.print_answer(round, answer))
-        round_button.pack()
+        answer_button = tkinter.Button(tab, text=answer_text, command=lambda round=i, answer=j: game1.print_answer(round, answer))
+        answer_button.pack()
     tabControl.add(tab, text="Round" + str(i + 1))
 
 tabControl.add(tab1, text="SFX")
