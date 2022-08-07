@@ -19,6 +19,7 @@ class Blackboard:
         self.stroke = stroke
         self.answers = []
         self.sum = 0
+        self.current_round = None
 
     # Write a word horizontally to the matrix
     def write_hor(self, word, start_row, start_col):
@@ -78,6 +79,7 @@ class Blackboard:
 
     def round_init(self, round_number):
         self.sum = 0
+        self.current_round = round_number
         no_answers, row_coords = self.calculate_coords(round_number)
 
         # Write the indices of the answers to the blackboard
@@ -92,6 +94,8 @@ class Blackboard:
 
     # Print selected answer for selected round
     def print_answer(self, round_number, answer_number):
+        if self.current_round != round_number:
+            self.round_init(round_number)
         self.sum = int(self.answers[round_number][answer_number][1]) + self.sum
         no_answers, row_coords = self.calculate_coords(round_number)
         self.write_hor(str(self.answers[round_number][answer_number][0]).ljust(16), row_coords + answer_number, 6)
@@ -164,23 +168,23 @@ inputPassword = tkinter.Entry(tab1)
 inputPassword.pack()
 
 button = tkinter.Button(tab1, text="Go", command=lambda: pygame.mixer.Sound.play(ending_music))
-button2 = tkinter.Button(tab1, text="Go", command=lambda: game1.round_init(2))
+# button2 = tkinter.Button(tab1, text="Go", command=lambda: game1.round_init(2))
 button.pack()
-button2.pack()
+# button2.pack()
 
-# Show round tabs and their content on the second window
+# Create a tab for every round
 for i, round_answers in enumerate(game1.answers):
-
-    # Create a tab for every round
     tab = ttk.Frame(tabControl)
-    for j, answer_tuple in enumerate(round_answers):
+    round_button = tkinter.Button(tab, text="Inicjalizuj runde", command=lambda round=i: game1.round_init(round))
+    answer_button.pack()
 
-        # Add buttons for every answer
+    # Add buttons for every answer
+    for j, answer_tuple in enumerate(round_answers):
         answer = answer_tuple[0]
         points = answer_tuple[1]
         answer_text = f"odpowiedz:{answer} {points}"
-        round_button = tkinter.Button(tab, text=answer_text, command=lambda round=i, answer=j: game1.print_answer(round, answer))
-        round_button.pack()
+        answer_button = tkinter.Button(tab, text=answer_text, command=lambda round=i, answer=j: game1.print_answer(round, answer))
+        answer_button.pack()
     tabControl.add(tab, text="Round" + str(i + 1))
 
 tabControl.add(tab1, text="SFX")
