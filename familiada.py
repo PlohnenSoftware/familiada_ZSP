@@ -95,7 +95,6 @@ class Blackboard:
         for j, answer_dict in enumerate(self.answers[round_number]):
             answer_dict[2] = False
 
-
     # Print selected answer for selected round
     def print_answer(self, round_number, answer_number):
         if self.answers[round_number][answer_number][2]:
