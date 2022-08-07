@@ -5,7 +5,11 @@ from math import floor
 from tkinter import messagebox, ttk
 
 # The program provides a graphical interface for the game familiada.
+
 # Game data showuld be stored in a csv file called "familiada.csv" in the same directory as the program.
+# The file should contain lines of answers of every round with
+# tuples of the form (word, score) all separated by commas. 
+
 # Currently all gui texts are written in Polish.
 
 # Blackboard class containing the matrix object used to draw characters on the screen
@@ -45,7 +49,7 @@ class Blackboard:
             for i in range(2):
                 self.write_hor("#", start_row + j * 4, start_col + i * 2)
 
-    def big_lost(self, team):
+    def show_big_x(self, team):
         if team not in ("L", "R"):
             exception = ValueError("Team must be either 'L' or 'R'")
             raise exception
@@ -55,7 +59,7 @@ class Blackboard:
             self.draw_gross_x(3, 26)
         pygame.mixer.Sound.play(wrong_sound)
 
-    def lost(self, team):
+    def show_small_x(self, team):
         if team not in ("L", "R"):
             exception = ValueError("Team must be either 'L' or 'R'")
             raise exception
@@ -66,7 +70,7 @@ class Blackboard:
         pygame.mixer.Sound.play(wrong_sound)
 
     def calculate_coords(self, round_number):
-        # get and set some parameters of the round
+        # Get and set some parameters of the round
         no_answers = len(self.answers[round_number])
 
         # Center the answers on the blackboard
@@ -83,7 +87,8 @@ class Blackboard:
         # Write blank spaces to the blackboard
         for i in range(no_answers):
             self.write_hor("________________ --", row_coords + i, 6)
-        # Write sum
+
+        # Write the sum
         self.write_hor("suma   0", row_coords + no_answers + 1, 17)
 
     # Print selected answer for selected round
@@ -102,7 +107,7 @@ def exit_app(tkwindow):
     sys.exit()
 
 
-# Initialize main game object
+# Initialize the main game object
 game1 = Blackboard(20)
 
 # Create a list containing tuples of answers and points for every round
@@ -113,9 +118,9 @@ try:
             line = line[:-1].split(",")
             round_data = []
             for i in range(0, len(line), 2):
-                answer = line[i]
+                round_answers = line[i]
                 points = line[i + 1]
-                round_data.append((answer, points))
+                round_data.append((round_answers, points))
             game1.answers.append(round_data)
 
         # Sort answers by points
@@ -162,10 +167,13 @@ button2 = tkinter.Button(tab1, text="Go", command=lambda: game1.round_init(2))
 button.pack()
 button2.pack()
 
-for i in range(len(game1.answers)):
+# Show round tabs and their content on the second window
+for i, round_answers in enumerate(game1.answers):
     game1.tabs.append(ttk.Frame(tabControl))
-    for j, item in enumerate(game1.answers[i]):
-        answer_text = f"odpowiedz:{item[0]} {item[1]}"
+    for j, answer_tuple in enumerate(round_answers):
+        answer = answer_tuple[0]
+        points = answer_tuple[1]
+        answer_text = f"odpowiedz:{answer} {points}"
         round_button = tkinter.Button(game1.tabs[i], text=answer_text, command=lambda round=i, answer=j: game1.print_answer(round, answer))
         round_button.pack()
     tabControl.add(game1.tabs[i], text="Round" + str(i + 1))
@@ -208,7 +216,7 @@ while True:
     rectangle_dimensions = (game1.stroke, game1.stroke, rectangle_width, rectangle_height)
     pygame.draw.rect(surface, rectangle_rgb, rectangle_dimensions)
 
-    # Anti-bug fix
+    # Anti-bug max
     letter_height = max(round(block_height * 0.75), 2)
 
     # Set the font
