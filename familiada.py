@@ -161,10 +161,10 @@ button2 = tkinter.Button(tab1, text="Go", command=lambda: game1.round_init(2))
 button.pack()
 button2.pack()
 
-for i in range(len(game1.answers)):
+for i, _ in enumerate(game1.answers):
     game1.tabs.append(ttk.Frame(tabControl))
-    for j in range(len(game1.answers[i])):
-        round_button = tkinter.Button(game1.tabs[i], text=f"odpowiedz:{game1.answers[i][j][0]} {game1.answers[i][j][1]}", command=lambda round=i, answer=j: game1.print_answer(round, answer))
+    for j, item in enumerate(game1.answers[i]):
+        round_button = tkinter.Button(game1.tabs[i], text=f"odpowiedz:{item[0]} {item[1]}", command=lambda round=i, answer=j: game1.print_answer(round, answer))
         round_button.pack()
     tabControl.add(game1.tabs[i], text="Round" + str(i + 1))
 
