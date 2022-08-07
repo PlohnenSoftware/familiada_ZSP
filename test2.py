@@ -16,6 +16,8 @@ nb.add(frame2, text="Tab2")
 
 def on_tab_change(event):
     tab = event.widget.tab("current")["text"]
+
+
 nb.bind("<<NotebookTabChanged>>", on_tab_change)
 
 root.mainloop()
