@@ -45,23 +45,21 @@ class Blackboard:
         if team not in ("L", "R"):
             exception = ValueError("Team must be either 'L' or 'R'")
             raise exception
+        if team == "L":
+            self.draw_gross_x(3, 0)
         else:
-            if team == "L":
-                self.draw_gross_x(3, 0)
-            else:
-                self.draw_gross_x(3, 26)
-            pygame.mixer.Sound.play(wrong_sound)
+            self.draw_gross_x(3, 26)
+        pygame.mixer.Sound.play(wrong_sound)
 
     def lost(self, team):
         if team not in ("L", "R"):
             exception = ValueError("Team must be either 'L' or 'R'")
             raise exception
+        if team == "L":
+            self.draw_small_x(2, 0)
         else:
-            if team == "L":
-                self.draw_small_x(2, 0)
-            else:
-                self.draw_small_x(2, 26)
-            pygame.mixer.Sound.play(wrong_sound)
+            self.draw_small_x(2, 26)
+        pygame.mixer.Sound.play(wrong_sound)
 
     def calculate_coords(self, round_number):
         # get and set some parameters of the round
