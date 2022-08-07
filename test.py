@@ -64,7 +64,7 @@ class Notebook:
         # ttk.Button(self.tab[1], text='close', command=quit).pack(side=LEFT, padx=90, fill=X, anchor=CENTER,expand=1)
 
     def filedialog(self):
-        self.filename = filedialog.askopenfilename(initialdir="/", title="Select a file", filetypes=(("csv files", "*.csv"), ("all files", "*.*")))
+        filename = filedialog.askopenfilename(initialdir="/", title="Select a file", filetypes=(("csv files", "*.csv"), ("all files", "*.*")))
         print(self.filename)
         # os.system('python deleteNull.py')
         # global filename
