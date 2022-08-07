@@ -69,11 +69,11 @@ class Blackboard:
 
         # Center the answers on the blackboard
         row_coords = 1 + (floor((6 - no_answers) / 2) if no_answers < 7 else 0)
-        
-        return no_answers,row_coords
+
+        return no_answers, row_coords
 
     def round_init(self, round_number):
-        self.sum =0
+        self.sum = 0
         no_answers, row_coords = self.calculate_coords(round_number)
 
         # Write the indices of the answers to the blackboard
@@ -84,16 +84,14 @@ class Blackboard:
             self.write_hor("________________ --", row_coords + i, 6)
         # write sum
         self.write_hor("suma   0", row_coords + no_answers + 1, 17)
-    
-    #print selected answer for selected round
+
+    # print selected answer for selected round
     def print_answer(self, round_number, answer_number):
         self.sum = int(self.answers[round_number][answer_number][1]) + self.sum
         no_answers, row_coords = self.calculate_coords(round_number)
         self.write_hor(str(self.answers[round_number][answer_number][0]).ljust(16), row_coords + answer_number, 6)
         self.write_hor(str(self.answers[round_number][answer_number][1]).rjust(2), row_coords + answer_number, 23)
         self.write_hor(str(self.sum).rjust(3), row_coords + no_answers + 1, 22)
-        
-
 
 
 def exit_app(tkwindow):
@@ -142,9 +140,9 @@ window1.geometry("400x200")
 window1.configure(background="#f0f0f0")
 window1.protocol("WM_DELETE_WINDOW", lambda: exit_app(window1))
 
-tabControl = ttk.Notebook(window1)  
+tabControl = ttk.Notebook(window1)
 tab1 = ttk.Frame(tabControl)
-  
+
 
 label = tkinter.Label(tab1, text="usernane")
 label.pack()
@@ -166,12 +164,12 @@ button2.pack()
 for i in range(len(game1.answers)):
     game1.tabs.append(ttk.Frame(tabControl))
     for j in range(len(game1.answers[i])):
-        round_button = tkinter.Button(game1.tabs[i], text=f'odpowiedz:{game1.answers[i][j][0]} {game1.answers[i][j][1]}', command=lambda round = i, answer = j: game1.print_answer(round, answer))
+        round_button = tkinter.Button(game1.tabs[i], text=f"odpowiedz:{game1.answers[i][j][0]} {game1.answers[i][j][1]}", command=lambda round=i, answer=j: game1.print_answer(round, answer))
         round_button.pack()
-    tabControl.add(game1.tabs[i], text='Round'+str(i+1))
+    tabControl.add(game1.tabs[i], text="Round" + str(i + 1))
 
-tabControl.add(tab1, text ='SFX')
-tabControl.pack(expand = 1, fill ="both")
+tabControl.add(tab1, text="SFX")
+tabControl.pack(expand=1, fill="both")
 
 # Import pygame SFX
 pygame.mixer.init()
@@ -208,7 +206,7 @@ while True:
     pygame.draw.rect(surface, rectangle_rgb, rectangle_dimensions)
     letter_hight = round(block_height * 0.75)
 
-    #anti-bug fix
+    # anti-bug fix
     if letter_hight < 2:
         letter_hight = 2
 
