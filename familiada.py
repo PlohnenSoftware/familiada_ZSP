@@ -5,11 +5,11 @@ import os
 from math import floor
 from tkinter import messagebox, ttk, filedialog
 
-# The program provides a graphical interface for the game familiada.
+# The program provides a graphical interface for the game Familiada.
 
-# Game data showuld be stored in a csv file called "familiada.csv" in the same directory as the program.
-# The file should contain lines of answers of every round with
-# dicts of the form (word, score) all separated by commas.
+# Game data is a csv selected by the user upon startup.
+# The file should contain lines of answers for round with points
+# in the form of dicts {word,score} all separated by commas.
 
 # Currently all gui texts are written in Polish.
 
