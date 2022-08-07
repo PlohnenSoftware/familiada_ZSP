@@ -167,7 +167,6 @@ with open(filename, "w") as f:
         f.write(",".join(answer_numbers) + "\n")
 
 
-
 # Create the window, saving it to a variable.
 pygame.init()
 surface = pygame.display.set_mode((800, 600), pygame.RESIZABLE)
