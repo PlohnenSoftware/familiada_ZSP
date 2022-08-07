@@ -159,9 +159,9 @@ with open(filename, "w") as f:
     filecontent = ""
     for round_answers in game1.answers:
         for answer in round_answers:
-            filecontent+=f"{answer[0]},{answer[1]},"
-        filecontent=filecontent[:-1]    
-        filecontent+="\n"
+            filecontent += f"{answer[0]},{answer[1]},"
+        filecontent = filecontent[:-1]
+        filecontent += "\n"
     f.write(filecontent)
 
 
