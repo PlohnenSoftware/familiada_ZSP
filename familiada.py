@@ -1,6 +1,7 @@
 import pygame
 import sys
 import tkinter
+import os
 from math import floor
 from tkinter import messagebox, ttk, filedialog
 
@@ -116,30 +117,43 @@ def exit_app(tkwindow):
     pygame.quit()
     sys.exit()
 
+def terminate_error(error_description):
+    if messagebox.showerror("FAMILIADA ERROR", error_description):
+        sys.exit()
+
 
 # Initialize the main game object
 game1 = Blackboard(20)
 
-# Create a list containing dicts of answers and points for every round
-try:
-    filename = filedialog.askopenfilename(initialdir="/", title="Select a file", filetypes=(("csv files", "*.csv"), ("all files", "*.*")))
-    with open(filename, "r+") as f:
-        lines = f.readlines()
-        for line in lines:
-            line = line[:-1].split(",")
-            round_data = []
-            for i in range(0, len(line), 2):
-                round_answers = line[i]
-                points = line[i + 1]
-                round_data.append([round_answers, points, False])
-            game1.answers.append(round_data)
+# Read data from the disk
+current_dir = os.path.dirname(os.path.abspath(__file__))
+filename = filedialog.askopenfilename(initialdir=current_dir, title="Select a file", filetypes=(("csv files", "*.csv"), ("all files", "*.*")))
 
-        # Sort answers by points
-        for i, round_answers in enumerate(game1.answers):
-            game1.answers[i] = sorted(round_answers, key=lambda x: int(x[1]), reverse=True)
-except FileNotFoundError:
-    if messagebox.showerror("ERROR", "There is no file named 'dane.csv' in the current directory"):
-        sys.exit()
+if filename == "":
+    terminate_error("No file selected")
+
+if filename[-4:] != ".csv":
+    terminate_error("Wrong file format, the file must be a .csv")
+
+# Create a list containing tuples of answers and points for every round
+with open(filename, "r+") as f:
+    lines = f.readlines()
+    for line in lines:
+        line = line[:-1].split(",")
+        round_data = []
+        for i in range(0, len(line), 2):
+            round_answer = line[i]
+            if len(round_answer) > 16:
+                terminate_error(f"Answer {round_answer} is too long")
+            points = line[i + 1]
+            if not points.isdigit() or int(points) not in range(100):
+                terminate_error(f"Points {points} are not valid")
+            round_data.append([round_answer, points, False])
+        game1.answers.append(round_data)
+
+    # Sort answers by points
+    for i, round_answers in enumerate(game1.answers):
+        game1.answers[i] = sorted(round_answers, key=lambda x: int(x[1]), reverse=True)
 
 
 # Create the window, saving it to a variable.
