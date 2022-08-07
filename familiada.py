@@ -11,15 +11,17 @@ class Blackboard:
         self.stroke = stroke
         self.answers = []
         self.tabs = []
+        self.sum = 0
 
     # Write a word horizontally to the matrix
     def write_hor(self, word, start_row, start_col):
-        letters = list(word)
+        letters = list(str(word))
         for i, letter in enumerate(letters):
             self.letter_matrix[start_row][start_col + i] = letter
 
     # Write a word vertically to the matrix
     def write_ver(self, word, start_row, start_col):
+        # niewiedzeć czemu nie działa word = str(word)
         letters = list(word)
         for i, letter in enumerate(letters):
             self.letter_matrix[start_row + i][start_col] = letter
@@ -71,28 +73,26 @@ class Blackboard:
         return no_answers,row_coords
 
     def round_init(self, round_number):
-
+        self.sum =0
         no_answers, row_coords = self.calculate_coords(round_number)
 
         # Write the indices of the answers to the blackboard
-        self.write_ver([str(i) for i in range(1, no_answers + 1)], row_coords, 3)
+        self.write_ver([str(i) for i in range(1, no_answers + 1)], row_coords, 4)
 
         # Write blank spaces to the blackboard
         for i in range(no_answers):
-            self.write_hor("_________________ --", row_coords + i, 5)
+            self.write_hor("________________ --", row_coords + i, 6)
         # write sum
         self.write_hor("suma   0", row_coords + no_answers + 1, 17)
     
     #print selected answer for selected round
-    def round_init(self, round_number):
+    def print_answer(self, round_number, answer_number):
+        self.sum = int(self.answers[round_number][answer_number][1]) + self.sum
         no_answers, row_coords = self.calculate_coords(round_number)
-
-
-        # Write blank spaces to the blackboard
-        for i in range(no_answers):
-            self.write_hor("_________________ --", row_coords + i, 5)
-        # write sum
-        self.write_hor("suma   0", row_coords + no_answers + 1, 17)
+        self.write_hor(str(self.answers[round_number][answer_number][0]).ljust(16), row_coords + answer_number, 6)
+        self.write_hor(str(self.answers[round_number][answer_number][1]).rjust(2), row_coords + answer_number, 23)
+        self.write_hor(str(self.sum).rjust(3), row_coords + no_answers + 1, 22)
+        
 
 
 
@@ -159,14 +159,14 @@ inputPassword = tkinter.Entry(tab1)
 inputPassword.pack()
 
 button = tkinter.Button(tab1, text="Go", command=lambda: pygame.mixer.Sound.play(ending_music))
-button2 = tkinter.Button(tab1, text="Go", command=lambda: game1.round_init(3))
+button2 = tkinter.Button(tab1, text="Go", command=lambda: game1.round_init(2))
 button.pack()
 button2.pack()
 
 for i in range(len(game1.answers)):
     game1.tabs.append(ttk.Frame(tabControl))
     for j in range(len(game1.answers[i])):
-        round_button = tkinter.Button(game1.tabs[i], text=f'odpowiedz:{game1.answers[i][j][0]} {game1.answers[i][j][1]}', command=lambda: pygame.mixer.Sound.play(ending_music))
+        round_button = tkinter.Button(game1.tabs[i], text=f'odpowiedz:{game1.answers[i][j][0]} {game1.answers[i][j][1]}', command=lambda round = i, answer = j: game1.print_answer(round, answer))
         round_button.pack()
     tabControl.add(game1.tabs[i], text='Round'+str(i+1))
 
