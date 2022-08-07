@@ -18,7 +18,6 @@ class Blackboard:
         self.letter_matrix = [["" for _ in range(29)] for _ in range(10)]
         self.stroke = stroke
         self.answers = []
-        self.tabs = []
         self.sum = 0
 
     # Write a word horizontally to the matrix
@@ -146,6 +145,7 @@ window1.geometry("400x200")
 window1.configure(background="#f0f0f0")
 window1.protocol("WM_DELETE_WINDOW", lambda: exit_app(window1))
 
+# Create SFX tab
 tabControl = ttk.Notebook(window1)
 tab1 = ttk.Frame(tabControl)
 
@@ -169,14 +169,18 @@ button2.pack()
 
 # Show round tabs and their content on the second window
 for i, round_answers in enumerate(game1.answers):
-    game1.tabs.append(ttk.Frame(tabControl))
+
+    # Create a tab for every round
+    tab = ttk.Frame(tabControl)
     for j, answer_tuple in enumerate(round_answers):
+
+        # Add buttons for every answer
         answer = answer_tuple[0]
         points = answer_tuple[1]
         answer_text = f"odpowiedz:{answer} {points}"
-        round_button = tkinter.Button(game1.tabs[i], text=answer_text, command=lambda round=i, answer=j: game1.print_answer(round, answer))
+        round_button = tkinter.Button(tab, text=answer_text, command=lambda round=i, answer=j: game1.print_answer(round, answer))
         round_button.pack()
-    tabControl.add(game1.tabs[i], text="Round" + str(i + 1))
+    tabControl.add(tab, text="Round" + str(i + 1))
 
 tabControl.add(tab1, text="SFX")
 tabControl.pack(expand=1, fill="both")
