@@ -140,6 +140,8 @@ with open(filename, "r+") as f:
     lines = f.readlines()
     for line in lines:
         line = line[:-1].split(",")
+        if len(line) > 14:
+            terminate_error("Every round must have at most 7 answers")
         round_data = []
         for i in range(0, len(line), 2):
             round_answer = line[i]
@@ -155,14 +157,15 @@ with open(filename, "r+") as f:
     for i, round_answers in enumerate(game1.answers):
         game1.answers[i] = sorted(round_answers, key=lambda x: int(x[1]), reverse=True)
 
+# Write sorted answers to the disk
 with open(filename, "w") as f:
-    filecontent = ""
     for round_answers in game1.answers:
+        answer_numbers = []
         for answer in round_answers:
-            filecontent+=f"{answer[0]},{answer[1]},"
-        filecontent=filecontent[:-1]    
-        filecontent+="\n"
-    f.write(filecontent)
+            answer_numbers.append(answer[0])
+            answer_numbers.append(answer[1])
+        f.write(",".join(answer_numbers) + "\n")
+
 
 
 # Create the window, saving it to a variable.
