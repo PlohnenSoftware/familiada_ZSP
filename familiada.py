@@ -1,6 +1,7 @@
 import pygame
 import sys
 import tkinter
+import os
 from math import floor
 from tkinter import messagebox, ttk, filedialog
 
@@ -73,7 +74,7 @@ class Blackboard:
         no_answers = len(self.answers[round_number])
 
         # Center the answers on the blackboard
-        row_coords = 1 + min(floor((6 - no_answers) / 2), 0)
+        row_coords = 1 + max(floor((6 - no_answers) / 2), 0)
         return no_answers, row_coords
 
     def round_init(self, round_number):
@@ -114,7 +115,8 @@ def terminate_error(error_description):
 game1 = Blackboard(20)
 
 # Read data from the disk
-filename = filedialog.askopenfilename(initialdir="/", title="Select a file", filetypes=(("csv files", "*.csv"), ("all files", "*.*")))
+current_dir = os.path.dirname(os.path.abspath(__file__))
+filename = filedialog.askopenfilename(initialdir=current_dir, title="Select a file", filetypes=(("csv files", "*.csv"), ("all files", "*.*")))
 
 if filename == "":
     terminate_error("No file selected")
