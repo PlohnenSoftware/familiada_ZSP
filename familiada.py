@@ -8,7 +8,7 @@ from tkinter import messagebox, ttk
 
 # Game data showuld be stored in a csv file called "familiada.csv" in the same directory as the program.
 # The file should contain lines of answers of every round with
-# tuples of the form (word, score) all separated by commas. 
+# tuples of the form (word, score) all separated by commas.
 
 # Currently all gui texts are written in Polish.
 
