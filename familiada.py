@@ -107,6 +107,7 @@ class Blackboard:
         self.write_hor(str(self.answers[round_number][answer_number][0]).ljust(16), row_coords + answer_number, 6)
         self.write_hor(str(self.answers[round_number][answer_number][1]).rjust(2), row_coords + answer_number, 23)
         self.write_hor(str(self.sum).rjust(3), row_coords + no_answers + 1, 22)
+        pygame.mixer.Sound.play(correct_sound)
         self.answers[round_number][answer_number][2] = True
 
 
@@ -121,6 +122,14 @@ def terminate_error(error_description):
     if messagebox.showerror("FAMILIADA ERROR", error_description):
         sys.exit()
 
+# Import pygame SFX
+pygame.mixer.init()
+correct_sound = pygame.mixer.Sound("sfx/correct.wav")
+wrong_sound = pygame.mixer.Sound("sfx/incorrect.wav")
+dubel_sound = pygame.mixer.Sound("sfx/dubel.wav")
+bravo_sound = pygame.mixer.Sound("sfx/bravo.wav")
+ending_music = pygame.mixer.Sound("sfx/final_ending.flac")
+intro_music = pygame.mixer.Sound("sfx/show_music.flac")
 
 # Initialize the main game object
 game1 = Blackboard(20)
@@ -157,16 +166,16 @@ with open(filename, "r+") as f:
     for i, round_answers in enumerate(game1.answers):
         game1.answers[i] = sorted(round_answers, key=lambda x: int(x[1]), reverse=True)
 
-# Write sorted answers to the disk
-with open(filename, "w") as f:
+    # Write sorted answers to the disk
+    f.seek(0)
     for round_answers in game1.answers:
         answer_numbers = []
         for answer in round_answers:
             answer_numbers.append(answer[0])
             answer_numbers.append(answer[1])
         f.write(",".join(answer_numbers) + "\n")
-
-
+        
+    f.close()
 
 # Create the window, saving it to a variable.
 pygame.init()
@@ -221,14 +230,6 @@ for i, round_answers in enumerate(game1.answers):
 tabControl.add(tab1, text="SFX")
 tabControl.pack(expand=1, fill="both")
 
-# Import pygame SFX
-pygame.mixer.init()
-correct_sound = pygame.mixer.Sound("sfx/correct.wav")
-wrong_sound = pygame.mixer.Sound("sfx/incorrect.wav")
-dubel_sound = pygame.mixer.Sound("sfx/dubel.wav")
-bravo_sound = pygame.mixer.Sound("sfx/bravo.wav")
-ending_music = pygame.mixer.Sound("sfx/final_ending.flac")
-intro_music = pygame.mixer.Sound("sfx/show_music.flac")
 
 while True:
     surface.fill((0, 0, 255))
