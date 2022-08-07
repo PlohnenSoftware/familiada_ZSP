@@ -4,6 +4,10 @@ import tkinter
 from math import floor
 from tkinter import messagebox, ttk
 
+# The program provides a graphical interface for the game familiada.
+# Game data showuld be stored in a csv file called "familiada.csv" in the same directory as the program.
+# Currently all gui texts are written in Polish.
+
 # Blackboard class containing the matrix object used to draw characters on the screen
 class Blackboard:
     def __init__(self, stroke):
@@ -66,8 +70,7 @@ class Blackboard:
         no_answers = len(self.answers[round_number])
 
         # Center the answers on the blackboard
-        row_coords = 1 + (floor((6 - no_answers) / 2) if no_answers < 7 else 0)
-
+        row_coords = 1 + min(floor((6 - no_answers) / 2), 0)
         return no_answers, row_coords
 
     def round_init(self, round_number):
@@ -80,10 +83,10 @@ class Blackboard:
         # Write blank spaces to the blackboard
         for i in range(no_answers):
             self.write_hor("________________ --", row_coords + i, 6)
-        # write sum
+        # Write sum
         self.write_hor("suma   0", row_coords + no_answers + 1, 17)
 
-    # print selected answer for selected round
+    # Print selected answer for selected round
     def print_answer(self, round_number, answer_number):
         self.sum = int(self.answers[round_number][answer_number][1]) + self.sum
         no_answers, row_coords = self.calculate_coords(round_number)
@@ -99,7 +102,7 @@ def exit_app(tkwindow):
     sys.exit()
 
 
-# initialize main game object
+# Initialize main game object
 game1 = Blackboard(20)
 
 # Create a list containing tuples of answers and points for every round
@@ -159,10 +162,11 @@ button2 = tkinter.Button(tab1, text="Go", command=lambda: game1.round_init(2))
 button.pack()
 button2.pack()
 
-for i, _ in enumerate(game1.answers):
+for i in range(len(game1.answers)):
     game1.tabs.append(ttk.Frame(tabControl))
     for j, item in enumerate(game1.answers[i]):
-        round_button = tkinter.Button(game1.tabs[i], text=f"odpowiedz:{item[0]} {item[1]}", command=lambda round=i, answer=j: game1.print_answer(round, answer))
+        answer_text = f"odpowiedz:{item[0]} {item[1]}"
+        round_button = tkinter.Button(game1.tabs[i], text=answer_text, command=lambda round=i, answer=j: game1.print_answer(round, answer))
         round_button.pack()
     tabControl.add(game1.tabs[i], text="Round" + str(i + 1))
 
@@ -180,6 +184,7 @@ intro_music = pygame.mixer.Sound("sfx/show_music.flac")
 
 while True:
     surface.fill((0, 0, 255))
+
     # Determine responsive width and height of the rectangles
     if surface.get_width() < surface.get_height() * (192 / 108):
         block_width = (surface.get_width() - 125 - (28 * 2)) / 29
@@ -202,14 +207,12 @@ while True:
     rectangle_height = surface.get_height() - game1.stroke * 2
     rectangle_dimensions = (game1.stroke, game1.stroke, rectangle_width, rectangle_height)
     pygame.draw.rect(surface, rectangle_rgb, rectangle_dimensions)
-    letter_hight = round(block_height * 0.75)
 
-    # anti-bug fix
-    if letter_hight < 2:
-        letter_hight = 2
+    # Anti-bug fix
+    letter_height = max(round(block_height * 0.75), 2)
 
     # Set the font
-    myfont = pygame.font.Font("familiada.ttf", letter_hight)
+    myfont = pygame.font.Font("familiada.ttf", letter_height)
 
     # Draw black rectangles & letters on the surface.
     for i in range(10):
@@ -220,7 +223,7 @@ while True:
             rectangle_rgb = (0, 0, 0)
             rectangle_dimensions = (pos_x, pos_y, block_width, block_height)
             pygame.draw.rect(surface, rectangle_rgb, rectangle_dimensions)
-            surface.blit(label, (pos_x + block_width * 0.146, pos_y + block_height / 2 - letter_hight / 2))
+            surface.blit(label, (pos_x + block_width * 0.146, pos_y + block_height / 2 - letter_height / 2))
 
     # Refresh both windows
     pygame.display.update()
