@@ -136,7 +136,7 @@ if filename[-4:] != ".csv":
     terminate_error("Wrong file format, the file must be a .csv")
 
 # Create a list containing tuples of answers and points for every round
-with open(filename, "r") as f:
+with open(filename, "r+") as f:
     lines = f.readlines()
     for line in lines:
         line = line[:-1].split(",")
@@ -156,10 +156,13 @@ with open(filename, "r") as f:
         game1.answers[i] = sorted(round_answers, key=lambda x: int(x[1]), reverse=True)
 
 with open(filename, "w") as f:
+    filecontent = ""
     for round_answers in game1.answers:
         for answer in round_answers:
-            f.write(f"{answer[0]},{answer[1]}")
-        f.write("\n")
+            filecontent+=f"{answer[0]},{answer[1]},"
+        filecontent=filecontent[:-1]    
+        filecontent+="\n"
+    f.write(filecontent)
 
 
 # Create the window, saving it to a variable.
