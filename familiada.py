@@ -120,10 +120,14 @@ class Blackboard:
 
         self.sum = int(self.answers[round_number][answer_number][1]) + self.sum
         no_answers, row_coords = self.calculate_coords(round_number)
-        self.write_hor(str(self.answers[round_number][answer_number][0]).ljust(16), row_coords + answer_number, 6)
-        self.write_hor(str(self.answers[round_number][answer_number][1]).rjust(2), row_coords + answer_number, 23)
+        answer_text = str(self.answers[round_number][answer_number][0])
+        answer_points = str(self.answers[round_number][answer_number][1])
+        self.write_hor(answer_text.ljust(16), row_coords + answer_number, 6)
+        self.write_hor(answer_points.rjust(2), row_coords + answer_number, 23)
         self.write_hor(str(self.sum).rjust(3), row_coords + no_answers + 1, 22)
         pygame.mixer.Sound.play(correct_sound)
+
+        # Set the answer as printed
         self.answers[round_number][answer_number][2] = True
 
 
