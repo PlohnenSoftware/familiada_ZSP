@@ -85,8 +85,8 @@ class Blackboard:
         no_answers, row_coords = self.calculate_coords(round_number)
 
         def lock_all_answers():
-            for i in range(len(self.answers)):
-                for answer in self.answers[i]:
+            for i, item in enumerate(self.answers):
+                for answer in item:
                     answer[2] = True
 
         # Write the indices of the answers to the blackboard
