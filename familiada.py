@@ -76,13 +76,18 @@ class Blackboard:
 
         # Center the answers on the blackboard
         row_coords = 1 + max(floor((6 - no_answers) / 2), 0)
-        return no_answers, row_coords
+        return no_answers, row_coords   
 
     def round_init(self, round_number):
         self.fill()
         self.sum = 0
         self.current_round = round_number
         no_answers, row_coords = self.calculate_coords(round_number)
+
+        def lock_all_answers():
+         for i in range(len(self.answers)):
+            for answer in self.answers[i]:
+                answer[2] = True 
 
         # Write the indices of the answers to the blackboard
         self.write_ver([str(i) for i in range(1, no_answers + 1)], row_coords, 4)
@@ -93,6 +98,7 @@ class Blackboard:
 
         # Write the sum
         self.write_hor("suma   0", row_coords + no_answers + 1, 17)
+        lock_all_answers()
         for j, answer_dict in enumerate(self.answers[round_number]):
             answer_dict[2] = False
 
@@ -109,6 +115,7 @@ class Blackboard:
         self.write_hor(str(self.sum).rjust(3), row_coords + no_answers + 1, 22)
         pygame.mixer.Sound.play(correct_sound)
         self.answers[round_number][answer_number][2] = True
+
 
 
 def exit_app(tkwindow):
@@ -144,7 +151,7 @@ if filename == "":
 if filename[-4:] != ".csv":
     terminate_error("Wrong file format, the file must be a .csv")
 
-# Create a list containing tuples of answers and points for every round
+# Create a list containing tuples of answers and points for every round ***trzeba zdebugować bo jak nie ma pustego endlina w pliku to się psuje, i jak jest wiecej niz jeden to w ogóle Exeption wypier**la, jak write i read były oddzielnie to było to samo ***
 with open(filename, "r+") as f:
     lines = f.readlines()
     for line in lines:
@@ -159,7 +166,7 @@ with open(filename, "r+") as f:
             points = line[i + 1]
             if not points.isdigit() or int(points) not in range(100):
                 terminate_error(f"Points {points} are not valid")
-            round_data.append([round_answer, points, False])
+            round_data.append([round_answer, points, True])
         game1.answers.append(round_data)
 
     # Sort answers by points
