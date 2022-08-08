@@ -30,7 +30,6 @@ class Blackboard:
 
     # Write a word vertically to the matrix
     def write_ver(self, word, start_row, start_col):
-        # niewiedzeć czemu nie działa word = str(word)
         letters = list(word)
         for i, letter in enumerate(letters):
             self.letter_matrix[start_row + i][start_col] = letter
@@ -124,6 +123,13 @@ class Blackboard:
         self.write_hor(str(self.sum).rjust(3), row_coords + no_answers + 1, 22)
         pygame.mixer.Sound.play(correct_sound)
         self.answers[round_number][answer_number][2] = True
+    
+    def init_final_round(self):
+        self.fill()
+        self.write_hor("suma   0", 8, 10)
+        for k in range(1,6):
+            self.write_hor("----------- @@|@@ -----------", k, 0)
+
 
 
 # Safely exit the program
