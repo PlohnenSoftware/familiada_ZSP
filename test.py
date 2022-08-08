@@ -61,7 +61,7 @@ class Notebook:
         ttk.Button(self.tab[1], text="Ouvrir un fichier csv", command=self.filedialog).pack(side=LEFT, anchor=CENTER, padx=90, pady=5, fill=X, expand=1)
 
     def filedialog(self):
-        filename = filedialog.askopenfilename(initialdir="/", title="Select a file", filetypes=(("csv files", "*.csv"), ("all files", "*.*")))
+        self.filename = filedialog.askopenfilename(initialdir="/", title="Select a file", filetypes=(("csv files", "*.csv"), ("all files", "*.*")))
         print(self.filename)
         importlib.import_module("deleteNull")
 
