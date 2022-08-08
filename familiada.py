@@ -158,7 +158,10 @@ intro_music = pygame.mixer.Sound("sfx/show_music.flac")
 game1 = Blackboard(20)
 
 # Read data from the disk
-current_dir = os.path.dirname(os.path.abspath(__file__)) #lepiej zrobić pulpit na start, do finalnej wersji bo jak sie d exe spakuje to wywala do jakiegoś folderu temp, gdzie jest interpreter pythona przenosny z Pyinstallera os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop')
+current_dir = os.path.dirname(os.path.abspath(__file__)) 
+#lepiej zrobić pulpit na start, do finalnej wersji bo jak sie d exe spakuje to wywala do jakiegoś folderu temp,
+#gdzie jest interpreter pythona przenosny z Pyinstallera current_dir=os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop')
+
 filename = filedialog.askopenfilename(initialdir=current_dir, title="Select a file", filetypes=(("csv files", "*.csv"), ("all files", "*.*")))
 
 if filename == "":
