@@ -31,7 +31,7 @@ class Blackboard:
     # Write a word vertically to the matrix
     def write_ver(self, word, start_row, start_col):
         # niewiedzeć czemu nie działa word = str(word)
-        letters = list(word)
+        letters = list(str(word))
         for i, letter in enumerate(letters):
             self.letter_matrix[start_row + i][start_col] = letter
 
@@ -90,7 +90,7 @@ class Blackboard:
         no_answers, row_coords = self.calculate_coords(round_number)
 
         # Write the indices of the answers to the blackboard
-        self.write_ver([str(i) for i in range(1, no_answers + 1)], row_coords, 4)
+        self.write_ver("".join([str(i) for i in range(1, no_answers + 1)]), row_coords, 4)
 
         # Write blank spaces to the blackboard
         for i in range(no_answers):
