@@ -169,13 +169,13 @@ with open(filename, "r+") as f:
         f.write("\n")
     lines = file_str.split("\n")
 
-    for line in lines:
+    for j, line in enumerate(lines):
 
         # Skip empty lines
         if line == "":
             continue
 
-        line = line[:-1].split(",")
+        line = line.split(",")
 
         # Check if the line is valid
         if len(line) > 14:
@@ -193,7 +193,7 @@ with open(filename, "r+") as f:
             points = line[i + 1]
             if not points.isdigit() or int(points) not in range(100):
                 print(line[i])
-                terminate_error(f"Points {points} at line {i-1} are not valid")
+                terminate_error(f"Points {points} at line {j+1} are not valid")
 
             round_data.append([round_answer, points, True])
         game1.answers.append(round_data)
