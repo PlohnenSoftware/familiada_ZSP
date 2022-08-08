@@ -20,7 +20,7 @@ class Blackboard:
         self.stroke = stroke
         self.answers = []
         self.sum = 0
-        self.current_round = None
+        self.current_round = -1
 
     # Write a word horizontally to the matrix
     def write_hor(self, word, start_row, start_col):
@@ -103,10 +103,15 @@ class Blackboard:
 
     # Print selected answer for selected round
     def print_answer(self, round_number, answer_number):
+
+        # Check if the answer is already printed
         if self.answers[round_number][answer_number][2]:
             return False
+
+        # Assure that the correct round is being shown
         if self.current_round != round_number:
             self.round_init(round_number)
+        
         self.sum = int(self.answers[round_number][answer_number][1]) + self.sum
         no_answers, row_coords = self.calculate_coords(round_number)
         self.write_hor(str(self.answers[round_number][answer_number][0]).ljust(16), row_coords + answer_number, 6)
@@ -115,7 +120,7 @@ class Blackboard:
         pygame.mixer.Sound.play(correct_sound)
         self.answers[round_number][answer_number][2] = True
 
-
+# Safely exit the program
 def exit_app(tkwindow):
     tkwindow.destroy()
     pygame.display.quit()
