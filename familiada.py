@@ -39,13 +39,13 @@ class Blackboard:
     def fill(self, char=""):
         self.letter_matrix = [[char for _ in range(29)] for _ in range(10)]
 
-    # Print a small x on the blackboard
+    # Print a small x on selected row and column
     def draw_small_x(self, start_row, start_col):
         for i in range(3):
             self.letter_matrix[start_row + i][start_col + i] = "#"
             self.letter_matrix[start_row - i + 2][start_col + i] = "#"
 
-    # Print a big x on the blackboard
+    # Print a big x on selected row and column
     def draw_gross_x(self, start_row, start_col):
         self.draw_small_x(start_row + 1, start_col)
         for j in range(2):
@@ -102,7 +102,8 @@ class Blackboard:
         for round_answers in self.answers:
             for answer in round_answers:
                 answer[2] = True
-
+        
+        # Set the answers as not printed
         for answer_dict in self.answers[round_number]:
             answer_dict[2] = False
 
