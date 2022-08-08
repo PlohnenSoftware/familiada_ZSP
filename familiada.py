@@ -76,7 +76,7 @@ class Blackboard:
 
         # Center the answers on the blackboard
         row_coords = 1 + max(floor((6 - no_answers) / 2), 0)
-        return no_answers, row_coords   
+        return no_answers, row_coords
 
     def round_init(self, round_number):
         self.fill()
@@ -85,9 +85,9 @@ class Blackboard:
         no_answers, row_coords = self.calculate_coords(round_number)
 
         def lock_all_answers():
-         for i in range(len(self.answers)):
-            for answer in self.answers[i]:
-                answer[2] = True 
+            for i in range(len(self.answers)):
+                for answer in self.answers[i]:
+                    answer[2] = True
 
         # Write the indices of the answers to the blackboard
         self.write_ver([str(i) for i in range(1, no_answers + 1)], row_coords, 4)
@@ -117,7 +117,6 @@ class Blackboard:
         self.answers[round_number][answer_number][2] = True
 
 
-
 def exit_app(tkwindow):
     tkwindow.destroy()
     pygame.display.quit()
@@ -128,6 +127,7 @@ def exit_app(tkwindow):
 def terminate_error(error_description):
     if messagebox.showerror("FAMILIADA ERROR", error_description):
         sys.exit()
+
 
 # Import pygame SFX
 pygame.mixer.init()
@@ -181,7 +181,7 @@ with open(filename, "r+") as f:
             answer_numbers.append(answer[0])
             answer_numbers.append(answer[1])
         f.write(",".join(answer_numbers) + "\n")
-        
+
     f.close()
 
 # Create the window, saving it to a variable.
