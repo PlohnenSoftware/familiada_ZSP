@@ -84,11 +84,6 @@ class Blackboard:
         self.current_round = round_number
         no_answers, row_coords = self.calculate_coords(round_number)
 
-        def lock_all_answers():
-            for i, item in enumerate(self.answers):
-                for answer in item:
-                    answer[2] = True
-
         # Write the indices of the answers to the blackboard
         self.write_ver([str(i) for i in range(1, no_answers + 1)], row_coords, 4)
 
@@ -98,9 +93,13 @@ class Blackboard:
 
         # Write the sum
         self.write_hor("suma   0", row_coords + no_answers + 1, 17)
-        lock_all_answers()
-        for j, answer_dict in enumerate(self.answers[round_number]):
-            answer_dict[2] = False
+        
+        for answer_container in self.answers:
+                for answer in answer_container:
+                    answer[2] = True
+
+        for answer_dict in self.answers[round_number]:
+            answer_dict[2] = False            
 
     # Print selected answer for selected round
     def print_answer(self, round_number, answer_number):
