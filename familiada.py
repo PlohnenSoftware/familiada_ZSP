@@ -39,17 +39,20 @@ class Blackboard:
     def fill(self, char=""):
         self.letter_matrix = [[char for _ in range(29)] for _ in range(10)]
 
+    # Print a small x on the blackboard
     def draw_small_x(self, start_row, start_col):
         for i in range(3):
             self.letter_matrix[start_row + i][start_col + i] = "#"
             self.letter_matrix[start_row - i + 2][start_col + i] = "#"
 
+    # Print a big x on the blackboard
     def draw_gross_x(self, start_row, start_col):
         self.draw_small_x(start_row + 1, start_col)
         for j in range(2):
             for i in range(2):
                 self.write_hor("#", start_row + j * 4, start_col + i * 2)
 
+    # Draw a big x on the blackboard for a selected team and play a sound
     def show_big_x(self, team):
         if team not in ("L", "R"):
             exception = ValueError("Team must be either 'L' or 'R'")
@@ -60,6 +63,7 @@ class Blackboard:
             self.draw_gross_x(3, 26)
         pygame.mixer.Sound.play(wrong_sound)
 
+    # Draw a small x on the blackboard for a selected team and play a sound
     def show_small_x(self, team):
         if team not in ("L", "R"):
             exception = ValueError("Team must be either 'L' or 'R'")
@@ -78,6 +82,7 @@ class Blackboard:
         row_coords = 1 + max(floor((6 - no_answers) / 2), 0)
         return no_answers, row_coords
 
+    # Initialize the round printing a blank blackboard
     def round_init(self, round_number):
         self.fill()
         self.sum = 0
@@ -94,8 +99,8 @@ class Blackboard:
         # Write the sum
         self.write_hor("suma   0", row_coords + no_answers + 1, 17)
 
-        for answer_container in self.answers:
-            for answer in answer_container:
+        for round_answers in self.answers:
+            for answer in round_answers:
                 answer[2] = True
 
         for answer_dict in self.answers[round_number]:
