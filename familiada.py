@@ -93,13 +93,13 @@ class Blackboard:
 
         # Write the sum
         self.write_hor("suma   0", row_coords + no_answers + 1, 17)
-        
+
         for answer_container in self.answers:
-                for answer in answer_container:
-                    answer[2] = True
+            for answer in answer_container:
+                answer[2] = True
 
         for answer_dict in self.answers[round_number]:
-            answer_dict[2] = False            
+            answer_dict[2] = False
 
     # Print selected answer for selected round
     def print_answer(self, round_number, answer_number):
