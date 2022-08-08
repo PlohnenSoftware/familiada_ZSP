@@ -116,7 +116,7 @@ class Blackboard:
         # Assure that the correct round is being shown
         if self.current_round != round_number:
             self.round_init(round_number)
-        
+
         self.sum = int(self.answers[round_number][answer_number][1]) + self.sum
         no_answers, row_coords = self.calculate_coords(round_number)
         self.write_hor(str(self.answers[round_number][answer_number][0]).ljust(16), row_coords + answer_number, 6)
@@ -124,6 +124,7 @@ class Blackboard:
         self.write_hor(str(self.sum).rjust(3), row_coords + no_answers + 1, 22)
         pygame.mixer.Sound.play(correct_sound)
         self.answers[round_number][answer_number][2] = True
+
 
 # Safely exit the program
 def exit_app(tkwindow):
@@ -292,7 +293,7 @@ while True:
     rectangle_dimensions = (game1.stroke, game1.stroke, rectangle_width, rectangle_height)
     pygame.draw.rect(surface, rectangle_rgb, rectangle_dimensions)
 
-    # Anti-bug maxx 
+    # Anti-bug maxx
     font_height = max(round(block_height * 0.75), 2)
 
     # Set the font
