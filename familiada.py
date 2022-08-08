@@ -130,6 +130,12 @@ class Blackboard:
         # Set the answer as printed
         self.answers[round_number][answer_number][2] = True
 
+    def init_final_round(self):
+        self.fill()
+        self.write_hor("suma   0", 8, 10)
+        for k in range(1, 6):
+            self.write_hor("----------- @@|@@ -----------", k, 0)
+
 
 # Safely exit the program
 def exit_app(tkwindow):
