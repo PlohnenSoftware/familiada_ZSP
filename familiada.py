@@ -150,21 +150,41 @@ if filename == "":
 if filename[-4:] != ".csv":
     terminate_error("Wrong file format, the file must be a .csv")
 
-# Create a list containing tuples of answers and points for every round ***trzeba zdebugować bo jak nie ma pustego endlina w pliku to się psuje, i jak jest wiecej niz jeden to w ogóle Exeption wypier**la, jak write i read były oddzielnie to było to samo ***
+# Create a list containing tuples of answers and points for every round
 with open(filename, "r+") as f:
-    lines = f.readlines()
+    file_str = f.read()
+
+    # Put an endline at the end of the file
+    if file_str[-1] != "\n":
+        f.write("\n")
+    lines = file_str.split("\n")
+
     for line in lines:
+
+        # Skip empty lines
+        if line == "":
+            continue
+
         line = line[:-1].split(",")
+
+        # Check if the line is valid
         if len(line) > 14:
-            terminate_error("Every round must have at most 7 answers")
+            terminate_error(f"Every round must have at most 7 answers, {line} has {len(line)//2}")
+
         round_data = []
         for i in range(0, len(line), 2):
             round_answer = line[i]
+
+            # Check if the answer is valid
             if len(round_answer) > 16:
-                terminate_error(f"Answer {round_answer} is too long")
+                terminate_error(f"Answer {round_answer} at line {i-1} is too long")
+
+            # Check if the  is valid
             points = line[i + 1]
             if not points.isdigit() or int(points) not in range(100):
-                terminate_error(f"Points {points} are not valid")
+                print(line[i])
+                terminate_error(f"Points {points} at line {i-1} are not valid")
+
             round_data.append([round_answer, points, True])
         game1.answers.append(round_data)
 
@@ -181,7 +201,6 @@ with open(filename, "r+") as f:
             answer_numbers.append(answer[1])
         f.write(",".join(answer_numbers) + "\n")
 
-    f.close()
 
 # Create the window, saving it to a variable.
 pygame.init()
@@ -263,11 +282,11 @@ while True:
     rectangle_dimensions = (game1.stroke, game1.stroke, rectangle_width, rectangle_height)
     pygame.draw.rect(surface, rectangle_rgb, rectangle_dimensions)
 
-    # Anti-bug max
-    letter_height = max(round(block_height * 0.75), 2)
+    # Anti-bug maxx 
+    font_height = max(round(block_height * 0.75), 2)
 
     # Set the font
-    myfont = pygame.font.Font("familiada.ttf", letter_height)
+    myfont = pygame.font.Font("familiada.ttf", font_height)
 
     # Draw black rectangles & letters on the surface.
     for i in range(10):
@@ -278,7 +297,7 @@ while True:
             rectangle_rgb = (0, 0, 0)
             rectangle_dimensions = (pos_x, pos_y, block_width, block_height)
             pygame.draw.rect(surface, rectangle_rgb, rectangle_dimensions)
-            surface.blit(label, (pos_x + block_width * 0.146, pos_y + block_height / 2 - letter_height / 2))
+            surface.blit(label, (pos_x + block_width * 0.146, pos_y + block_height / 2 - font_height / 2))
 
     # Refresh both windows
     pygame.display.update()
