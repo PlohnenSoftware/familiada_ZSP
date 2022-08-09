@@ -84,7 +84,7 @@ class Blackboard:
         # Center the answers on the blackboard
         row_coords = 1 + max(floor((6 - no_answers) / 2), 0)
         return no_answers, row_coords
-    
+
     def add_score(self):
         if self.winning_team == "L":
             self.l_score += self.round_score
