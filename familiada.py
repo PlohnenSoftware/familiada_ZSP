@@ -141,6 +141,10 @@ for i, round_answers in enumerate(game1.answers):
     l_won_button.grid(row=1, column=0)
     r_won_button = tkinter.Button(tab, text="Prawa Wygrywa runde", command=lambda: game1.set_current_winner("P"))
     r_won_button.grid(row=1, column=2)
+    l_strike_button = tkinter.Button(tab, text="Utrata Lewa", command=lambda: game1.big_strike("L"))
+    r_strike_button = tkinter.Button(tab, text="Utrata Prawa", command=lambda: game1.big_strike("R"))
+    l_strike_button.grid(row=2, column=0)
+    r_strike_button.grid(row=2, column=2)
 
     # Add buttons for every answer
     for j, answer_dict in enumerate(round_answers):

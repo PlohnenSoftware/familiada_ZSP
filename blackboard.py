@@ -156,19 +156,21 @@ class Blackboard:
                  
     
     # Draw a big x on the blackboard for a selected team and play a sound
-    def show_big_x(self, team):
+    def big_strike(self, team):
         if team not in ("L", "R"):
             raise self.incorrect_team
         if team == "L" and self.l_strike == 0:
             self.draw_gross_x(3, 0)
             self.l_strike = 4
+            pygame.mixer.Sound.play(wrong_sound)
         elif self.r_strike == 0:
             self.draw_gross_x(3, 26)
             self.r_strike = 4
-        pygame.mixer.Sound.play(wrong_sound)
+            pygame.mixer.Sound.play(wrong_sound)
+
 
     # Draw a small x on the blackboard for a selected team and play a sound
-    def show_small_x(self, team):
+    def small_strike(self, team):
         if team not in ("L", "R"):
             raise self.incorrect_team
         if team == "L":
