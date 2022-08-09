@@ -159,7 +159,7 @@ class Blackboard:
         r_len = len(r_score_str)
         self.write_hor(l_score_str, 5, 11 - l_len)
         self.write_hor(r_score_str, 5, 15 + r_len)
-    
+
     def set_current_winner(self, winner):
         self.winning_team = winner
 
@@ -306,7 +306,6 @@ for i, round_answers in enumerate(game1.answers):
     l_won_button.grid(row=1, column=0)
     r_won_button = tkinter.Button(tab, text="Prawa Wygrywa runde", command=lambda: game1.set_current_winner("P"))
     r_won_button.grid(row=1, column=1)
-
 
     # Add buttons for every answer
     for j, answer_dict in enumerate(round_answers):
