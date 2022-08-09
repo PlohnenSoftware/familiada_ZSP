@@ -300,7 +300,7 @@ for i, round_answers in enumerate(game1.answers):
         points = answer_dict[1].rjust(2)
         answer_text = f"{answer} {points}"
         answer_button = tkinter.Button(tab, text=answer_text, command=lambda round=i, answer=j: game1.print_answer(round, answer))
-        answer_button.grid(row=j+2, column=1)
+        answer_button.grid(row=j + 2, column=1)
     tabControl.add(tab, text="Round" + str(i + 1))
 
 # Create a tab for showing team scores
