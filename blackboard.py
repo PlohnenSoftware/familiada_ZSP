@@ -22,6 +22,7 @@ class Blackboard:
         self.answers = []
         self.round_score = 0
         self.current_round = -1
+        self.incorrect_team = ValueError("Team must be either 'L' or 'R'")
 
         # Initialize team scores
         self.l_score = 0
@@ -60,28 +61,6 @@ class Blackboard:
         for j in range(2):
             for i in range(2):
                 self.write_hor("#", start_row + j * 4, start_col + i * 2)
-
-    # Draw a big x on the blackboard for a selected team and play a sound
-    def show_big_x(self, team):
-        if team not in ("L", "R"):
-            exception = ValueError("Team must be either 'L' or 'R'")
-            raise exception
-        if team == "L":
-            self.draw_gross_x(3, 0)
-        else:
-            self.draw_gross_x(3, 26)
-        pygame.mixer.Sound.play(wrong_sound)
-
-    # Draw a small x on the blackboard for a selected team and play a sound
-    def show_small_x(self, team):
-        if team not in ("L", "R"):
-            exception = ValueError("Team must be either 'L' or 'R'")
-            raise exception
-        if team == "L":
-            self.draw_small_x(2, 0)
-        else:
-            self.draw_small_x(2, 26)
-        pygame.mixer.Sound.play(wrong_sound)
 
     def calculate_coords(self, round_number) -> tuple:
         # Get and set some parameters of the round
@@ -168,3 +147,32 @@ class Blackboard:
 
     def set_current_winner(self, winner):
         self.winning_team = winner
+
+    # Function that clears all printed X from blackboard
+    def clear_x(self):
+        for i in range(10):
+            for j in range(3):
+                self.letter_matrix[i][j] = self.letter_matrix[i][j + 26] = ""
+                 
+    
+    # Draw a big x on the blackboard for a selected team and play a sound
+    def show_big_x(self, team):
+        if team not in ("L", "R"):
+            raise self.incorrect_team
+        if team == "L" and self.l_strike == 0:
+            self.draw_gross_x(3, 0)
+            self.l_strike = 4
+        elif self.r_strike == 0:
+            self.draw_gross_x(3, 26)
+            self.r_strike = 4
+        pygame.mixer.Sound.play(wrong_sound)
+
+    # Draw a small x on the blackboard for a selected team and play a sound
+    def show_small_x(self, team):
+        if team not in ("L", "R"):
+            raise self.incorrect_team
+        if team == "L":
+            self.draw_small_x(2, 0)
+        else:
+            self.draw_small_x(2, 26)
+        pygame.mixer.Sound.play(wrong_sound)
