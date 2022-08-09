@@ -102,7 +102,7 @@ class Blackboard:
         for round_answers in self.answers:
             for answer in round_answers:
                 answer[2] = True
-        
+
         # Set the answers as not printed
         for answer_dict in self.answers[round_number]:
             answer_dict[2] = False
@@ -164,9 +164,9 @@ intro_music = pygame.mixer.Sound("sfx/show_music.flac")
 game1 = Blackboard(20)
 
 # Read data from the disk
-current_dir = os.path.dirname(os.path.abspath(__file__)) 
-#lepiej zrobić pulpit na start, do finalnej wersji bo jak sie d exe spakuje to wywala do jakiegoś folderu temp,
-#gdzie jest interpreter pythona przenosny z Pyinstallera current_dir=os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop')
+current_dir = os.path.dirname(os.path.abspath(__file__))
+# lepiej zrobić pulpit na start, do finalnej wersji bo jak sie d exe spakuje to wywala do jakiegoś folderu temp,
+# gdzie jest interpreter pythona przenosny z Pyinstallera current_dir=os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop')
 
 filename = filedialog.askopenfilename(initialdir=current_dir, title="Select a file", filetypes=(("csv files", "*.csv"), ("all files", "*.*")))
 
@@ -195,7 +195,9 @@ with open(filename, "r+") as f:
 
         # Check if the line is valid
         if len(line) > 14:
-            terminate_error(f"Every round must have at most 7 answers, {line} has {len(line)//2}")  #trzeba zamieniac wszystkie odpowiedzi na małe litery, bo na dużych w foncie są elementy zeby duzy napis z hardcodować i utraty szans ładniejsze
+            terminate_error(
+                f"Every round must have at most 7 answers, {line} has {len(line)//2}"
+            )  # trzeba zamieniac wszystkie odpowiedzi na małe litery, bo na dużych w foncie są elementy zeby duzy napis z hardcodować i utraty szans ładniejsze
 
         round_data = []
         for i in range(0, len(line), 2):
