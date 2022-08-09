@@ -2,7 +2,6 @@ import pygame
 import sys
 import tkinter
 import os
-from math import floor
 from tkinter import messagebox, ttk, filedialog
 from blackboard import Blackboard as Bb
 
