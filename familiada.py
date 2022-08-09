@@ -84,13 +84,16 @@ class Blackboard:
         # Center the answers on the blackboard
         row_coords = 1 + max(floor((6 - no_answers) / 2), 0)
         return no_answers, row_coords
-
-    # Initialize the round printing a blank blackboard
-    def round_init(self, round_number):
+    
+    def add_score(self):
         if self.winning_team == "L":
             self.l_score += self.round_score
         else:
             self.r_score += self.round_score
+
+    # Initialize the round printing a blank blackboard
+    def round_init(self, round_number):
+        self.add_score()
         self.round_score = 0
         self.fill()
         self.round_score = 0
@@ -145,10 +148,7 @@ class Blackboard:
             self.write_hor("----------- @@|@@ -----------", k, 0)
 
     def show_scores(self):
-        if self.winning_team == "L":
-            self.l_score += self.round_score
-        else:
-            self.r_score += self.round_score
+        self.add_score()
         self.fill()
         self.write_hor("suma punktów:", 3, 8)
 
