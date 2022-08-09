@@ -242,7 +242,7 @@ window1 = tkinter.Tk()
 window1.title("Familiada - reżyserka")
 window1.iconbitmap("familiada.ico")
 window1.geometry("400x200")
-window1.configure(background="#f0f0f0")
+style = ttk.Style(window1)
 window1.protocol("WM_DELETE_WINDOW", lambda: exit_app(window1))
 
 # Create SFX tab
@@ -269,7 +269,9 @@ button.pack()
 for i, round_answers in enumerate(game1.answers):
     tab = ttk.Frame(tabControl)
     round_button = tkinter.Button(tab, text="Inicjalizuj runde", command=lambda round=i: game1.round_init(round))
-    round_button.pack()
+    round_button.grid(row=0, column=1)
+    l_start_button = tkinter.Button(tab, text="Lewa Zaczyna", command=lambda: game1.round_init(round))
+    l_lost_button = tkinter.Button
 
     # Add buttons for every answer
     for j, answer_dict in enumerate(round_answers):
@@ -277,7 +279,7 @@ for i, round_answers in enumerate(game1.answers):
         points = answer_dict[1].rjust(2)
         answer_text = f"{answer} {points}"
         answer_button = tkinter.Button(tab, text=answer_text, command=lambda round=i, answer=j: game1.print_answer(round, answer))
-        answer_button.pack()
+        answer_button.grid(row=j+2, column=1)
     tabControl.add(tab, text="Round" + str(i + 1))
 
 tabControl.add(tab1, text="SFX")
