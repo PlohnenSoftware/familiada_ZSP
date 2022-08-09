@@ -83,7 +83,9 @@ class Blackboard:
         return no_answers, row_coords
 
     # Initialize the round printing a blank blackboard
-    def round_init(self, round_number):
+    def round_init(self, round_number, last_round_score=0):
+        winner_team = 'R' if strike_l > strike_r else 'L'
+        add_to_score(winner_team, last_round_score)
         self.fill()
         self.sum = 0
         self.current_round = round_number
@@ -138,8 +140,15 @@ class Blackboard:
 
     def show_scores(self, l_score, r_score):
         self.fill()
-        self.write_hor(str(l_score).rjust(3), 8, 22)
-        self.write_hor(str(r_score).rjust(3), 8, 26)
+        self.write_hor("suma punktów:" , 3, 8)
+
+        # Write the scores
+        l_score_str = str(l_score)
+        l_len = len(l_score_str)
+        r_score_str = str(r_score)
+        r_len = len(r_score_str)
+        self.write_hor(l_score_str, 5, 11 - l_len)
+        self.write_hor(r_score_str, 5, 15 + r_len)
 
 
 # Safely exit the program
@@ -269,6 +278,13 @@ inputPassword.pack()
 
 button = tkinter.Button(tab1, text="Go", command=lambda: pygame.mixer.Sound.play(ending_music))
 button.pack()
+
+# Initialize team scores
+l_score = 0
+r_score = 0
+l_strike = 0
+r_strike = 0
+round_score = 0
 
 # Create a tab for every round
 for i, round_answers in enumerate(game1.answers):
