@@ -16,6 +16,10 @@ from blackboard import Blackboard as Bb
 
 # Blackboard class containing the matrix object used to draw characters on the screen
 
+# Initialize the main game object
+game1 = Bb(20)
+game1.clear_x()
+
 # Safely exit the program
 def exit_app(tkwindow):
     tkwindow.destroy()
@@ -27,9 +31,6 @@ def exit_app(tkwindow):
 def terminate_error(error_description):
     if messagebox.showerror("FAMILIADA ERROR", error_description):
         sys.exit()
-
-# Initialize the main game object
-game1 = Bb(20)
 
 # Read data from the disk
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -63,9 +64,7 @@ with open(filename, "r+") as f:
 
         # Check if the line is valid
         if len(line) > 14:
-            terminate_error(
-                f"Every round must have at most 7 answers, {line} has {len(line)//2}"
-            )  
+            terminate_error(f"Every round must have at most 7 answers, {line} has {len(line)//2}")  
 
         round_data = []
         for i in range(0, len(line), 2):
@@ -109,7 +108,7 @@ pygame.display.set_icon(programIcon)
 window1 = tkinter.Tk()
 window1.title("Familiada - reżyserka")
 window1.iconbitmap("familiada.ico")
-window1.geometry("400x200")
+window1.geometry("400x400")
 style = ttk.Style(window1)
 window1.protocol("WM_DELETE_WINDOW", lambda: exit_app(window1))
 
@@ -154,7 +153,7 @@ for i, round_answers in enumerate(game1.answers):
 
 # Create a tab for showing team scores
 score_tab = ttk.Frame(tabControl)
-score_button = tkinter.Button(score_tab, text="Pokaż wyniki", command=lambda: game1.show_scores())
+score_button = tkinter.Button(score_tab, text = "Pokaż wyniki", command = game1.show_scores)
 score_button.pack()
 
 tabControl.add(score_tab, text="Punktacja")
