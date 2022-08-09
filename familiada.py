@@ -135,7 +135,7 @@ class Blackboard:
         self.write_hor("suma   0", 8, 10)
         for k in range(1, 6):
             self.write_hor("----------- @@|@@ -----------", k, 0)
-    
+
     def show_scores(self, l_score, r_score):
         self.fill()
         self.write_hor(str(l_score).rjust(3), 8, 22)
@@ -148,6 +148,7 @@ def exit_app(tkwindow):
     pygame.display.quit()
     pygame.quit()
     sys.exit()
+
 
 def terminate_error(error_description):
     if messagebox.showerror("FAMILIADA ERROR", error_description):
