@@ -130,7 +130,7 @@ labelPassword.pack()
 inputPassword = tkinter.Entry(tab1)
 inputPassword.pack()
 
-button = tkinter.Button(tab1, text="Go", command=lambda: pygame.mixer.Sound.play(ending_music))
+button = tkinter.Button(tab1, text="Go", command=lambda: pygame.mixer.Sound.play())
 button.pack()
 
 # Create a tab for every round
