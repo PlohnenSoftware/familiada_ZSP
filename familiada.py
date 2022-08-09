@@ -32,6 +32,7 @@ def terminate_error(error_description):
     if messagebox.showerror("FAMILIADA ERROR", error_description):
         sys.exit()
 
+
 # Read data from the disk
 current_dir = os.path.dirname(os.path.abspath(__file__))
 # lepiej zrobić pulpit na start, do finalnej wersji bo jak sie d exe spakuje to wywala do jakiegoś folderu temp,
@@ -64,7 +65,7 @@ with open(filename, "r+") as f:
 
         # Check if the line is valid
         if len(line) > 14:
-            terminate_error(f"Every round must have at most 7 answers, {line} has {len(line)//2}")  
+            terminate_error(f"Every round must have at most 7 answers, {line} has {len(line)//2}")
 
         round_data = []
         for i in range(0, len(line), 2):
@@ -157,7 +158,7 @@ for i, round_answers in enumerate(game1.answers):
 
 # Create a tab for showing team scores
 score_tab = ttk.Frame(tabControl)
-score_button = tkinter.Button(score_tab, text = "Pokaż wyniki", command = game1.show_scores)
+score_button = tkinter.Button(score_tab, text="Pokaż wyniki", command=game1.show_scores)
 score_button.pack()
 
 tabControl.add(score_tab, text="Punktacja")
