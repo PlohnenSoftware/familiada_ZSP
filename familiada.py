@@ -195,7 +195,7 @@ with open(filename, "r+") as f:
 
         # Check if the line is valid
         if len(line) > 14:
-            terminate_error(f"Every round must have at most 7 answers, {line} has {len(line)//2}")
+            terminate_error(f"Every round must have at most 7 answers, {line} has {len(line)//2}")  #trzeba zamieniac wszystkie odpowiedzi na małe litery, bo na dużych w foncie są elementy zeby duzy napis z hardcodować i utraty szans ładniejsze
 
         round_data = []
         for i in range(0, len(line), 2):
