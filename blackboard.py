@@ -11,7 +11,6 @@ write_sound = pygame.mixer.Sound("sfx/write.wav")
 ending_music = pygame.mixer.Sound("sfx/final_ending.flac")
 intro_music = pygame.mixer.Sound("sfx/show_music.flac")
 
-
 class Blackboard:
     def __init__(self, stroke):
         self.letter_matrix = [["" for _ in range(29)] for _ in range(10)]
