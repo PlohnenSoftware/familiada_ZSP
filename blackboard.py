@@ -15,6 +15,7 @@ write_sound = pygame.mixer.Sound("sfx/write.wav")
 ending_music = pygame.mixer.Sound("sfx/final_ending.flac")
 intro_music = pygame.mixer.Sound("sfx/show_music.flac")
 
+
 class Blackboard:
     def __init__(self, stroke):
         self.letter_matrix = [["" for _ in range(29)] for _ in range(10)]
@@ -153,8 +154,7 @@ class Blackboard:
         for i in range(10):
             for j in range(3):
                 self.letter_matrix[i][j] = self.letter_matrix[i][j + 26] = ""
-                 
-    
+
     # Draw a big x on the blackboard for a selected team and play a sound
     def big_strike(self, team):
         if team not in ("L", "R"):
@@ -167,7 +167,6 @@ class Blackboard:
             self.draw_gross_x(3, 26)
             self.r_strike = 4
             pygame.mixer.Sound.play(wrong_sound)
-
 
     # Draw a small x on the blackboard for a selected team and play a sound
     def small_strike(self, team):
