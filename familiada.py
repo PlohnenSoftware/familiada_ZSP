@@ -18,7 +18,6 @@ from blackboard import Blackboard as Bb
 
 # Initialize the main game object
 game1 = Bb(20)
-game1.clear_x()
 
 # Safely exit the program
 def exit_app(tkwindow):
