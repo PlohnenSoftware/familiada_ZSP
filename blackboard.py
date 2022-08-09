@@ -168,6 +168,3 @@ class Blackboard:
 
     def set_current_winner(self, winner):
         self.winning_team = winner
-
-def pit():
-    return 0
