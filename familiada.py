@@ -84,7 +84,7 @@ class Blackboard:
 
     # Initialize the round printing a blank blackboard
     def round_init(self, round_number, last_round_score=0):
-        winner_team = 'R' if strike_l > strike_r else 'L'
+        winner_team = "R" if strike_l > strike_r else "L"
         add_to_score(winner_team, last_round_score)
         self.fill()
         self.sum = 0
@@ -140,7 +140,7 @@ class Blackboard:
 
     def show_scores(self, l_score, r_score):
         self.fill()
-        self.write_hor("suma punktów:" , 3, 8)
+        self.write_hor("suma punktów:", 3, 8)
 
         # Write the scores
         l_score_str = str(l_score)
