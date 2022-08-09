@@ -74,7 +74,7 @@ class Blackboard:
             self.draw_small_x(2, 26)
         pygame.mixer.Sound.play(wrong_sound)
 
-    def calculate_coords(self, round_number):
+    def calculate_coords(self, round_number) -> tuple:
         # Get and set some parameters of the round
         no_answers = len(self.answers[round_number])
 
@@ -112,7 +112,7 @@ class Blackboard:
 
         # Check if the answer is already printed
         if self.answers[round_number][answer_number][2]:
-            return False
+            return
 
         # Assure that the correct round is being shown
         if self.current_round != round_number:
@@ -135,6 +135,11 @@ class Blackboard:
         self.write_hor("suma   0", 8, 10)
         for k in range(1, 6):
             self.write_hor("----------- @@|@@ -----------", k, 0)
+    
+    def show_scores(self, l_score, r_score):
+        self.fill()
+        self.write_hor(str(l_score).rjust(3), 8, 22)
+        self.write_hor(str(r_score).rjust(3), 8, 26)
 
 
 # Safely exit the program
@@ -143,7 +148,6 @@ def exit_app(tkwindow):
     pygame.display.quit()
     pygame.quit()
     sys.exit()
-
 
 def terminate_error(error_description):
     if messagebox.showerror("FAMILIADA ERROR", error_description):
@@ -279,6 +283,14 @@ for i, round_answers in enumerate(game1.answers):
         answer_button = tkinter.Button(tab, text=answer_text, command=lambda round=i, answer=j: game1.print_answer(round, answer))
         answer_button.pack()
     tabControl.add(tab, text="Round" + str(i + 1))
+
+# Create a tab for showing team scores
+score_tab = ttk.Frame(tabControl)
+score_button = tkinter.Button(score_tab, text="Pokaż wyniki", command=lambda: game1.show_scores(424, 300))
+score_button.pack()
+
+tabControl.add(score_tab, text="Punktacja")
+tabControl.pack(expand=1, fill="both")
 
 tabControl.add(tab1, text="SFX")
 tabControl.pack(expand=1, fill="both")
