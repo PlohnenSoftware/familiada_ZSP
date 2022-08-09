@@ -19,8 +19,11 @@ class Blackboard:
         self.letter_matrix = [["" for _ in range(29)] for _ in range(10)]
         self.stroke = stroke
         self.answers = []
-        self.sum = 0
+        self.round_score = 0
         self.current_round = -1
+        self.l_score = 0
+        self.r_score = 0
+        self.winning_team = ""
 
     # Write a word horizontally to the matrix
     def write_hor(self, word, start_row, start_col):
@@ -83,11 +86,14 @@ class Blackboard:
         return no_answers, row_coords
 
     # Initialize the round printing a blank blackboard
-    def round_init(self, round_number, last_round_score=0):
-        winner_team = "R" if strike_l > strike_r else "L"
-        add_to_score(winner_team, last_round_score)
+    def round_init(self, round_number):
+        if self.winning_team == "L":
+            self.l_score += self.round_score
+        else:
+            self.r_score += self.round_score
+        self.round_score = 0
         self.fill()
-        self.sum = 0
+        self.round_score = 0
         self.current_round = round_number
         no_answers, row_coords = self.calculate_coords(round_number)
 
@@ -120,13 +126,13 @@ class Blackboard:
         if self.current_round != round_number:
             self.round_init(round_number)
 
-        self.sum = int(self.answers[round_number][answer_number][1]) + self.sum
+        self.round_score = int(self.answers[round_number][answer_number][1]) + self.round_score
         no_answers, row_coords = self.calculate_coords(round_number)
         answer_text = str(self.answers[round_number][answer_number][0])
         answer_points = str(self.answers[round_number][answer_number][1])
         self.write_hor(answer_text.ljust(16), row_coords + answer_number, 6)
         self.write_hor(answer_points.rjust(2), row_coords + answer_number, 23)
-        self.write_hor(str(self.sum).rjust(3), row_coords + no_answers + 1, 22)
+        self.write_hor(str(self.round_score).rjust(3), row_coords + no_answers + 1, 22)
         pygame.mixer.Sound.play(correct_sound)
 
         # Set the answer as printed
@@ -138,17 +144,24 @@ class Blackboard:
         for k in range(1, 6):
             self.write_hor("----------- @@|@@ -----------", k, 0)
 
-    def show_scores(self, l_score, r_score):
+    def show_scores(self):
+        if self.winning_team == "L":
+            self.l_score += self.round_score
+        else:
+            self.r_score += self.round_score
         self.fill()
         self.write_hor("suma punktów:", 3, 8)
 
         # Write the scores
-        l_score_str = str(l_score)
+        l_score_str = str(self.l_score)
         l_len = len(l_score_str)
-        r_score_str = str(r_score)
+        r_score_str = str(self.r_score)
         r_len = len(r_score_str)
         self.write_hor(l_score_str, 5, 11 - l_len)
         self.write_hor(r_score_str, 5, 15 + r_len)
+    
+    def set_current_winner(self, winner):
+        self.winning_team = winner
 
 
 # Safely exit the program
@@ -280,8 +293,6 @@ button = tkinter.Button(tab1, text="Go", command=lambda: pygame.mixer.Sound.play
 button.pack()
 
 # Initialize team scores
-l_score = 0
-r_score = 0
 l_strike = 0
 r_strike = 0
 round_score = 0
@@ -291,8 +302,11 @@ for i, round_answers in enumerate(game1.answers):
     tab = ttk.Frame(tabControl)
     round_button = tkinter.Button(tab, text="Inicjalizuj runde", command=lambda round=i: game1.round_init(round))
     round_button.grid(row=0, column=1)
-    l_start_button = tkinter.Button(tab, text="Lewa Zaczyna", command=lambda: game1.round_init(round))
-    l_lost_button = tkinter.Button
+    l_won_button = tkinter.Button(tab, text="Lewa Wygrywa runde", command=lambda: game1.set_current_winner("L"))
+    l_won_button.grid(row=1, column=0)
+    r_won_button = tkinter.Button(tab, text="Prawa Wygrywa runde", command=lambda: game1.set_current_winner("P"))
+    r_won_button.grid(row=1, column=1)
+
 
     # Add buttons for every answer
     for j, answer_dict in enumerate(round_answers):
@@ -305,7 +319,7 @@ for i, round_answers in enumerate(game1.answers):
 
 # Create a tab for showing team scores
 score_tab = ttk.Frame(tabControl)
-score_button = tkinter.Button(score_tab, text="Pokaż wyniki", command=lambda: game1.show_scores(424, 300))
+score_button = tkinter.Button(score_tab, text="Pokaż wyniki", command=lambda: game1.show_scores())
 score_button.pack()
 
 tabControl.add(score_tab, text="Punktacja")
