@@ -13,6 +13,7 @@ write_sound = pygame.mixer.Sound("sfx/write.wav")
 ending_music = pygame.mixer.Sound("sfx/final_ending.flac")
 intro_music = pygame.mixer.Sound("sfx/show_music.flac")
 
+
 class Blackboard:
     def __init__(self, stroke):
         self.letter_matrix = [["" for _ in range(29)] for _ in range(10)]
@@ -27,7 +28,7 @@ class Blackboard:
         self.strike = {"L": 5, "R": 5}
         self.round_score = 0
         self.winning_team = "L"
-    
+
     strike_to_x = {0: 7, 1: 4, 2: 1}
 
     def incorrect_team(self):
@@ -52,11 +53,11 @@ class Blackboard:
 
     # Print a small x on selected row and column
     def draw_small_x(self, start_row, start_col):
-        self.write_hor("Y", start_row, start_col+1)
-        self.write_hor("I", start_row+1, start_col+1)
-        self.write_hor("X", start_row+2, start_col+1)
+        self.write_hor("Y", start_row, start_col + 1)
+        self.write_hor("I", start_row + 1, start_col + 1)
+        self.write_hor("X", start_row + 2, start_col + 1)
         for i in range(2):
-            i = i<<1
+            i = i << 1
             self.letter_matrix[start_row + i][start_col + i] = "G"
             self.letter_matrix[start_row - i + 2][start_col + i] = "H"
 
@@ -174,7 +175,7 @@ class Blackboard:
             self.strike["R"] = 4
             pygame.mixer.Sound.play(wrong_sound)
         if self.strike["L"] == 4 and self.strike["R"] == 4 and self.chance_reset_allowed:
-            Delay(10,self.clear_x).start()
+            Delay(10, self.clear_x).start()
             self.chance_reset_allowed = False
 
     # Draw a small x on the blackboard for a selected team and play a sound
@@ -190,7 +191,7 @@ class Blackboard:
             return
         y = self.strike_to_x[current_strikes]
 
-        if team == 'L':
+        if team == "L":
             self.draw_small_x(y, 0)
         else:
             self.draw_small_x(y, 26)
@@ -200,8 +201,8 @@ class Blackboard:
         pygame.mixer.Sound.play(wrong_sound)
 
     @staticmethod
-    def show_final_answer(answer_input,point_input):
-        print('tu twoja funkcja się wywołuje do wpisywania odpowiedzi z rundy finałowej')
+    def show_final_answer(answer_input, point_input):
+        print("tu twoja funkcja się wywołuje do wpisywania odpowiedzi z rundy finałowej")
         print("Odpowiedz: " + answer_input.get())
         print("Punkty: " + point_input.get())
         # corrections, adding the final card and buttons to handle, start working on the function of displaying the answers from the final,
