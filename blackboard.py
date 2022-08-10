@@ -200,9 +200,8 @@ class Blackboard:
 
         pygame.mixer.Sound.play(wrong_sound)
 
-
-    def show_final_answer(self,answer_input,point_input,row,col):
-        print('tu twoja funkcja się wywołuje do wpisywania odpowiedzi z rundy finałowej')
+    def show_final_answer(self, answer_input, point_input, row, col):
+        print("tu twoja funkcja się wywołuje do wpisywania odpowiedzi z rundy finałowej")
         print("Odpowiedz: " + answer_input.get())
         print("Punkty: " + point_input.get())
         # corrections, adding the final card and buttons to handle, start working on the function of displaying the answers from the final,
