@@ -31,7 +31,8 @@ class Blackboard:
 
     strike_to_x = {0: 7, 1: 4, 2: 1}
 
-    def incorrect_team(self):
+    @staticmethod
+    def incorrect_team():
         raise ValueError("Team must be either 'L' or 'R'")
 
     # Write a word horizontally to the matrix
