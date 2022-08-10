@@ -176,17 +176,17 @@ class Blackboard:
         if self.l_strike == 4 and self.r_strike == 4 and self.chance_reset_allowed:
             Delay(10,self.clear_x).start()
             self.chance_reset_allowed = False
-            
+
     # Draw a small x on the blackboard for a selected team and play a sound
     def small_strike(self, team):
         if team == "L":
             current_strikes = self.l_strike
             is_current_team_l = True
-            
+
         elif team == "R":
             current_strikes = self.r_strike
             is_current_team_l = False
-            
+
         else:
             raise self.incorrect_team
 
@@ -195,7 +195,7 @@ class Blackboard:
             case 1: y =4
             case 2: y =1
             case _: return False
-        
+
         if is_current_team_l:
             self.draw_small_x(y, 0)
             self.l_strike = current_strikes + 1
@@ -205,7 +205,8 @@ class Blackboard:
 
         pygame.mixer.Sound.play(wrong_sound)
 
-    def show_final_answer(self,answer_input,point_input):
+    @staticmethod
+    def show_final_answer(answer_input,point_input):
         print('tu twoja funkcja się wywołuje do wpisywania odpowiedzi z rundy finałowej')
         print("Odpowiedz: " + answer_input.get())
         print("Punkty: " + point_input.get())
