@@ -205,11 +205,15 @@ class Blackboard:
     def show_final_answer(self, answer_input, point_input, row, col):
         answer = answer_input.get()
         points = point_input.get()
-        output_str = f"{answer.ljust(11)} {points}"
-        if col == 1:
-            output_str = f"{points} {answer.rjust(11)}"
+        if col:
+            answer_str = f"{answer.rjust(11)}"
+            output_str = f"{points.ljust(2)} {answer.rjust(11)}"
+        else:
+            answer_str = f"{answer.ljust(11)}"
+            output_str = f"{answer.ljust(11)} {points.rjust(2)}"
         print("tu twoja funkcja się wywołuje do wpisywania odpowiedzi z rundy finałowej")
-        self.write_hor(output_str, row + 1, col * 15)
+        self.write_hor(answer_str, row + 1, col * 15)
+        Delay(2, lambda: self.write_hor(output_str, row + 1, col * 15)).start()
         print("Odpowiedz: " + answer)
         print("Punkty: " + points)
         # corrections, adding the final card and buttons to handle, start working on the function of displaying the answers from the final,
