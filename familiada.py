@@ -138,7 +138,7 @@ for i, round_answers in enumerate(game1.answers):
     round_button.grid(row=0, column=1)
     l_won_button = tkinter.Button(tab, text="Lewa Wygrywa runde", command=lambda: game1.set_current_winner("L"))
     l_won_button.grid(row=1, column=0)
-    r_won_button = tkinter.Button(tab, text="Prawa Wygrywa runde", command=lambda: game1.set_current_winner("P"))
+    r_won_button = tkinter.Button(tab, text="Prawa Wygrywa runde", command=lambda: game1.set_current_winner("R"))
     r_won_button.grid(row=1, column=2)
     l_strike_button = tkinter.Button(tab, text="Duża utrata Lewa", command=lambda: game1.big_strike("L"))
     r_strike_button = tkinter.Button(tab, text="Duża utrata Prawa", command=lambda: game1.big_strike("R"))
