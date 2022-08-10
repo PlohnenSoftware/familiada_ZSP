@@ -4,6 +4,7 @@ import tkinter
 import os
 from tkinter import messagebox, ttk, filedialog
 from blackboard import Blackboard as Bb
+from auth import check_date
 
 # The program provides a graphical interface for the game Familiada.
 
@@ -14,9 +15,6 @@ from blackboard import Blackboard as Bb
 # Currently all gui texts are written in Polish.
 
 # Blackboard class containing the matrix object used to draw characters on the screen
-
-# Initialize the main game object
-game1 = Bb(20)
 
 # Safely exit the program
 def exit_app(tkwindow):
@@ -30,6 +28,15 @@ def terminate_error(error_description):
     if messagebox.showerror("FAMILIADA ERROR", error_description):
         sys.exit()
 
+auth_result = check_date()
+
+if auth_result == "Date Expired":
+    terminate_error("Licencja wygasła")
+elif auth_result == "Invalid file":
+    terminate_error("Nieprawidłowy plik")
+
+# Initialize the main game object
+game1 = Bb(20)
 
 # Read data from the disk
 current_dir = os.path.dirname(os.path.abspath(__file__))
