@@ -207,9 +207,9 @@ class Blackboard:
         points = point_input.get()
         output_str = f"{answer.ljust(11)} {points}"
         if col == 1:
-            output_str = f"{points} {answer.rjust(12)}"
+            output_str = f"{points} {answer.rjust(11)}"
         print("tu twoja funkcja się wywołuje do wpisywania odpowiedzi z rundy finałowej")
-        self.write_hor(output_str, row + 1, col * 16)
+        self.write_hor(output_str, row + 1, col * 15)
         print("Odpowiedz: " + answer)
         print("Punkty: " + points)
         # corrections, adding the final card and buttons to handle, start working on the function of displaying the answers from the final,
