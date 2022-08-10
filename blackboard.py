@@ -1,5 +1,7 @@
 import pygame
 from math import floor
+from threading import Timer as Delay
+
 
 # Import pygame SFX
 pygame.mixer.init()
@@ -19,12 +21,13 @@ class Blackboard:
         self.round_score = 0
         self.current_round = -1
         self.incorrect_team = ValueError("Team must be either 'L' or 'R'")
+        self.chance_reset_allowed = False
 
         # Initialize team scores
         self.l_score = 0
         self.r_score = 0
-        self.l_strike = 0
-        self.r_strike = 0
+        self.l_strike = 5
+        self.r_strike = 5
         self.round_score = 0
         self.winning_team = None
 
@@ -47,9 +50,13 @@ class Blackboard:
 
     # Print a small x on selected row and column
     def draw_small_x(self, start_row, start_col):
-        for i in range(3):
-            self.letter_matrix[start_row + i][start_col + i] = "#"
-            self.letter_matrix[start_row - i + 2][start_col + i] = "#"
+        self.write_hor("Y", start_row, start_col+1)
+        self.write_hor("I", start_row+1, start_col+1)
+        self.write_hor("X", start_row+2, start_col+1)
+        for i in range(2):
+            i = i<<1
+            self.letter_matrix[start_row + i][start_col + i] = "G"
+            self.letter_matrix[start_row - i + 2][start_col + i] = "H"
 
     # Print a big x on selected row and column
     def draw_gross_x(self, start_row, start_col):
@@ -75,9 +82,11 @@ class Blackboard:
     # Initialize the round printing a blank blackboard
     def round_init(self, round_number):
         self.add_score()
+        self.chance_reset_allowed = True
         self.round_score = 0
+        self.l_strike = 0
+        self.r_strike = 0
         self.fill()
-        self.round_score = 0
         self.current_round = round_number
         no_answers, row_coords = self.calculate_coords(round_number)
 
@@ -100,7 +109,7 @@ class Blackboard:
             answer_dict[2] = False
 
     # Print selected answer for selected round
-    def print_answer(self, round_number, answer_number):
+    def show_answer(self, round_number, answer_number):
 
         # Check if the answer is already printed
         if self.answers[round_number][answer_number][2]:
@@ -150,6 +159,8 @@ class Blackboard:
             for j in range(3):
                 self.letter_matrix[i][j] = self.letter_matrix[i][j + 26] = ""
 
+        self.l_strike = self.r_strike = 0
+
     # Draw a big x on the blackboard for a selected team and play a sound
     def big_strike(self, team):
         if team not in ("L", "R"):
@@ -158,17 +169,46 @@ class Blackboard:
             self.draw_gross_x(3, 0)
             self.l_strike = 4
             pygame.mixer.Sound.play(wrong_sound)
-        elif self.r_strike == 0:
+        elif team == "R" and self.r_strike == 0:
             self.draw_gross_x(3, 26)
             self.r_strike = 4
             pygame.mixer.Sound.play(wrong_sound)
-
+        if self.l_strike == 4 and self.r_strike == 4 and self.chance_reset_allowed:
+            Delay(10,self.clear_x).start()
+            self.chance_reset_allowed = False
+            
     # Draw a small x on the blackboard for a selected team and play a sound
     def small_strike(self, team):
-        if team not in ("L", "R"):
-            raise self.incorrect_team
         if team == "L":
-            self.draw_small_x(2, 0)
+            current_strikes = self.l_strike
+            is_current_team_l = True
+            
+        elif team == "R":
+            current_strikes = self.r_strike
+            is_current_team_l = False
+            
         else:
-            self.draw_small_x(2, 26)
+            raise self.incorrect_team
+
+        match current_strikes:
+            case 0: y =7
+            case 1: y =4
+            case 2: y =1
+            case _: return False
+        
+        if is_current_team_l:
+            self.draw_small_x(y, 0)
+            self.l_strike = current_strikes + 1
+        else:
+            self.draw_small_x(y, 26)
+            self.r_strike = current_strikes + 1
+
         pygame.mixer.Sound.play(wrong_sound)
+
+    def show_final_answer(self,answer_input,point_input):
+        print('tu twoja funkcja się wywołuje do wpisywania odpowiedzi z rundy finałowej')
+        print("Odpowiedz: " + answer_input.get())
+        print("Punkty: " + point_input.get())
+        # corrections, adding the final card and buttons to handle, start working on the function of displaying the answers from the final,
+        #  correct the symbol of the small loss to a more acurate one, but by doing so, the large loss should be corrected; the function from the answers
+        #  in the final should be finished writing; the font should be coded from large numbers and the large title caption should be coded
