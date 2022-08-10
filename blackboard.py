@@ -205,8 +205,8 @@ class Blackboard:
 
         pygame.mixer.Sound.play(wrong_sound)
 
-    @staticmethod
-    def show_final_answer(answer_input,point_input):
+
+    def show_final_answer(self,answer_input,point_input,row,col):
         print('tu twoja funkcja się wywołuje do wpisywania odpowiedzi z rundy finałowej')
         print("Odpowiedz: " + answer_input.get())
         print("Punkty: " + point_input.get())
