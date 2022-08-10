@@ -168,7 +168,7 @@ for w in range(5):
     for t in range(2):
         input_answer = tkinter.Entry(final_tab)
         input_points = tkinter.Entry(final_tab)
-        final_button = tkinter.Button(final_tab, text="Wyświetl", command=lambda answer_txt=input_answer, point_txt=input_points: game1.show_final_answer(answer_txt, point_txt))
+        final_button = tkinter.Button(final_tab, text="Wyświetl", command=lambda r=w, c=t, answer_txt=input_answer, point_txt=input_points: game1.show_final_answer(answer_txt, point_txt,r,c))
         input_answer.grid(row=w + 1, column=t * 3)
         input_points.grid(row=w + 1, column=t * 3 + 1)
         final_button.grid(row=w + 1, column=t * 3 + 2)
