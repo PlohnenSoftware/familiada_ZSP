@@ -206,8 +206,8 @@ class Blackboard:
     def show_final_answer(self, answer_input, point_input, row, col):
         answer = str(answer_input.get())
         points = str(point_input.get())
-        answer=answer.lower()
-        if len(answer) > 11 or len(points)>2 or points.isdigit()==False:
+        answer = answer.lower()
+        if len(answer) > 11 or len(points) > 2 or points.isdigit() == False:
             return
 
         if col:
@@ -217,21 +217,21 @@ class Blackboard:
             answer_str = f"{answer.ljust(11)}"
             output_str = f"{answer.ljust(11)} {points.rjust(2)}"
         pygame.mixer.Sound.play(write_sound)
-       
+
         self.write_hor(answer_str, row + 1, col * 15)
+
         def show_score():
-                        self.write_hor(output_str, row + 1, col * 15)
-                        if int(points)>0:
-                            self.round_score+=int(points)
-                            pygame.mixer.Sound.play(correct_sound)
-                            self.write_hor(str(self.round_score).rjust(3), 8, 15)
+            self.write_hor(output_str, row + 1, col * 15)
+            if int(points) > 0:
+                self.round_score += int(points)
+                pygame.mixer.Sound.play(correct_sound)
+                self.write_hor(str(self.round_score).rjust(3), 8, 15)
 
-
-                        else: pygame.mixer.Sound.play(wrong_sound)
-
+            else:
+                pygame.mixer.Sound.play(wrong_sound)
 
         Delay(2, show_score).start()
-      
+
         # corrections, adding the final card and buttons to handle, start working on the function of displaying the answers from the final,
         #  correct the symbol of the small loss to a more acurate one, but by doing so, the large loss should be corrected; the function from the answers
         #  in the final should be finished writing; the font should be coded from large numbers and the large title caption should be coded
