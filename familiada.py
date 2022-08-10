@@ -28,6 +28,7 @@ def terminate_error(error_description):
     if messagebox.showerror("FAMILIADA ERROR", error_description):
         sys.exit()
 
+
 auth_result = check_date()
 
 if auth_result == "Date Expired":
