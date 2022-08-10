@@ -135,6 +135,7 @@ class Blackboard:
 
     def init_final_round(self):
         self.fill()
+        self.round_score = 0
         self.write_hor("suma   0", 8, 10)
         for k in range(1, 6):
             self.write_hor("----------- @@|@@ -----------", k, 0)
@@ -203,19 +204,34 @@ class Blackboard:
         pygame.mixer.Sound.play(wrong_sound)
 
     def show_final_answer(self, answer_input, point_input, row, col):
-        answer = answer_input.get()
-        points = point_input.get()
+        answer = str(answer_input.get())
+        points = str(point_input.get())
+        answer=answer.lower()
+        if len(answer) > 11 or len(points)>2 or points.isdigit()==False:
+            return
+
         if col:
             answer_str = f"{answer.rjust(11)}"
             output_str = f"{points.ljust(2)} {answer.rjust(11)}"
         else:
             answer_str = f"{answer.ljust(11)}"
             output_str = f"{answer.ljust(11)} {points.rjust(2)}"
-        print("tu twoja funkcja się wywołuje do wpisywania odpowiedzi z rundy finałowej")
+        pygame.mixer.Sound.play(write_sound)
+       
         self.write_hor(answer_str, row + 1, col * 15)
-        Delay(2, lambda: self.write_hor(output_str, row + 1, col * 15)).start()
-        print("Odpowiedz: " + answer)
-        print("Punkty: " + points)
+        def show_score():
+                        self.write_hor(output_str, row + 1, col * 15)
+                        if int(points)>0:
+                            self.round_score+=int(points)
+                            pygame.mixer.Sound.play(correct_sound)
+                            self.write_hor(str(self.round_score).rjust(3), 8, 15)
+
+
+                        else: pygame.mixer.Sound.play(wrong_sound)
+
+
+        Delay(2, show_score).start()
+      
         # corrections, adding the final card and buttons to handle, start working on the function of displaying the answers from the final,
         #  correct the symbol of the small loss to a more acurate one, but by doing so, the large loss should be corrected; the function from the answers
         #  in the final should be finished writing; the font should be coded from large numbers and the large title caption should be coded
