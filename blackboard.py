@@ -22,14 +22,15 @@ class Blackboard:
         self.round_score = 0
         self.current_round = -1
         self.chance_reset_allowed = False
+        self.answers_shown_final = [[True for _ in range(5)] for _ in range(2)]
 
         # Initialize team scores
         self.score = {"L": 0, "R": 0}
         self.strike = {"L": 5, "R": 5}
         self.round_score = 0
         self.winning_team = "L"
+        self.strike_to_x = {0: 7, 1: 4, 2: 1}
 
-    strike_to_x = {0: 7, 1: 4, 2: 1}
 
     @staticmethod
     def incorrect_team():
@@ -139,6 +140,7 @@ class Blackboard:
         self.write_hor("suma   0", 8, 10)
         for k in range(1, 6):
             self.write_hor("----------- @@|@@ -----------", k, 0)
+        self.answers_shown_final = [[False for _ in range(5)] for _ in range(2)]
 
     def show_scores(self):
         self.add_score()
@@ -207,12 +209,18 @@ class Blackboard:
         answer = str(answer_input.get())
         points = str(point_input.get())
         answer = answer.lower()
+
+        if self.answers_shown_final[col][row]:
+            return
+        else: self.answers_shown_final[col][row] = True
+
+
         if len(answer) > 11 or len(points) > 2 or points.isdigit() is False:
             return
 
         if col:
-            answer_str = f"{answer.rjust(11)}"
-            output_str = f"{points.ljust(2)} {answer.rjust(11)}"
+            answer_str = f"@@ {answer.rjust(11)}"
+            output_str = f"{points.rjust(2)} {answer.rjust(11)}"
         else:
             answer_str = f"{answer.ljust(11)}"
             output_str = f"{answer.ljust(11)} {points.rjust(2)}"
