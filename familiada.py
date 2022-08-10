@@ -134,23 +134,27 @@ button.pack()
 # Create a tab for every round
 for i, round_answers in enumerate(game1.answers):
     tab = ttk.Frame(tabControl)
-    round_button = tkinter.Button(tab, text="Inicjalizuj runde", command=lambda round=i: game1.round_init(round))
+    round_button = tkinter.Button(tab, text="Zacznij runde", command=lambda round=i: game1.round_init(round))
     round_button.grid(row=0, column=1)
     l_won_button = tkinter.Button(tab, text="Lewa Wygrywa runde", command=lambda: game1.set_current_winner("L"))
     l_won_button.grid(row=1, column=0)
     r_won_button = tkinter.Button(tab, text="Prawa Wygrywa runde", command=lambda: game1.set_current_winner("P"))
     r_won_button.grid(row=1, column=2)
-    l_strike_button = tkinter.Button(tab, text="Utrata Lewa", command=lambda: game1.big_strike("L"))
-    r_strike_button = tkinter.Button(tab, text="Utrata Prawa", command=lambda: game1.big_strike("R"))
+    l_strike_button = tkinter.Button(tab, text="Duża utrata Lewa", command=lambda: game1.big_strike("L"))
+    r_strike_button = tkinter.Button(tab, text="Duża utrata Prawa", command=lambda: game1.big_strike("R"))
     l_strike_button.grid(row=2, column=0)
     r_strike_button.grid(row=2, column=2)
+    l_strike_button1 = tkinter.Button(tab, text="Utrata Lewa", command=lambda: game1.small_strike("L"))
+    r_strike_button1 = tkinter.Button(tab, text="Utrata Prawa", command=lambda: game1.small_strike("R"))
+    l_strike_button1.grid(row=3, column=0)
+    r_strike_button1.grid(row=3, column=2)
 
     # Add buttons for every answer
     for j, answer_dict in enumerate(round_answers):
         answer = answer_dict[0].ljust(16)
         points = answer_dict[1].rjust(2)
         answer_text = f"{answer} {points}"
-        answer_button = tkinter.Button(tab, text=answer_text, command=lambda round=i, answer=j: game1.print_answer(round, answer))
+        answer_button = tkinter.Button(tab, text=answer_text, command=lambda round=i, answer=j: game1.show_answer(round, answer))
         answer_button.grid(row=j + 2, column=1)
     tabControl.add(tab, text="Round" + str(i + 1))
 
@@ -158,6 +162,20 @@ for i, round_answers in enumerate(game1.answers):
 score_tab = ttk.Frame(tabControl)
 score_button = tkinter.Button(score_tab, text="Pokaż wyniki", command=game1.show_scores)
 score_button.pack()
+
+final_tab = ttk.Frame(tabControl)
+for w in range(5):
+    for t in range(2):
+        input_answer = tkinter.Entry(final_tab)
+        input_points = tkinter.Entry(final_tab)
+        final_button = tkinter.Button(final_tab, text="Wyświetl", command=lambda answer_txt = input_answer, point_txt = input_points: game1.show_final_answer(answer_txt,point_txt))
+        input_answer.grid(row=w+1, column=t*3)
+        input_points.grid(row=w+1, column=t*3 +1)
+        final_button.grid(row=w+1, column=t*3 +2)
+init_final_buttplug = tkinter.Button(final_tab, text="Zacznij finał", command=game1.init_final_round)
+init_final_buttplug.grid(row=0, column=2)
+tabControl.add(final_tab, text="Finał")
+
 
 tabControl.add(score_tab, text="Punktacja")
 tabControl.pack(expand=1, fill="both")
