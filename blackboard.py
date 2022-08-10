@@ -211,8 +211,7 @@ class Blackboard:
 
         if self.answers_shown_final[col][row]:
             return
-        else:
-            self.answers_shown_final[col][row] = True
+        self.answers_shown_final[col][row] = True
 
         if len(answer) > 11 or len(points) > 2 or points.isdigit() is False:
             return
