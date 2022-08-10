@@ -2,8 +2,8 @@ import pygame
 import sys
 import tkinter
 import os
-from math import floor
 from tkinter import messagebox, ttk, filedialog
+from blackboard import Blackboard as Bb
 
 # The program provides a graphical interface for the game Familiada.
 
@@ -14,108 +14,11 @@ from tkinter import messagebox, ttk, filedialog
 # Currently all gui texts are written in Polish.
 
 # Blackboard class containing the matrix object used to draw characters on the screen
-class Blackboard:
-    def __init__(self, stroke):
-        self.letter_matrix = [["" for _ in range(29)] for _ in range(10)]
-        self.stroke = stroke
-        self.answers = []
-        self.sum = 0
-        self.current_round = None
 
-    # Write a word horizontally to the matrix
-    def write_hor(self, word, start_row, start_col):
-        letters = list(str(word))
-        for i, letter in enumerate(letters):
-            self.letter_matrix[start_row][start_col + i] = letter
+# Initialize the main game object
+game1 = Bb(20)
 
-    # Write a word vertically to the matrix
-    def write_ver(self, word, start_row, start_col):
-        # niewiedzeć czemu nie działa word = str(word)
-        letters = list(word)
-        for i, letter in enumerate(letters):
-            self.letter_matrix[start_row + i][start_col] = letter
-
-    # Fill whole board with one character
-    def fill(self, char=""):
-        self.letter_matrix = [[char for _ in range(29)] for _ in range(10)]
-
-    def draw_small_x(self, start_row, start_col):
-        for i in range(3):
-            self.letter_matrix[start_row + i][start_col + i] = "#"
-            self.letter_matrix[start_row - i + 2][start_col + i] = "#"
-
-    def draw_gross_x(self, start_row, start_col):
-        self.draw_small_x(start_row + 1, start_col)
-        for j in range(2):
-            for i in range(2):
-                self.write_hor("#", start_row + j * 4, start_col + i * 2)
-
-    def show_big_x(self, team):
-        if team not in ("L", "R"):
-            exception = ValueError("Team must be either 'L' or 'R'")
-            raise exception
-        if team == "L":
-            self.draw_gross_x(3, 0)
-        else:
-            self.draw_gross_x(3, 26)
-        pygame.mixer.Sound.play(wrong_sound)
-
-    def show_small_x(self, team):
-        if team not in ("L", "R"):
-            exception = ValueError("Team must be either 'L' or 'R'")
-            raise exception
-        if team == "L":
-            self.draw_small_x(2, 0)
-        else:
-            self.draw_small_x(2, 26)
-        pygame.mixer.Sound.play(wrong_sound)
-
-    def calculate_coords(self, round_number):
-        # Get and set some parameters of the round
-        no_answers = len(self.answers[round_number])
-
-        # Center the answers on the blackboard
-        row_coords = 1 + max(floor((6 - no_answers) / 2), 0)
-        return no_answers, row_coords
-
-    def round_init(self, round_number):
-        self.fill()
-        self.sum = 0
-        self.current_round = round_number
-        no_answers, row_coords = self.calculate_coords(round_number)
-
-        # Write the indices of the answers to the blackboard
-        self.write_ver([str(i) for i in range(1, no_answers + 1)], row_coords, 4)
-
-        # Write blank spaces to the blackboard
-        for i in range(no_answers):
-            self.write_hor("________________ --", row_coords + i, 6)
-
-        # Write the sum
-        self.write_hor("suma   0", row_coords + no_answers + 1, 17)
-
-        for answer_container in self.answers:
-            for answer in answer_container:
-                answer[2] = True
-
-        for answer_dict in self.answers[round_number]:
-            answer_dict[2] = False
-
-    # Print selected answer for selected round
-    def print_answer(self, round_number, answer_number):
-        if self.answers[round_number][answer_number][2]:
-            return False
-        if self.current_round != round_number:
-            self.round_init(round_number)
-        self.sum = int(self.answers[round_number][answer_number][1]) + self.sum
-        no_answers, row_coords = self.calculate_coords(round_number)
-        self.write_hor(str(self.answers[round_number][answer_number][0]).ljust(16), row_coords + answer_number, 6)
-        self.write_hor(str(self.answers[round_number][answer_number][1]).rjust(2), row_coords + answer_number, 23)
-        self.write_hor(str(self.sum).rjust(3), row_coords + no_answers + 1, 22)
-        pygame.mixer.Sound.play(correct_sound)
-        self.answers[round_number][answer_number][2] = True
-
-
+# Safely exit the program
 def exit_app(tkwindow):
     tkwindow.destroy()
     pygame.display.quit()
@@ -128,20 +31,11 @@ def terminate_error(error_description):
         sys.exit()
 
 
-# Import pygame SFX
-pygame.mixer.init()
-correct_sound = pygame.mixer.Sound("sfx/correct.wav")
-wrong_sound = pygame.mixer.Sound("sfx/incorrect.wav")
-dubel_sound = pygame.mixer.Sound("sfx/dubel.wav")
-bravo_sound = pygame.mixer.Sound("sfx/bravo.wav")
-ending_music = pygame.mixer.Sound("sfx/final_ending.flac")
-intro_music = pygame.mixer.Sound("sfx/show_music.flac")
-
-# Initialize the main game object
-game1 = Blackboard(20)
-
 # Read data from the disk
 current_dir = os.path.dirname(os.path.abspath(__file__))
+# lepiej zrobić pulpit na start, do finalnej wersji bo jak sie d exe spakuje to wywala do jakiegoś folderu temp,
+# gdzie jest interpreter pythona przenosny z Pyinstallera current_dir=os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop')
+
 filename = filedialog.askopenfilename(initialdir=current_dir, title="Select a file", filetypes=(("csv files", "*.csv"), ("all files", "*.*")))
 
 if filename == "":
@@ -150,22 +44,42 @@ if filename == "":
 if filename[-4:] != ".csv":
     terminate_error("Wrong file format, the file must be a .csv")
 
-# Create a list containing tuples of answers and points for every round ***trzeba zdebugować bo jak nie ma pustego endlina w pliku to się psuje, i jak jest wiecej niz jeden to w ogóle Exeption wypier**la, jak write i read były oddzielnie to było to samo ***
+# Create a list containing tuples of answers and points for every round
 with open(filename, "r+") as f:
-    lines = f.readlines()
-    for line in lines:
-        line = line[:-1].split(",")
+    file_str = f.read()
+
+    # Put an endline at the end of the file
+    if file_str[-1] != "\n":
+        f.write("\n")
+    lines = file_str.split("\n")
+
+    for j, line in enumerate(lines):
+
+        # Skip empty lines
+        if line == "":
+            continue
+
+        line = line.split(",")
+
+        # Check if the line is valid
         if len(line) > 14:
-            terminate_error("Every round must have at most 7 answers")
+            terminate_error(f"Every round must have at most 7 answers, {line} has {len(line)//2}")
+
         round_data = []
         for i in range(0, len(line), 2):
             round_answer = line[i]
+
+            # Check if the answer is valid
             if len(round_answer) > 16:
-                terminate_error(f"Answer {round_answer} is too long")
+                terminate_error(f"Answer {round_answer} at line {i-1} is too long")
+
+            # Check if the  is valid
             points = line[i + 1]
             if not points.isdigit() or int(points) not in range(100):
-                terminate_error(f"Points {points} are not valid")
-            round_data.append([round_answer, points, True])
+                print(line[i])
+                terminate_error(f"Points {points} at line {j+1} are not valid")
+
+            round_data.append([round_answer.lower(), points, True])
         game1.answers.append(round_data)
 
     # Sort answers by points
@@ -181,7 +95,6 @@ with open(filename, "r+") as f:
             answer_numbers.append(answer[1])
         f.write(",".join(answer_numbers) + "\n")
 
-    f.close()
 
 # Create the window, saving it to a variable.
 pygame.init()
@@ -194,8 +107,8 @@ pygame.display.set_icon(programIcon)
 window1 = tkinter.Tk()
 window1.title("Familiada - reżyserka")
 window1.iconbitmap("familiada.ico")
-window1.geometry("400x200")
-window1.configure(background="#f0f0f0")
+window1.geometry("400x400")
+style = ttk.Style(window1)
 window1.protocol("WM_DELETE_WINDOW", lambda: exit_app(window1))
 
 # Create SFX tab
@@ -215,23 +128,57 @@ labelPassword.pack()
 inputPassword = tkinter.Entry(tab1)
 inputPassword.pack()
 
-button = tkinter.Button(tab1, text="Go", command=lambda: pygame.mixer.Sound.play(ending_music))
+button = tkinter.Button(tab1, text="Go", command=pygame.mixer.Sound.play)
 button.pack()
 
 # Create a tab for every round
 for i, round_answers in enumerate(game1.answers):
     tab = ttk.Frame(tabControl)
-    round_button = tkinter.Button(tab, text="Inicjalizuj runde", command=lambda round=i: game1.round_init(round))
-    round_button.pack()
+    round_button = tkinter.Button(tab, text="Zacznij runde", command=lambda round=i: game1.round_init(round))
+    round_button.grid(row=0, column=1)
+    l_won_button = tkinter.Button(tab, text="Lewa Wygrywa runde", command=lambda: game1.set_current_winner("L"))
+    l_won_button.grid(row=1, column=0)
+    r_won_button = tkinter.Button(tab, text="Prawa Wygrywa runde", command=lambda: game1.set_current_winner("P"))
+    r_won_button.grid(row=1, column=2)
+    l_strike_button = tkinter.Button(tab, text="Duża utrata Lewa", command=lambda: game1.big_strike("L"))
+    r_strike_button = tkinter.Button(tab, text="Duża utrata Prawa", command=lambda: game1.big_strike("R"))
+    l_strike_button.grid(row=2, column=0)
+    r_strike_button.grid(row=2, column=2)
+    l_strike_button1 = tkinter.Button(tab, text="Utrata Lewa", command=lambda: game1.small_strike("L"))
+    r_strike_button1 = tkinter.Button(tab, text="Utrata Prawa", command=lambda: game1.small_strike("R"))
+    l_strike_button1.grid(row=3, column=0)
+    r_strike_button1.grid(row=3, column=2)
 
     # Add buttons for every answer
     for j, answer_dict in enumerate(round_answers):
         answer = answer_dict[0].ljust(16)
         points = answer_dict[1].rjust(2)
         answer_text = f"{answer} {points}"
-        answer_button = tkinter.Button(tab, text=answer_text, command=lambda round=i, answer=j: game1.print_answer(round, answer))
-        answer_button.pack()
+        answer_button = tkinter.Button(tab, text=answer_text, command=lambda round=i, answer=j: game1.show_answer(round, answer))
+        answer_button.grid(row=j + 2, column=1)
     tabControl.add(tab, text="Round" + str(i + 1))
+
+# Create a tab for showing team scores
+score_tab = ttk.Frame(tabControl)
+score_button = tkinter.Button(score_tab, text="Pokaż wyniki", command=game1.show_scores)
+score_button.pack()
+
+final_tab = ttk.Frame(tabControl)
+for w in range(5):
+    for t in range(2):
+        input_answer = tkinter.Entry(final_tab)
+        input_points = tkinter.Entry(final_tab)
+        final_button = tkinter.Button(final_tab, text="Wyświetl", command=lambda answer_txt=input_answer, point_txt=input_points: game1.show_final_answer(answer_txt, point_txt))
+        input_answer.grid(row=w + 1, column=t * 3)
+        input_points.grid(row=w + 1, column=t * 3 + 1)
+        final_button.grid(row=w + 1, column=t * 3 + 2)
+init_final_buttplug = tkinter.Button(final_tab, text="Zacznij finał", command=game1.init_final_round)
+init_final_buttplug.grid(row=0, column=2)
+tabControl.add(final_tab, text="Finał")
+
+
+tabControl.add(score_tab, text="Punktacja")
+tabControl.pack(expand=1, fill="both")
 
 tabControl.add(tab1, text="SFX")
 tabControl.pack(expand=1, fill="both")
@@ -263,11 +210,11 @@ while True:
     rectangle_dimensions = (game1.stroke, game1.stroke, rectangle_width, rectangle_height)
     pygame.draw.rect(surface, rectangle_rgb, rectangle_dimensions)
 
-    # Anti-bug max
-    letter_height = max(round(block_height * 0.75), 2)
+    # Anti-bug maxx
+    font_height = max(round(block_height * 0.75), 2)
 
     # Set the font
-    myfont = pygame.font.Font("familiada.ttf", letter_height)
+    myfont = pygame.font.Font("familiada.ttf", font_height)
 
     # Draw black rectangles & letters on the surface.
     for i in range(10):
@@ -278,7 +225,7 @@ while True:
             rectangle_rgb = (0, 0, 0)
             rectangle_dimensions = (pos_x, pos_y, block_width, block_height)
             pygame.draw.rect(surface, rectangle_rgb, rectangle_dimensions)
-            surface.blit(label, (pos_x + block_width * 0.146, pos_y + block_height / 2 - letter_height / 2))
+            surface.blit(label, (pos_x + block_width * 0.146, pos_y + block_height / 2 - font_height / 2))
 
     # Refresh both windows
     pygame.display.update()
