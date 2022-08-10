@@ -207,7 +207,7 @@ class Blackboard:
         answer = str(answer_input.get())
         points = str(point_input.get())
         answer = answer.lower()
-        if len(answer) > 11 or len(points) > 2 or points.isdigit() == False:
+        if len(answer) > 11 or len(points) > 2 or points.isdigit() is False:
             return
 
         if col:
