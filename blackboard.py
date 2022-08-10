@@ -118,6 +118,7 @@ class Blackboard:
         if self.current_round != round_number:
             self.round_init(round_number)
 
+        # Write the answer
         self.round_score = int(self.answers[round_number][answer_number][1]) + self.round_score
         no_answers, row_coords = self.calculate_coords(round_number)
         answer_text = str(self.answers[round_number][answer_number][0])
@@ -125,6 +126,7 @@ class Blackboard:
         self.write_hor(answer_text.ljust(16), row_coords + answer_number, 6)
         self.write_hor(answer_points.rjust(2), row_coords + answer_number, 23)
         self.write_hor(str(self.round_score).rjust(3), row_coords + no_answers + 1, 22)
+
         pygame.mixer.Sound.play(correct_sound)
 
         # Set the answer as printed
@@ -181,10 +183,9 @@ class Blackboard:
     # Draw a small x on the blackboard for a selected team and play a sound
     def small_strike(self, team):
 
-        current_strikes = self.strike[team]
-
         if team not in ("L", "R"):
             self.incorrect_team()
+        current_strikes = self.strike[team]
 
         # Determine the row of the small x to be drawn
         if current_strikes not in (0, 1, 2):
@@ -201,9 +202,15 @@ class Blackboard:
         pygame.mixer.Sound.play(wrong_sound)
 
     def show_final_answer(self, answer_input, point_input, row, col):
+        answer = answer_input.get()
+        points = point_input.get()
+        output_str = f"{answer.ljust(11)} {points}"
+        if col == 1:
+            output_str = f"{points} {answer.rjust(12)}"
         print("tu twoja funkcja się wywołuje do wpisywania odpowiedzi z rundy finałowej")
-        print("Odpowiedz: " + answer_input.get())
-        print("Punkty: " + point_input.get())
+        self.write_hor(output_str, row+1, col*16)
+        print("Odpowiedz: " + answer)
+        print("Punkty: " + points)
         # corrections, adding the final card and buttons to handle, start working on the function of displaying the answers from the final,
         #  correct the symbol of the small loss to a more acurate one, but by doing so, the large loss should be corrected; the function from the answers
         #  in the final should be finished writing; the font should be coded from large numbers and the large title caption should be coded
