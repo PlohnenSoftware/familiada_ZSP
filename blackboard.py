@@ -31,7 +31,6 @@ class Blackboard:
         self.winning_team = "L"
         self.strike_to_x = {0: 7, 1: 4, 2: 1}
 
-
     @staticmethod
     def incorrect_team():
         raise ValueError("Team must be either 'L' or 'R'")
@@ -212,8 +211,8 @@ class Blackboard:
 
         if self.answers_shown_final[col][row]:
             return
-        else: self.answers_shown_final[col][row] = True
-
+        else:
+            self.answers_shown_final[col][row] = True
 
         if len(answer) > 11 or len(points) > 2 or points.isdigit() is False:
             return
