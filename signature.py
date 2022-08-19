@@ -6,9 +6,8 @@ def euclid(m, n):
 
     if n == 0:
         return m
-    else:
-        r = m % n
-        return euclid(n, r)
+    r = m % n
+    return euclid(n, r)
 
 
 # Program to find
