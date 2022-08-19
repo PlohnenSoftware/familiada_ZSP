@@ -15,8 +15,7 @@ def check_date():
         day_diff = (today - license_date).days
         if -1 < day_diff < 15:
             return "Success"
-        else:
-            return "Date Expired"
+        return "Date Expired"
     # except Exception as e:
     #     raise e
     #     return "Invalid file"
