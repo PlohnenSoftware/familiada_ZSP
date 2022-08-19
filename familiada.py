@@ -4,6 +4,7 @@ import tkinter
 import os
 from tkinter import messagebox, ttk, filedialog
 from blackboard import Blackboard as Bb
+from auth import check_date
 
 # The program provides a graphical interface for the game Familiada.
 
@@ -14,9 +15,6 @@ from blackboard import Blackboard as Bb
 # Currently all gui texts are written in Polish.
 
 # Blackboard class containing the matrix object used to draw characters on the screen
-
-# Initialize the main game object
-game1 = Bb(20)
 
 # Safely exit the program
 def exit_app(tkwindow):
@@ -30,6 +28,16 @@ def terminate_error(error_description):
     if messagebox.showerror("FAMILIADA ERROR", error_description):
         sys.exit()
 
+
+auth_result = check_date()
+
+if auth_result == "Date Expired":
+    terminate_error("Licencja wygasła")
+elif auth_result == "Invalid file":
+    terminate_error("Nieprawidłowy plik")
+
+# Initialize the main game object
+game1 = Bb(20)
 
 # Read data from the disk
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -134,20 +142,21 @@ button.pack()
 # Create a tab for every round
 for i, round_answers in enumerate(game1.answers):
     tab = ttk.Frame(tabControl)
+    tab.grid_columnconfigure((0, 4), weight=1)
     round_button = tkinter.Button(tab, text="Zacznij runde", command=lambda round=i: game1.round_init(round))
-    round_button.grid(row=0, column=1)
+    round_button.grid(row=0, column=2, sticky="ew")
     l_won_button = tkinter.Button(tab, text="Lewa Wygrywa runde", command=lambda: game1.set_current_winner("L"))
-    l_won_button.grid(row=1, column=0)
-    r_won_button = tkinter.Button(tab, text="Prawa Wygrywa runde", command=lambda: game1.set_current_winner("P"))
-    r_won_button.grid(row=1, column=2)
+    l_won_button.grid(row=1, column=1, sticky="ew")
+    r_won_button = tkinter.Button(tab, text="Prawa Wygrywa runde", command=lambda: game1.set_current_winner("R"))
+    r_won_button.grid(row=1, column=3, sticky="ew")
     l_strike_button = tkinter.Button(tab, text="Duża utrata Lewa", command=lambda: game1.big_strike("L"))
     r_strike_button = tkinter.Button(tab, text="Duża utrata Prawa", command=lambda: game1.big_strike("R"))
-    l_strike_button.grid(row=2, column=0)
-    r_strike_button.grid(row=2, column=2)
+    l_strike_button.grid(row=2, column=1, sticky="ew")
+    r_strike_button.grid(row=2, column=3, sticky="ew")
     l_strike_button1 = tkinter.Button(tab, text="Utrata Lewa", command=lambda: game1.small_strike("L"))
     r_strike_button1 = tkinter.Button(tab, text="Utrata Prawa", command=lambda: game1.small_strike("R"))
-    l_strike_button1.grid(row=3, column=0)
-    r_strike_button1.grid(row=3, column=2)
+    l_strike_button1.grid(row=3, column=1, sticky="ew")
+    r_strike_button1.grid(row=3, column=3, sticky="ew")
 
     # Add buttons for every answer
     for j, answer_dict in enumerate(round_answers):
@@ -155,7 +164,7 @@ for i, round_answers in enumerate(game1.answers):
         points = answer_dict[1].rjust(2)
         answer_text = f"{answer} {points}"
         answer_button = tkinter.Button(tab, text=answer_text, command=lambda round=i, answer=j: game1.show_answer(round, answer))
-        answer_button.grid(row=j + 2, column=1)
+        answer_button.grid(row=j + 2, column=2, sticky="ew")
     tabControl.add(tab, text="Round" + str(i + 1))
 
 # Create a tab for showing team scores
@@ -168,7 +177,7 @@ for w in range(5):
     for t in range(2):
         input_answer = tkinter.Entry(final_tab)
         input_points = tkinter.Entry(final_tab)
-        final_button = tkinter.Button(final_tab, text="Wyświetl", command=lambda answer_txt=input_answer, point_txt=input_points: game1.show_final_answer(answer_txt, point_txt))
+        final_button = tkinter.Button(final_tab, text="Wyświetl", command=lambda r=w, c=t, answer_txt=input_answer, point_txt=input_points: game1.show_final_answer(answer_txt, point_txt, r, c))
         input_answer.grid(row=w + 1, column=t * 3)
         input_points.grid(row=w + 1, column=t * 3 + 1)
         final_button.grid(row=w + 1, column=t * 3 + 2)
