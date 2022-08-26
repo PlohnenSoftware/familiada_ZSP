@@ -29,12 +29,12 @@ def terminate_error(error_description):
         sys.exit()
 
 
-auth_result = check_date()
+# auth_result = check_date()
 
-if auth_result == "Date Expired":
-    terminate_error("Licencja wygasła")
-elif auth_result == "Invalid file":
-    terminate_error("Nieprawidłowy plik")
+# if auth_result == "Date Expired":
+#     terminate_error("Licencja wygasła")
+# elif auth_result == "Invalid file":
+#     terminate_error("Nieprawidłowy plik")
 
 # Initialize the main game object
 game1 = Bb(20)
