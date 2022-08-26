@@ -142,20 +142,21 @@ button.pack()
 # Create a tab for every round
 for i, round_answers in enumerate(game1.answers):
     tab = ttk.Frame(tabControl)
+    tab.grid_columnconfigure((0, 4), weight=1)
     round_button = tkinter.Button(tab, text="Zacznij runde", command=lambda round=i: game1.round_init(round))
-    round_button.grid(row=0, column=1)
+    round_button.grid(row=0, column=2, sticky="ew")
     l_won_button = tkinter.Button(tab, text="Lewa Wygrywa runde", command=lambda: game1.set_current_winner("L"))
-    l_won_button.grid(row=1, column=0)
+    l_won_button.grid(row=1, column=1, sticky="ew")
     r_won_button = tkinter.Button(tab, text="Prawa Wygrywa runde", command=lambda: game1.set_current_winner("R"))
-    r_won_button.grid(row=1, column=2)
+    r_won_button.grid(row=1, column=3, sticky="ew")
     l_strike_button = tkinter.Button(tab, text="Duża utrata Lewa", command=lambda: game1.big_strike("L"))
     r_strike_button = tkinter.Button(tab, text="Duża utrata Prawa", command=lambda: game1.big_strike("R"))
-    l_strike_button.grid(row=2, column=0)
-    r_strike_button.grid(row=2, column=2)
+    l_strike_button.grid(row=2, column=1, sticky="ew")
+    r_strike_button.grid(row=2, column=3, sticky="ew")
     l_strike_button1 = tkinter.Button(tab, text="Utrata Lewa", command=lambda: game1.small_strike("L"))
     r_strike_button1 = tkinter.Button(tab, text="Utrata Prawa", command=lambda: game1.small_strike("R"))
-    l_strike_button1.grid(row=3, column=0)
-    r_strike_button1.grid(row=3, column=2)
+    l_strike_button1.grid(row=3, column=1, sticky="ew")
+    r_strike_button1.grid(row=3, column=3, sticky="ew")
 
     # Add buttons for every answer
     for j, answer_dict in enumerate(round_answers):
@@ -163,7 +164,7 @@ for i, round_answers in enumerate(game1.answers):
         points = answer_dict[1].rjust(2)
         answer_text = f"{answer} {points}"
         answer_button = tkinter.Button(tab, text=answer_text, command=lambda round=i, answer=j: game1.show_answer(round, answer))
-        answer_button.grid(row=j + 2, column=1)
+        answer_button.grid(row=j + 2, column=2, sticky="ew")
     tabControl.add(tab, text="Round" + str(i + 1))
 
 # Create a tab for showing team scores
