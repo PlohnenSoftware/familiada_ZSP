@@ -31,13 +31,13 @@ class Blackboard:
         self.strike = {"L": 5, "R": 5}
         self.round_score = 0
         self.row_for_strike = {0: 7, 1: 4, 2: 1}
-  
-  #CHECK IF TEAM INPUT IS CORRECT
+
+    # CHECK IF TEAM INPUT IS CORRECT
     def check_team_input(self, team):
         if team not in ("L", "R"):
             raise ValueError("Team must be either 'L' or 'R'")
-    
-    #change the team thaht is winner of the roud
+
+    # change the team thaht is winner of the roud
     def change_winner(self):
         self.check_team_input(self.round_winner)
         if self.round_winner == "L":
@@ -49,7 +49,6 @@ class Blackboard:
         if self.round_winner != "":
             self.score[self.round_winner] += self.round_score
             self.round_score = 0
-
 
     # Write a word horizontally to the matrix
     def write_hor(self, word, start_row, start_col):
@@ -147,7 +146,7 @@ class Blackboard:
 
         # Set the answer as printed
         self.answers[round_number][answer_number][2] = self.was_good_answer = True
-        
+
     def init_final_round(self):
         self.fill()
         self.round_winner = ""
@@ -252,19 +251,20 @@ class Blackboard:
 
         Delay(2, show_score_for_answer).start()
 
-    def set_strating_team(self,team_signature):
+    def set_strating_team(self, team_signature):
         self.check_team_input(team_signature)
         if self.round_winner != "":
             return
-        self.round_winner= self.faster = team_signature
-        
-    def incorrect_answer(self,team_signature):
+        self.round_winner = self.faster = team_signature
+
+    def incorrect_answer(self, team_signature):
         self.check_team_input(team_signature)
         if self.was_good_answer and self.faster == team_signature:
             self.small_strike(team_signature)
         else:
             self.big_strike(team_signature)
-            
+
+
 # corrections, adding the final card and buttons to handle, start working on the function of displaying the answers from the final,
 #  correct the symbol of the small loss to a more acurate one, but by doing so, the large loss should be corrected; the function from the answers
 #  in the final should be finished writing; the font should be coded from large numbers and the large title caption should be coded
