@@ -21,19 +21,35 @@ class Blackboard:
         self.answers = []
         self.round_score = 0
         self.current_round = -1
-        self.chance_reset_allowed = False
         self.answers_shown_final = [[True for _ in range(5)] for _ in range(2)]
+        self.was_good_answer = False
+        self.round_winner = ""
+        self.faster = ""
 
         # Initialize team scores
         self.score = {"L": 0, "R": 0}
         self.strike = {"L": 5, "R": 5}
         self.round_score = 0
-        self.winning_team = "L"
-        self.strike_to_x = {0: 7, 1: 4, 2: 1}
+        self.row_for_strike = {0: 7, 1: 4, 2: 1}
+  
+  #CHECK IF TEAM INPUT IS CORRECT
+    def check_team_input(self, team):
+        if team not in ("L", "R"):
+            raise ValueError("Team must be either 'L' or 'R'")
+    
+    #change the team thaht is winner of the roud
+    def change_winner(self):
+        self.check_team_input(self.round_winner)
+        if self.round_winner == "L":
+            self.round_winner = "R"
+        else:
+            self.round_winner = "L"
 
-    @staticmethod
-    def incorrect_team():
-        raise ValueError("Team must be either 'L' or 'R'")
+    def add_score(self):
+        if self.round_winner != "":
+            self.score[self.round_winner] += self.round_score
+            self.round_score = 0
+
 
     # Write a word horizontally to the matrix
     def write_hor(self, word, start_row, start_col):
@@ -77,15 +93,14 @@ class Blackboard:
         row_coords = 1 + max(floor((6 - no_answers) / 2), 0)
         return no_answers, row_coords
 
-    def add_score(self):
-        self.score[self.winning_team] += self.round_score
-
     # Initialize the round printing a blank blackboard
     def round_init(self, round_number):
         self.add_score()
         self.chance_reset_allowed = True
-        self.round_score = 0
+        self.round_winner = ""
         self.strike = {"L": 0, "R": 0}
+        self.faster = ""
+        self.was_good_answer = False
         self.fill()
         self.current_round = round_number
         no_answers, row_coords = self.calculate_coords(round_number)
@@ -131,10 +146,11 @@ class Blackboard:
         pygame.mixer.Sound.play(correct_sound)
 
         # Set the answer as printed
-        self.answers[round_number][answer_number][2] = True
-
+        self.answers[round_number][answer_number][2] = self.was_good_answer = True
+        
     def init_final_round(self):
         self.fill()
+        self.round_winner = ""
         self.round_score = 0
         self.write_hor("suma   0", 8, 10)
         for k in range(1, 6):
@@ -155,9 +171,6 @@ class Blackboard:
         self.write_hor(l_score_str, 5, 11 - l_len)
         self.write_hor(r_score_str, 5, 15 + r_len)
 
-    def set_current_winner(self, winner):
-        self.winning_team = winner
-
     # Function that clears all printed X from blackboard
     def clear_x(self):
         for i in range(10):
@@ -168,9 +181,8 @@ class Blackboard:
 
     # Draw a big x on the blackboard for a selected team and play a sound
     def big_strike(self, team):
-        if team not in ("L", "R"):
-            self.incorrect_team()
-
+        self.check_team_input(team)
+        self.change_winner()
         if team == "L" and self.strike["L"] == 0:
             self.draw_gross_x(3, 0)
             self.strike["L"] = 4
@@ -179,21 +191,20 @@ class Blackboard:
             self.draw_gross_x(3, 26)
             self.strike["R"] = 4
             pygame.mixer.Sound.play(wrong_sound)
-        if self.strike["L"] == 4 and self.strike["R"] == 4 and self.chance_reset_allowed:
+        if self.strike["L"] == 4 and self.strike["R"] == 4:
             Delay(10, self.clear_x).start()
             self.chance_reset_allowed = False
 
     # Draw a small x on the blackboard for a selected team and play a sound
     def small_strike(self, team):
 
-        if team not in ("L", "R"):
-            self.incorrect_team()
+        self.check_team_input(team)
         current_strikes = self.strike[team]
 
         # Determine the row of the small x to be drawn
         if current_strikes not in (0, 1, 2):
             return
-        y = self.strike_to_x[current_strikes]
+        y = self.row_for_strike[current_strikes]
 
         if team == "L":
             self.draw_small_x(y, 0)
@@ -201,6 +212,9 @@ class Blackboard:
             self.draw_small_x(y, 26)
 
         self.strike[team] = current_strikes + 1
+
+        if current_strikes == 2:
+            self.change_winner()
 
         pygame.mixer.Sound.play(wrong_sound)
 
@@ -226,7 +240,7 @@ class Blackboard:
 
         self.write_hor(answer_str, row + 1, col * 15)
 
-        def show_score():
+        def show_score_for_answer():
             self.write_hor(output_str, row + 1, col * 15)
             if int(points) > 0:
                 self.round_score += int(points)
@@ -236,8 +250,21 @@ class Blackboard:
             else:
                 pygame.mixer.Sound.play(wrong_sound)
 
-        Delay(2, show_score).start()
+        Delay(2, show_score_for_answer).start()
 
-        # corrections, adding the final card and buttons to handle, start working on the function of displaying the answers from the final,
-        #  correct the symbol of the small loss to a more acurate one, but by doing so, the large loss should be corrected; the function from the answers
-        #  in the final should be finished writing; the font should be coded from large numbers and the large title caption should be coded
+    def set_strating_team(self,team_signature):
+        self.check_team_input(team_signature)
+        if self.round_winner != "":
+            return
+        self.round_winner= self.faster = team_signature
+        
+    def incorrect_answer(self,team_signature):
+        self.check_team_input(team_signature)
+        if self.was_good_answer and self.faster == team_signature:
+            self.small_strike(team_signature)
+        else:
+            self.big_strike(team_signature)
+            
+# corrections, adding the final card and buttons to handle, start working on the function of displaying the answers from the final,
+#  correct the symbol of the small loss to a more acurate one, but by doing so, the large loss should be corrected; the function from the answers
+#  in the final should be finished writing; the font should be coded from large numbers and the large title caption should be coded
