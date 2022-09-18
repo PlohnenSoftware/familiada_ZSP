@@ -26,7 +26,8 @@ def exit_app(tkwindow):
 def terminate_error(error_description):
     if messagebox.showerror("FAMILIADA ERROR", error_description):
         sys.exit()
-        
+
+
 # Initialize the main game object
 game1 = Bb(20)
 
