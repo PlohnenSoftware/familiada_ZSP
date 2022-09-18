@@ -26,8 +26,7 @@ def exit_app(tkwindow):
 def terminate_error(error_description):
     if messagebox.showerror("FAMILIADA ERROR", error_description):
         sys.exit()
-
-
+        
 # Initialize the main game object
 game1 = Bb(20)
 
@@ -137,9 +136,9 @@ for i, round_answers in enumerate(game1.answers):
     tab.grid_columnconfigure((0, 4), weight=1)
     round_button = tkinter.Button(tab, text="Zacznij runde", command=lambda round=i: game1.round_init(round))
     round_button.grid(row=0, column=2, sticky="ew")
-    l_start_button = tkinter.Button(tab, text="Lewa pierwsza naciska przycisk", command=lambda: game1.set_strating_team("L"))
+    l_start_button = tkinter.Button(tab, text="Lewa pierwsza naciska przycisk", command=lambda: game1.set_starting_team("L"))
     l_start_button.grid(row=1, column=1, sticky="ew")
-    r_start_button = tkinter.Button(tab, text="Prawa pierwsza naciska przycisk", command=lambda: game1.set_strating_team("R"))
+    r_start_button = tkinter.Button(tab, text="Prawa pierwsza naciska przycisk", command=lambda: game1.set_starting_team("R"))
     r_start_button.grid(row=1, column=3, sticky="ew")
     l_strike_button = tkinter.Button(tab, text="Błąd Lewa", command=lambda: game1.incorrect_answer("L"))
     r_strike_button = tkinter.Button(tab, text="Błąd Prawa", command=lambda: game1.incorrect_answer("R"))
