@@ -80,10 +80,9 @@ class Blackboard:
 
     # Print a big x on selected row and column
     def draw_gross_x(self, start_row, start_col):
-        self.draw_small_x(start_row + 1, start_col)
-        for j in range(2):
-            for i in range(2):
-                self.write_hor("#", start_row + j * 4, start_col + i * 2)
+        self.write_ver("DF CE", start_row, start_col)
+        self.write_ver("CE DF", start_row, start_col + 2)
+        self.write_hor("I", start_row + 2, start_col + 1)
 
     def calculate_coords(self, round_number) -> tuple:
         # Get and set some parameters of the round
@@ -196,7 +195,7 @@ class Blackboard:
             self.strike["R"] = 4
             pygame.mixer.Sound.play(wrong_sound)
         if self.strike["L"] == 4 and self.strike["R"] == 4:
-            Delay(10, self.clear_x).start()
+            Delay(5, self.clear_x).start()
             self.chance_reset_allowed = False
 
     # Draw a small x on the blackboard for a selected team and play a sound
