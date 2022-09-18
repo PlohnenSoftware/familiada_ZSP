@@ -28,8 +28,6 @@ def terminate_error(error_description):
         sys.exit()
 
 
-
-
 # Initialize the main game object
 game1 = Bb(20)
 
