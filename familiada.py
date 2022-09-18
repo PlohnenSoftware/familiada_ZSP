@@ -36,13 +36,13 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 # lepiej zrobić pulpit na start, do finalnej wersji bo jak sie d exe spakuje to wywala do jakiegoś folderu temp,
 # gdzie jest interpreter pythona przenosny z Pyinstallera current_dir=os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop')
 
-filename = filedialog.askopenfilename(initialdir=current_dir, title="Select a file", filetypes=(("csv files", "*.csv"), ("all files", "*.*")))
+filename = filedialog.askopenfilename(initialdir=current_dir, title="Wybierz plik z danymi", filetypes=(("csv files", "*.csv"), ("all files", "*.*")))
 
 if filename == "":
-    terminate_error("No file selected")
+    terminate_error("Nie wybrano pliku")
 
 if filename[-4:] != ".csv":
-    terminate_error("Wrong file format, the file must be a .csv")
+    terminate_error("Zly format pliku, musi to byc .csv")
 
 # Create a list containing tuples of answers and points for every round
 with open(filename, "r+") as f:
