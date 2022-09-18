@@ -4,7 +4,6 @@ import tkinter
 import os
 from tkinter import messagebox, ttk, filedialog
 from blackboard import Blackboard as Bb
-from auth import check_date
 
 # The program provides a graphical interface for the game Familiada.
 
@@ -29,12 +28,7 @@ def terminate_error(error_description):
         sys.exit()
 
 
-# auth_result = check_date()
 
-# if auth_result == "Date Expired":
-#     terminate_error("Licencja wygasła")
-# elif auth_result == "Invalid file":
-#     terminate_error("Nieprawidłowy plik")
 
 # Initialize the main game object
 game1 = Bb(20)
