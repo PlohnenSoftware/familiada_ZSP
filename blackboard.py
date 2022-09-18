@@ -22,9 +22,9 @@ class Blackboard:
         self.round_score = 0
         self.current_round = -1
         self.answers_shown_final = [[True for _ in range(5)] for _ in range(2)]
-        self.was_good_answer = False
+        self.correct_answer = False
         self.round_winner = ""
-        self.faster = ""
+        self.faster_team = ""
 
         # Initialize team scores
         self.score = {"L": 0, "R": 0}
@@ -36,7 +36,7 @@ class Blackboard:
     @staticmethod
     def check_team_input(team):
         if team not in ("L", "R"):
-            raise ValueError("Team must be either 'L' or 'R'")
+            raise ValueError("A team must be either 'L' or 'R'")
 
     # change the team thaht is winner of the roud
     def change_winner(self):
@@ -99,8 +99,8 @@ class Blackboard:
         self.chance_reset_allowed = True
         self.round_winner = ""
         self.strike = {"L": 0, "R": 0}
-        self.faster = ""
-        self.was_good_answer = False
+        self.faster_team = ""
+        self.correct_answer = False
         self.fill()
         self.current_round = round_number
         no_answers, row_coords = self.calculate_coords(round_number)
@@ -146,7 +146,7 @@ class Blackboard:
         pygame.mixer.Sound.play(correct_sound)
 
         # Set the answer as printed
-        self.answers[round_number][answer_number][2] = self.was_good_answer = True
+        self.answers[round_number][answer_number][2] = self.correct_answer = True
 
     def init_final_round(self):
         self.fill()
@@ -252,15 +252,15 @@ class Blackboard:
 
         Delay(2, show_score_for_answer).start()
 
-    def set_strating_team(self, team_signature):
+    def set_starting_team(self, team_signature):
         self.check_team_input(team_signature)
         if self.round_winner != "":
             return
-        self.round_winner = self.faster = team_signature
+        self.round_winner = self.faster_team = team_signature
 
     def incorrect_answer(self, team_signature):
         self.check_team_input(team_signature)
-        if self.was_good_answer and self.faster == team_signature:
+        if self.correct_answer and self.faster_team == team_signature:
             self.small_strike(team_signature)
         else:
             self.big_strike(team_signature)
