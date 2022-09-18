@@ -33,7 +33,8 @@ class Blackboard:
         self.row_for_strike = {0: 7, 1: 4, 2: 1}
 
     # CHECK IF TEAM INPUT IS CORRECT
-    def check_team_input(self, team):
+    @staticmethod
+    def check_team_input(team):
         if team not in ("L", "R"):
             raise ValueError("Team must be either 'L' or 'R'")
 
