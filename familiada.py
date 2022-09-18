@@ -145,18 +145,14 @@ for i, round_answers in enumerate(game1.answers):
     tab.grid_columnconfigure((0, 4), weight=1)
     round_button = tkinter.Button(tab, text="Zacznij runde", command=lambda round=i: game1.round_init(round))
     round_button.grid(row=0, column=2, sticky="ew")
-    l_won_button = tkinter.Button(tab, text="Lewa Wygrywa runde", command=lambda: game1.set_current_winner("L"))
-    l_won_button.grid(row=1, column=1, sticky="ew")
-    r_won_button = tkinter.Button(tab, text="Prawa Wygrywa runde", command=lambda: game1.set_current_winner("R"))
-    r_won_button.grid(row=1, column=3, sticky="ew")
-    l_strike_button = tkinter.Button(tab, text="Duża utrata Lewa", command=lambda: game1.big_strike("L"))
-    r_strike_button = tkinter.Button(tab, text="Duża utrata Prawa", command=lambda: game1.big_strike("R"))
+    l_start_button = tkinter.Button(tab, text="Lewa pierwsza naciska przycisk", command=lambda: game1.set_strating_team("L"))
+    l_start_button.grid(row=1, column=1, sticky="ew")
+    r_start_button = tkinter.Button(tab, text="Prawa pierwsza naciska przycisk", command=lambda: game1.set_strating_team("R"))
+    r_start_button.grid(row=1, column=3, sticky="ew")
+    l_strike_button = tkinter.Button(tab, text="Błąd Lewa", command=lambda: game1.incorrect_answer("L"))
+    r_strike_button = tkinter.Button(tab, text="Błąd Prawa", command=lambda: game1.incorrect_answer("R"))
     l_strike_button.grid(row=2, column=1, sticky="ew")
     r_strike_button.grid(row=2, column=3, sticky="ew")
-    l_strike_button1 = tkinter.Button(tab, text="Utrata Lewa", command=lambda: game1.small_strike("L"))
-    r_strike_button1 = tkinter.Button(tab, text="Utrata Prawa", command=lambda: game1.small_strike("R"))
-    l_strike_button1.grid(row=3, column=1, sticky="ew")
-    r_strike_button1.grid(row=3, column=3, sticky="ew")
 
     # Add buttons for every answer
     for j, answer_dict in enumerate(round_answers):
@@ -171,6 +167,7 @@ for i, round_answers in enumerate(game1.answers):
 score_tab = ttk.Frame(tabControl)
 score_button = tkinter.Button(score_tab, text="Pokaż wyniki", command=game1.show_scores)
 score_button.pack()
+tabControl.add(score_tab, text="Punktacja")
 
 final_tab = ttk.Frame(tabControl)
 for w in range(5):
@@ -186,16 +183,13 @@ init_final_buttplug.grid(row=0, column=2)
 tabControl.add(final_tab, text="Finał")
 
 
-tabControl.add(score_tab, text="Punktacja")
-tabControl.pack(expand=1, fill="both")
-
 tabControl.add(tab1, text="SFX")
 tabControl.pack(expand=1, fill="both")
 
 
 while True:
     surface.fill((0, 0, 255))
-
+    game1.write_hor(game1.round_winner.lower(), 0, 0)
     # Determine responsive width and height of the rectangles
     if surface.get_width() < surface.get_height() * (192 / 108):
         block_width = (surface.get_width() - 125 - (28 * 2)) / 29
