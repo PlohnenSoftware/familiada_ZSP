@@ -10,7 +10,7 @@ wrong_sound = pygame.mixer.Sound("sfx/incorrect.wav")
 dubel_sound = pygame.mixer.Sound("sfx/dubel.wav")
 bravo_sound = pygame.mixer.Sound("sfx/bravo.wav")
 write_sound = pygame.mixer.Sound("sfx/write.wav")
-ending_music = pygame.mixer.Sound("sfx/final_ending.flac")
+pygame.mixer.music.load("sfx/final_ending.flac")
 intro_music = pygame.mixer.Sound("sfx/show_music.flac")
 
 
