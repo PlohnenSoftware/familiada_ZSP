@@ -226,14 +226,16 @@ class Blackboard:
         points = str(point_input.get())
         answer = answer.lower()
 
-         # Check if the answer is already printed
-        if self.answers_shown_final[col][row]:
-            return
-        self.answers_shown_final[col][row] = True
-
         # Check if inputs are valid
         if len(answer) > 11 or len(points) > 2 or points.isdigit() is False:
             return
+
+        # Check if the answer is already printed
+        if self.answers_shown_final[col][row]:
+            return
+
+        # Set answer as printed
+        self.answers_shown_final[col][row] = True
 
         if col:
             answer_str = f"@@ {answer.rjust(11)}"
