@@ -4,7 +4,7 @@ import tkinter
 import os
 from tkinter import messagebox, ttk, filedialog
 from blackboard import Blackboard as Bb
-from blackboard import dubel_sound,bravo_sound,intro_music
+from blackboard import dubel_sound, bravo_sound, intro_music
 
 # The program provides a graphical interface for the game Familiada.
 
@@ -112,7 +112,7 @@ window1.geometry("650x400")
 style = ttk.Style(window1)
 window1.protocol("WM_DELETE_WINDOW", lambda: exit_app(window1))
 
-#Create tab controler in the window1
+# Create tab controler in the window1
 tabControl = ttk.Notebook(window1)
 
 # Create a tab for every round
@@ -142,7 +142,7 @@ for i, round_answers in enumerate(game1.answers):
         answer_text = f"{answer} {points}"
         answer_button = tkinter.Button(round_tab, text=answer_text, command=lambda round=i, answer=j: game1.show_answer(round, answer))
         answer_button.grid(row=j + 2, column=2, sticky="ew")
-    tabControl.add(round_tab, text=f'Round {i + 1}')
+    tabControl.add(round_tab, text=f"Round {i + 1}")
 
 # Create a tab for showing team scores
 score_tab = ttk.Frame(tabControl)
@@ -164,7 +164,7 @@ for w in range(5):
 startfinal_button = tkinter.Button(final_tab, text="Zacznij finał", command=game1.init_final_round)
 startfinal_button.grid(row=0, column=2)
 
-doubled_answer = tkinter.Button(final_tab, text="Dubel", command=lambda:pygame.mixer.Sound.play(dubel_sound))
+doubled_answer = tkinter.Button(final_tab, text="Dubel", command=lambda: pygame.mixer.Sound.play(dubel_sound))
 doubled_answer.grid(row=7, column=2)
 
 tabControl.add(final_tab, text="Finał")
@@ -185,15 +185,15 @@ sfx_tab = ttk.Frame(tabControl)
 # inputPassword = tkinter.Entry(sfx_tab)
 # inputPassword.pack()
 
-button1 = tkinter.Button(sfx_tab, text="Brawa", command=lambda:pygame.mixer.Sound.play(bravo_sound))
+button1 = tkinter.Button(sfx_tab, text="Brawa", command=lambda: pygame.mixer.Sound.play(bravo_sound))
 button1.pack()
-button2 = tkinter.Button(sfx_tab, text="INTRO", command=lambda:pygame.mixer.Sound.play(intro_music))
+button2 = tkinter.Button(sfx_tab, text="INTRO", command=lambda: pygame.mixer.Sound.play(intro_music))
 button2.pack()
-button3 = tkinter.Button(sfx_tab, text="ENDING", command=lambda:pygame.mixer.music.play())
+button3 = tkinter.Button(sfx_tab, text="ENDING", command=lambda: pygame.mixer.music.play())
 button3.pack()
-button4 = tkinter.Button(sfx_tab, text="STOP", command=lambda:play_round_sound())
+button4 = tkinter.Button(sfx_tab, text="STOP", command=lambda: play_round_sound())
 button4.pack()
-button4 = tkinter.Button(sfx_tab, text="STOP", command=lambda:pygame.mixer.stop())
+button4 = tkinter.Button(sfx_tab, text="STOP", command=lambda: pygame.mixer.stop())
 button4.pack()
 
 tabControl.add(sfx_tab, text="SFX")
