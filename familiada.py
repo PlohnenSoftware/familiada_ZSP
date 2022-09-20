@@ -111,7 +111,7 @@ window1.geometry("650x400")
 style = ttk.Style(window1)
 window1.protocol("WM_DELETE_WINDOW", lambda: exit_app(window1))
 
-#Create tab controler in the window1
+# Create tab controler in the window1
 tabControl = ttk.Notebook(window1)
 
 # Create a tab for every round
@@ -141,7 +141,7 @@ for i, round_answers in enumerate(game1.answers):
         answer_text = f"{answer} {points}"
         answer_button = tkinter.Button(round_tab, text=answer_text, command=lambda round=i, answer=j: game1.show_answer(round, answer))
         answer_button.grid(row=j + 2, column=2, sticky="ew")
-    tabControl.add(round_tab, text=f'Round {i + 1}')
+    tabControl.add(round_tab, text=f"Round {i + 1}")
 
 # Create a tab for showing team scores
 score_tab = ttk.Frame(tabControl)
