@@ -107,43 +107,31 @@ pygame.display.set_icon(programIcon)
 window1 = tkinter.Tk()
 window1.title("Familiada - reżyserka")
 window1.iconbitmap("familiada.ico")
-window1.geometry("400x400")
+window1.geometry("650x400")
 style = ttk.Style(window1)
 window1.protocol("WM_DELETE_WINDOW", lambda: exit_app(window1))
 
-# Create SFX tab
+#Create tab controler in the window1
 tabControl = ttk.Notebook(window1)
-tab1 = ttk.Frame(tabControl)
-
-
-label = tkinter.Label(tab1, text="usernane")
-label.pack()
-
-inputUser = tkinter.Entry(tab1)
-inputUser.pack()
-
-labelPassword = tkinter.Label(tab1, text="Password")
-labelPassword.pack()
-
-inputPassword = tkinter.Entry(tab1)
-inputPassword.pack()
-
-button = tkinter.Button(tab1, text="Go", command=pygame.mixer.Sound.play)
-button.pack()
 
 # Create a tab for every round
 for i, round_answers in enumerate(game1.answers):
-    tab = ttk.Frame(tabControl)
-    tab.grid_columnconfigure((0, 4), weight=1)
-    round_button = tkinter.Button(tab, text="Zacznij runde", command=lambda round=i: game1.round_init(round))
+    round_tab = ttk.Frame(tabControl)
+    round_tab.grid_columnconfigure((0, 4), weight=1)
+
+    round_button = tkinter.Button(round_tab, text="Zacznij runde", command=lambda round=i: game1.round_init(round))
     round_button.grid(row=0, column=2, sticky="ew")
-    l_start_button = tkinter.Button(tab, text="Lewa pierwsza naciska przycisk", command=lambda: game1.set_starting_team("L"))
+
+    l_start_button = tkinter.Button(round_tab, text="Lewa pierwsza", command=lambda: game1.set_starting_team("L"))
     l_start_button.grid(row=1, column=1, sticky="ew")
-    r_start_button = tkinter.Button(tab, text="Prawa pierwsza naciska przycisk", command=lambda: game1.set_starting_team("R"))
+
+    r_start_button = tkinter.Button(round_tab, text="Prawa pierwsza", command=lambda: game1.set_starting_team("R"))
     r_start_button.grid(row=1, column=3, sticky="ew")
-    l_strike_button = tkinter.Button(tab, text="Błąd Lewa", command=lambda: game1.incorrect_answer("L"))
-    r_strike_button = tkinter.Button(tab, text="Błąd Prawa", command=lambda: game1.incorrect_answer("R"))
+
+    l_strike_button = tkinter.Button(round_tab, text="Błąd Lewa", command=lambda: game1.incorrect_answer("L"))
     l_strike_button.grid(row=2, column=1, sticky="ew")
+
+    r_strike_button = tkinter.Button(round_tab, text="Błąd Prawa", command=lambda: game1.incorrect_answer("R"))
     r_strike_button.grid(row=2, column=3, sticky="ew")
 
     # Add buttons for every answer
@@ -151,9 +139,9 @@ for i, round_answers in enumerate(game1.answers):
         answer = answer_dict[0].ljust(16)
         points = answer_dict[1].rjust(2)
         answer_text = f"{answer} {points}"
-        answer_button = tkinter.Button(tab, text=answer_text, command=lambda round=i, answer=j: game1.show_answer(round, answer))
+        answer_button = tkinter.Button(round_tab, text=answer_text, command=lambda round=i, answer=j: game1.show_answer(round, answer))
         answer_button.grid(row=j + 2, column=2, sticky="ew")
-    tabControl.add(tab, text="Round" + str(i + 1))
+    tabControl.add(round_tab, text=f'Round {i + 1}')
 
 # Create a tab for showing team scores
 score_tab = ttk.Frame(tabControl)
@@ -161,6 +149,7 @@ score_button = tkinter.Button(score_tab, text="Pokaż wyniki", command=game1.sho
 score_button.pack()
 tabControl.add(score_tab, text="Punktacja")
 
+# Create a tab for final round
 final_tab = ttk.Frame(tabControl)
 for w in range(5):
     for t in range(2):
@@ -174,14 +163,31 @@ init_final_buttplug = tkinter.Button(final_tab, text="Zacznij finał", command=g
 init_final_buttplug.grid(row=0, column=2)
 tabControl.add(final_tab, text="Finał")
 
+# Create SFX tab
+sfx_tab = ttk.Frame(tabControl)
 
-tabControl.add(tab1, text="SFX")
+
+label = tkinter.Label(sfx_tab, text="usernane")
+label.pack()
+
+inputUser = tkinter.Entry(sfx_tab)
+inputUser.pack()
+
+labelPassword = tkinter.Label(sfx_tab, text="Password")
+labelPassword.pack()
+
+inputPassword = tkinter.Entry(sfx_tab)
+inputPassword.pack()
+
+button = tkinter.Button(sfx_tab, text="Go", command=pygame.mixer.Sound.play)
+button.pack()
+
+tabControl.add(sfx_tab, text="SFX")
 tabControl.pack(expand=1, fill="both")
 
 
 while True:
     surface.fill((0, 0, 255))
-    game1.write_hor(game1.round_winner.lower(), 0, 0)
     # Determine responsive width and height of the rectangles
     if surface.get_width() < surface.get_height() * (192 / 108):
         block_width = (surface.get_width() - 125 - (28 * 2)) / 29
@@ -205,7 +211,7 @@ while True:
     rectangle_dimensions = (game1.stroke, game1.stroke, rectangle_width, rectangle_height)
     pygame.draw.rect(surface, rectangle_rgb, rectangle_dimensions)
 
-    # Anti-bug maxx
+    # Anti-bug SUPERmaxxx
     font_height = max(round(block_height * 0.75), 2)
 
     # Set the font
