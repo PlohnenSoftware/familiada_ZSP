@@ -122,6 +122,8 @@ class Blackboard:
         # Set the answers as not printed
         for answer_dict in self.answers[round_number]:
             answer_dict[2] = False
+        #Play round SFX
+        pygame.mixer.Sound.play(round_sound)
 
     # Print selected answer for selected round
     def show_answer(self, round_number, answer_number):
