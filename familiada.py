@@ -205,7 +205,7 @@ tabControl.pack(expand=1, fill="both")
 
 while True:
     surface.fill((0, 0, 255))
-    
+
     # Determine responsive width and height of the rectangles
     if surface.get_width() < surface.get_height() * (192 / 108):
         block_width = (surface.get_width() - 125 - (28 * 2)) / 29
