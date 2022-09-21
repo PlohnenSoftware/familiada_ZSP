@@ -184,27 +184,18 @@ tabControl.add(final_tab, text="Finał")
 # Create SFX tab
 sfx_tab = ttk.Frame(tabControl)
 
-
-# label = tkinter.Label(sfx_tab, text="username")
-# label.pack()
-
-# inputUser = tkinter.Entry(sfx_tab)
-# inputUser.pack()
-
-# labelPassword = tkinter.Label(sfx_tab, text="Password")
-# labelPassword.pack()
-
-# inputPassword = tkinter.Entry(sfx_tab)
-# inputPassword.pack()
-
 button1 = tkinter.Button(sfx_tab, text="Brawa", command=lambda: pygame.mixer.Sound.play(bravo_sound))
 button1.pack()
+
 button2 = tkinter.Button(sfx_tab, text="INTRO", command=lambda: pygame.mixer.Sound.play(intro_music))
 button2.pack()
+
 button3 = tkinter.Button(sfx_tab, text="ENDING", command=lambda: pygame.mixer.Sound.play(ending_music))
 button3.pack()
+
 button4 = tkinter.Button(sfx_tab, text="ROUND", command=lambda: pygame.mixer.Sound.play(round_sound))
 button4.pack()
+
 button4 = tkinter.Button(sfx_tab, text="STOP", command=lambda: pygame.mixer.fadeout(500))
 button4.pack()
 
@@ -214,6 +205,7 @@ tabControl.pack(expand=1, fill="both")
 
 while True:
     surface.fill((0, 0, 255))
+    
     # Determine responsive width and height of the rectangles
     if surface.get_width() < surface.get_height() * (192 / 108):
         block_width = (surface.get_width() - 125 - (28 * 2)) / 29
