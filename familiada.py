@@ -4,7 +4,7 @@ import tkinter
 import os
 from tkinter import messagebox, ttk, filedialog
 from blackboard import Blackboard as Bb
-from blackboard import dubel_sound, bravo_sound, intro_music
+from blackboard import dubel_sound, bravo_sound, round_sound, intro_music, ending_music
 
 # The program provides a graphical interface for the game Familiada.
 
@@ -167,6 +167,18 @@ startfinal_button.grid(row=0, column=2)
 doubled_answer = tkinter.Button(final_tab, text="Dubel", command=lambda: pygame.mixer.Sound.play(dubel_sound))
 doubled_answer.grid(row=7, column=2)
 
+labeltxt = "Odpowiedź:"
+label_answer = tkinter.Label(final_tab, text=labeltxt)
+label_answer.grid(row=0, column=0)
+label_answer1 = tkinter.Label(final_tab, text=labeltxt)
+label_answer1.grid(row=0, column=3)
+
+labeltxt1 = "Punkty:"
+label_points = tkinter.Label(final_tab, text=labeltxt1)
+label_points.grid(row=0, column=1)
+label_points1 = tkinter.Label(final_tab, text=labeltxt1)
+label_points1.grid(row=0, column=4)
+
 tabControl.add(final_tab, text="Finał")
 
 # Create SFX tab
@@ -189,11 +201,11 @@ button1 = tkinter.Button(sfx_tab, text="Brawa", command=lambda: pygame.mixer.Sou
 button1.pack()
 button2 = tkinter.Button(sfx_tab, text="INTRO", command=lambda: pygame.mixer.Sound.play(intro_music))
 button2.pack()
-button3 = tkinter.Button(sfx_tab, text="ENDING", command=lambda: pygame.mixer.music.play())
+button3 = tkinter.Button(sfx_tab, text="ENDING", command=lambda: pygame.mixer.Sound.play(ending_music))
 button3.pack()
-button4 = tkinter.Button(sfx_tab, text="STOP", command=lambda: play_round_sound())
+button4 = tkinter.Button(sfx_tab, text="ROUND", command=lambda: pygame.mixer.Sound.play(round_sound))
 button4.pack()
-button4 = tkinter.Button(sfx_tab, text="STOP", command=lambda: pygame.mixer.stop())
+button4 = tkinter.Button(sfx_tab, text="STOP", command=lambda: pygame.mixer.fadeout(500))
 button4.pack()
 
 tabControl.add(sfx_tab, text="SFX")
