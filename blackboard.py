@@ -128,10 +128,6 @@ class Blackboard:
     # Print selected answer for selected round
     def show_answer(self, round_number, answer_number):
 
-        # Check if a team has been selected
-        if self.faster_team == "":
-            return
-
         # Check if the answer is already printed
         if self.answers[round_number][answer_number][2]:
             return
