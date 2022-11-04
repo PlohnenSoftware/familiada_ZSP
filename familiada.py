@@ -4,6 +4,7 @@ import tkinter
 import os
 from tkinter import messagebox, ttk, filedialog
 from blackboard import Blackboard as Bb
+from blackboard import dubel_sound, bravo_sound, round_sound, intro_music, ending_music
 
 # The program provides a graphical interface for the game Familiada.
 
@@ -111,7 +112,7 @@ window1.geometry("650x400")
 style = ttk.Style(window1)
 window1.protocol("WM_DELETE_WINDOW", lambda: exit_app(window1))
 
-#Create tab controler in the window1
+# Create tab controler in the window1
 tabControl = ttk.Notebook(window1)
 
 # Create a tab for every round
@@ -141,7 +142,7 @@ for i, round_answers in enumerate(game1.answers):
         answer_text = f"{answer} {points}"
         answer_button = tkinter.Button(round_tab, text=answer_text, command=lambda round=i, answer=j: game1.show_answer(round, answer))
         answer_button.grid(row=j + 2, column=2, sticky="ew")
-    tabControl.add(round_tab, text=f'Round {i + 1}')
+    tabControl.add(round_tab, text=f"Round {i + 1}")
 
 # Create a tab for showing team scores
 score_tab = ttk.Frame(tabControl)
@@ -159,28 +160,44 @@ for w in range(5):
         input_answer.grid(row=w + 1, column=t * 3)
         input_points.grid(row=w + 1, column=t * 3 + 1)
         final_button.grid(row=w + 1, column=t * 3 + 2)
-init_final_buttplug = tkinter.Button(final_tab, text="Zacznij finał", command=game1.init_final_round)
-init_final_buttplug.grid(row=0, column=2)
+
+startfinal_button = tkinter.Button(final_tab, text="Zacznij finał", command=game1.init_final_round)
+startfinal_button.grid(row=0, column=2)
+
+doubled_answer = tkinter.Button(final_tab, text="Dubel", command=lambda: pygame.mixer.Sound.play(dubel_sound))
+doubled_answer.grid(row=7, column=2)
+
+labeltxt = "Odpowiedź:"
+label_answer = tkinter.Label(final_tab, text=labeltxt)
+label_answer.grid(row=0, column=0)
+label_answer1 = tkinter.Label(final_tab, text=labeltxt)
+label_answer1.grid(row=0, column=3)
+
+labeltxt1 = "Punkty:"
+label_points = tkinter.Label(final_tab, text=labeltxt1)
+label_points.grid(row=0, column=1)
+label_points1 = tkinter.Label(final_tab, text=labeltxt1)
+label_points1.grid(row=0, column=4)
+
 tabControl.add(final_tab, text="Finał")
 
 # Create SFX tab
 sfx_tab = ttk.Frame(tabControl)
 
+button1 = tkinter.Button(sfx_tab, text="Brawa", command=lambda: pygame.mixer.Sound.play(bravo_sound))
+button1.pack()
 
-label = tkinter.Label(sfx_tab, text="usernane")
-label.pack()
+button2 = tkinter.Button(sfx_tab, text="INTRO", command=lambda: pygame.mixer.Sound.play(intro_music))
+button2.pack()
 
-inputUser = tkinter.Entry(sfx_tab)
-inputUser.pack()
+button3 = tkinter.Button(sfx_tab, text="ENDING", command=lambda: pygame.mixer.Sound.play(ending_music))
+button3.pack()
 
-labelPassword = tkinter.Label(sfx_tab, text="Password")
-labelPassword.pack()
+button4 = tkinter.Button(sfx_tab, text="ROUND", command=lambda: pygame.mixer.Sound.play(round_sound))
+button4.pack()
 
-inputPassword = tkinter.Entry(sfx_tab)
-inputPassword.pack()
-
-button = tkinter.Button(sfx_tab, text="Go", command=pygame.mixer.Sound.play)
-button.pack()
+button4 = tkinter.Button(sfx_tab, text="STOP", command=lambda: pygame.mixer.fadeout(500))
+button4.pack()
 
 tabControl.add(sfx_tab, text="SFX")
 tabControl.pack(expand=1, fill="both")
@@ -188,6 +205,7 @@ tabControl.pack(expand=1, fill="both")
 
 while True:
     surface.fill((0, 0, 255))
+
     # Determine responsive width and height of the rectangles
     if surface.get_width() < surface.get_height() * (192 / 108):
         block_width = (surface.get_width() - 125 - (28 * 2)) / 29
