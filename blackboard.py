@@ -10,6 +10,7 @@ wrong_sound = pygame.mixer.Sound("sfx/incorrect.wav")
 dubel_sound = pygame.mixer.Sound("sfx/dubel.wav")
 bravo_sound = pygame.mixer.Sound("sfx/bravo.wav")
 write_sound = pygame.mixer.Sound("sfx/write.wav")
+round_sound = pygame.mixer.Sound("sfx/round_sound.wav")
 ending_music = pygame.mixer.Sound("sfx/final_ending.flac")
 intro_music = pygame.mixer.Sound("sfx/show_music.flac")
 
@@ -121,13 +122,11 @@ class Blackboard:
         # Set the answers as not printed
         for answer_dict in self.answers[round_number]:
             answer_dict[2] = False
+        # Play round SFX
+        pygame.mixer.Sound.play(round_sound)
 
     # Print selected answer for selected round
     def show_answer(self, round_number, answer_number):
-
-        # Check if a team has been selected
-        if self.faster_team == "":
-            return
 
         # Check if the answer is already printed
         if self.answers[round_number][answer_number][2]:
