@@ -35,7 +35,8 @@ game1 = Bb(20)
 # Read data from the disk
 current_dir = os.path.dirname(os.path.abspath(__file__))
 # lepiej zrobić pulpit na start, do finalnej wersji bo jak sie d exe spakuje to wywala do jakiegoś folderu temp,
-# gdzie jest interpreter pythona przenosny z Pyinstallera current_dir=os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop')
+# gdzie jest interpreter pythona przenosny z Pyinstallera 
+# current_dir=os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop')
 
 filename = filedialog.askopenfilename(initialdir=current_dir, title="Wybierz plik z danymi", filetypes=(("csv files", "*.csv"), ("all files", "*.*")))
 
