@@ -1,6 +1,8 @@
 import sys
 import random
+import PyQt6.QtCore as QtCore
 from PyQt6.QtWidgets import QApplication, QMainWindow, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QWidget, QLineEdit, QTabWidget, QTextEdit
+from PyQt6.QtGui import QColor
 
 
 class MyWindow(QMainWindow):
@@ -80,10 +82,30 @@ class MyWindow(QMainWindow):
         # Add the text edit widget to the vertical layout of the third tab
         tab3_layout.addWidget(self.history_text)
 
+        # Create the fourth tab
+        self.tab4 = QWidget()
+        self.tab_widget.addTab(self.tab4, "Tab 4")
+
+        # Set the background color of the fourth tab
+        tab4_palette = self.tab4.palette()
+        tab4_palette.setColor(self.tab4.backgroundRole(), QColor.fromRgb(77, 219, 255, 255))
+        self.tab4.setPalette(tab4_palette)
+
+        # Create a vertical layout for the fourth tab
+        tab4_layout = QVBoxLayout(self.tab4)
+
+        # Create a button to terminate the program
+        self.exit_button = QPushButton("Exit", self)
+        self.exit_button.setObjectName("exitButton")
+
+        # Add the exit button to the vertical layout of the fourth tab
+        tab4_layout.addWidget(self.exit_button)
+
         # Connect the button signals to their respective slots
         self.button1.clicked.connect(self.button1_clicked)
         self.button2.clicked.connect(self.button2_clicked)
         self.random_button.clicked.connect(self.generate_random_number)
+        self.exit_button.clicked.connect(self.exit_program)
 
         # Add the tab widget to the main layout
         layout.addWidget(self.tab_widget)
@@ -119,6 +141,18 @@ class MyWindow(QMainWindow):
         # Display the history of generated numbers
         for number in self.number_history:
             self.history_text.append(str(number))
+
+    def exit_program(self):
+        sys.exit()
+
+    def changeEvent(self, event):
+        if event.type() == QtCore.QEvent.Type.ActivationChange:
+            if not self.isActiveWindow():
+                self.activateWindow()
+
+    def closeEvent(self, event):
+        event.ignore()
+        self.exit_program()
 
 
 if __name__ == "__main__":
