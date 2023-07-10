@@ -7,3 +7,5 @@
 #### .\pipunall.ps1
 
 #### pyinstaller.exe --onefile --windowed --icon=familiada.ico familiada.py
+
+#### pip install pygame --pre 
