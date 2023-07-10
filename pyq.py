@@ -1,6 +1,6 @@
 import sys
 import random
-from PyQt6.QtWidgets import QApplication, QMainWindow, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QWidget, QLineEdit, QTabWidget
+from PyQt6.QtWidgets import QApplication, QMainWindow, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QWidget, QLineEdit, QTabWidget, QTextEdit
 
 
 class MyWindow(QMainWindow):
@@ -66,6 +66,20 @@ class MyWindow(QMainWindow):
         tab2_layout.addWidget(self.random_button)
         tab2_layout.addWidget(self.random_label)
 
+        # Create the third tab
+        self.tab3 = QWidget()
+        self.tab_widget.addTab(self.tab3, "Tab 3")
+
+        # Create a vertical layout for the third tab
+        tab3_layout = QVBoxLayout(self.tab3)
+
+        # Create a text edit widget to display the history
+        self.history_text = QTextEdit(self)
+        self.history_text.setReadOnly(True)
+
+        # Add the text edit widget to the vertical layout of the third tab
+        tab3_layout.addWidget(self.history_text)
+
         # Connect the button signals to their respective slots
         self.button1.clicked.connect(self.button1_clicked)
         self.button2.clicked.connect(self.button2_clicked)
@@ -73,6 +87,9 @@ class MyWindow(QMainWindow):
 
         # Add the tab widget to the main layout
         layout.addWidget(self.tab_widget)
+
+        # List to store the history of generated numbers
+        self.number_history = []
 
     def button1_clicked(self):
         input_text = self.input1.text()
@@ -85,6 +102,23 @@ class MyWindow(QMainWindow):
     def generate_random_number(self):
         random_number = random.randint(0, 100)
         self.random_label.setText(f"Random Number: {random_number}")
+
+        # Add the generated number to the history list
+        self.number_history.append(random_number)
+
+        # Limit the history to 25 last generated numbers
+        self.number_history = self.number_history[-25:]
+
+        # Update the history text display
+        self.update_history_text()
+
+    def update_history_text(self):
+        # Clear the history text
+        self.history_text.clear()
+
+        # Display the history of generated numbers
+        for number in self.number_history:
+            self.history_text.append(str(number))
 
 
 if __name__ == "__main__":
