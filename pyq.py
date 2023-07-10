@@ -1,7 +1,7 @@
 import sys
 import random
 import PyQt6.QtCore as QtCore
-from PyQt6.QtWidgets import QApplication, QMainWindow, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QWidget, QLineEdit, QTabWidget, QTextEdit
+from PyQt6.QtWidgets import QApplication, QMainWindow, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QWidget, QLineEdit, QTabWidget, QTextEdit, QGridLayout
 from PyQt6.QtGui import QColor
 
 
@@ -101,11 +101,37 @@ class MyWindow(QMainWindow):
         # Add the exit button to the vertical layout of the fourth tab
         tab4_layout.addWidget(self.exit_button)
 
+        # Create the fifth tab
+        self.tab5 = QWidget()
+        self.tab_widget.addTab(self.tab5, "Tab 5")
+
+        # Create a vertical layout for the fifth tab
+        tab5_layout = QVBoxLayout(self.tab5)
+
+        # Create a label for the fifth tab
+        label5 = QLabel("This is Tab 5", self.tab5)
+
+        # Add the label to the vertical layout of the fifth tab
+        tab5_layout.addWidget(label5)
+
+        # Create the sixth tab
+        self.tab6 = QWidget()
+        self.tab_widget.addTab(self.tab6, "Tab 6")
+
+        # Create a grid layout for the sixth tab
+        grid_layout = QGridLayout(self.tab6)
+
+        # Create buttons for the grid layout
+        buttons = []
+        for i in range(6):
+            for j in range(3):
+                button = QPushButton(f"Button {i * 3 + j + 1}", self)
+                buttons.append(button)
+                grid_layout.addWidget(button, i, j)
+
         # Connect the button signals to their respective slots
-        self.button1.clicked.connect(self.button1_clicked)
-        self.button2.clicked.connect(self.button2_clicked)
-        self.random_button.clicked.connect(self.generate_random_number)
-        self.exit_button.clicked.connect(self.exit_program)
+        for button in buttons:
+            button.clicked.connect(self.grid_button_clicked)
 
         # Add the tab widget to the main layout
         layout.addWidget(self.tab_widget)
@@ -144,6 +170,11 @@ class MyWindow(QMainWindow):
 
     def exit_program(self):
         sys.exit()
+
+    def grid_button_clicked(self):
+        button = self.sender()
+        button_name = button.text()
+        self.label.setText(f"{button_name} clicked!")
 
     def changeEvent(self, event):
         if event.type() == QtCore.QEvent.Type.ActivationChange:
