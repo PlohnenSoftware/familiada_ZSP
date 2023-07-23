@@ -1,193 +1,67 @@
 import sys
-import random
-import PyQt6.QtCore as QtCore
-from PyQt6.QtWidgets import QApplication, QMainWindow, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QWidget, QLineEdit, QTabWidget, QTextEdit, QGridLayout
-from PyQt6.QtGui import QColor
+import time
+from PyQt6.QtWidgets import QApplication, QMainWindow, QLabel, QPushButton, QVBoxLayout, QWidget, QLCDNumber
+from PyQt6.QtCore import QTimer
 
 
-class MyWindow(QMainWindow):
+class CounterWindow(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        self.setWindowTitle("Simple GUI")
-        self.setGeometry(300, 300, 400, 200)
+        self.counter = 0
+        self.is_running = False
 
-        # Create a central widget and set it as the main window's central widget
+        self.setWindowTitle("Counter Window")
+        self.setGeometry(100, 100, 300, 150)
+
+        self.layout = QVBoxLayout()
+
+        self.display = QLCDNumber(self)
+        self.display.setDigitCount(7)
+        self.display.display(self.counter)
+
+        self.layout.addWidget(self.display)
+
+        self.start_button = QPushButton("Start", self)
+        self.start_button.clicked.connect(self.start_timer)
+        self.layout.addWidget(self.start_button)
+
+        self.stop_button = QPushButton("Stop", self)
+        self.stop_button.clicked.connect(self.stop_timer)
+        self.layout.addWidget(self.stop_button)
+
+        self.reset_button = QPushButton("Reset", self)
+        self.reset_button.clicked.connect(self.reset_timer)
+        self.layout.addWidget(self.reset_button)
+
+        self.timer = QTimer(self)
+        self.timer.timeout.connect(self.update_counter)
+
         central_widget = QWidget(self)
+        central_widget.setLayout(self.layout)
         self.setCentralWidget(central_widget)
 
-        # Create a vertical layout
-        layout = QVBoxLayout(central_widget)
+    def start_timer(self):
+        if not self.is_running:
+            self.is_running = True
+            self.timer.start(500)  # 500 milliseconds (0.5 seconds)
 
-        # Create a tab widget
-        self.tab_widget = QTabWidget(self)
+    def stop_timer(self):
+        if self.is_running:
+            self.is_running = False
+            self.timer.stop()
 
-        # Create the first tab
-        self.tab1 = QWidget()
-        self.tab_widget.addTab(self.tab1, "Tab 1")
+    def reset_timer(self):
+        self.counter = 0
+        self.display.display(self.counter)
 
-        # Create a vertical layout for the first tab
-        tab1_layout = QVBoxLayout(self.tab1)
-
-        # Create a label
-        self.label = QLabel("Hello, PyQt6!", self)
-
-        # Create a horizontal layout for buttons and text input fields
-        button_layout = QHBoxLayout()
-
-        # Create buttons
-        self.button1 = QPushButton("Button 1", self)
-        self.button2 = QPushButton("Button 2", self)
-
-        # Create text input fields
-        self.input1 = QLineEdit(self)
-        self.input2 = QLineEdit(self)
-
-        # Add the buttons and text input fields to the horizontal layout
-        button_layout.addWidget(self.button1)
-        button_layout.addWidget(self.button2)
-        button_layout.addWidget(self.input1)
-        button_layout.addWidget(self.input2)
-
-        # Add the label and the horizontal layout to the vertical layout of the first tab
-        tab1_layout.addWidget(self.label)
-        tab1_layout.addLayout(button_layout)
-
-        # Create the second tab
-        self.tab2 = QWidget()
-        self.tab_widget.addTab(self.tab2, "Tab 2")
-
-        # Create a vertical layout for the second tab
-        tab2_layout = QVBoxLayout(self.tab2)
-
-        # Create a button to generate a random number
-        self.random_button = QPushButton("Generate Random Number", self)
-        self.random_label = QLabel(self)
-
-        # Add the button and label to the vertical layout of the second tab
-        tab2_layout.addWidget(self.random_button)
-        tab2_layout.addWidget(self.random_label)
-
-        # Create the third tab
-        self.tab3 = QWidget()
-        self.tab_widget.addTab(self.tab3, "Tab 3")
-
-        # Create a vertical layout for the third tab
-        tab3_layout = QVBoxLayout(self.tab3)
-
-        # Create a text edit widget to display the history
-        self.history_text = QTextEdit(self)
-        self.history_text.setReadOnly(True)
-
-        # Add the text edit widget to the vertical layout of the third tab
-        tab3_layout.addWidget(self.history_text)
-
-        # Create the fourth tab
-        self.tab4 = QWidget()
-        self.tab_widget.addTab(self.tab4, "Tab 4")
-
-        # Set the background color of the fourth tab
-        tab4_palette = self.tab4.palette()
-        tab4_palette.setColor(self.tab4.backgroundRole(), QColor.fromRgb(77, 219, 255, 255))
-        self.tab4.setPalette(tab4_palette)
-
-        # Create a vertical layout for the fourth tab
-        tab4_layout = QVBoxLayout(self.tab4)
-
-        # Create a button to terminate the program
-        self.exit_button = QPushButton("Exit", self)
-        self.exit_button.setObjectName("exitButton")
-
-        # Add the exit button to the vertical layout of the fourth tab
-        tab4_layout.addWidget(self.exit_button)
-
-        # Create the fifth tab
-        self.tab5 = QWidget()
-        self.tab_widget.addTab(self.tab5, "Tab 5")
-
-        # Create a vertical layout for the fifth tab
-        tab5_layout = QVBoxLayout(self.tab5)
-
-        # Create a label for the fifth tab
-        label5 = QLabel("This is Tab 5", self.tab5)
-
-        # Add the label to the vertical layout of the fifth tab
-        tab5_layout.addWidget(label5)
-
-        # Create the sixth tab
-        self.tab6 = QWidget()
-        self.tab_widget.addTab(self.tab6, "Tab 6")
-
-        # Create a grid layout for the sixth tab
-        grid_layout = QGridLayout(self.tab6)
-
-        # Create buttons for the grid layout
-        buttons = []
-        for i in range(6):
-            for j in range(3):
-                button = QPushButton(f"Button {i * 3 + j + 1}", self)
-                buttons.append(button)
-                grid_layout.addWidget(button, i, j)
-
-        # Connect the button signals to their respective slots
-        for button in buttons:
-            button.clicked.connect(self.grid_button_clicked)
-
-        # Add the tab widget to the main layout
-        layout.addWidget(self.tab_widget)
-
-        # List to store the history of generated numbers
-        self.number_history = []
-
-    def button1_clicked(self):
-        input_text = self.input1.text()
-        self.label.setText(f"Button 1 clicked!\nInput 1: {input_text}")
-
-    def button2_clicked(self):
-        input_text = self.input2.text()
-        self.label.setText(f"Button 2 clicked!\nInput 2: {input_text}")
-
-    def generate_random_number(self):
-        random_number = random.randint(0, 100)
-        self.random_label.setText(f"Random Number: {random_number}")
-
-        # Add the generated number to the history list
-        self.number_history.append(random_number)
-
-        # Limit the history to 25 last generated numbers
-        self.number_history = self.number_history[-25:]
-
-        # Update the history text display
-        self.update_history_text()
-
-    def update_history_text(self):
-        # Clear the history text
-        self.history_text.clear()
-
-        # Display the history of generated numbers
-        for number in self.number_history:
-            self.history_text.append(str(number))
-
-    def exit_program(self):
-        sys.exit()
-
-    def grid_button_clicked(self):
-        button = self.sender()
-        button_name = button.text()
-        self.label.setText(f"{button_name} clicked!")
-
-    def changeEvent(self, event):
-        if event.type() == QtCore.QEvent.Type.ActivationChange:
-            if not self.isActiveWindow():
-                self.activateWindow()
-
-    def closeEvent(self, event):
-        event.ignore()
-        self.exit_program()
+    def update_counter(self):
+        self.counter += 1
+        self.display.display(self.counter)
 
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    window = MyWindow()
+    window = CounterWindow()
     window.show()
     sys.exit(app.exec())
