@@ -3,22 +3,11 @@ from math import floor
 from threading import Timer as Delay
 
 
-# Import pygame SFX
-pygame.mixer.init()
-correct_sound = pygame.mixer.Sound("sfx/correct.wav")
-wrong_sound = pygame.mixer.Sound("sfx/incorrect.wav")
-dubel_sound = pygame.mixer.Sound("sfx/dubel.wav")
-bravo_sound = pygame.mixer.Sound("sfx/bravo.wav")
-write_sound = pygame.mixer.Sound("sfx/write.wav")
-round_sound = pygame.mixer.Sound("sfx/round_sound.wav")
-ending_music = pygame.mixer.Sound("sfx/final_ending.flac")
-intro_music = pygame.mixer.Sound("sfx/show_music.flac")
-
-
 class Blackboard:
-    def __init__(self, stroke):
+    def __init__(self):
+        # Initialize the blackboard containing object
         self.letter_matrix = [["" for _ in range(29)] for _ in range(10)]
-        self.stroke = stroke
+        self.stroke = 20
         self.answers = []
         self.round_score = 0
         self.current_round = -1
@@ -33,11 +22,99 @@ class Blackboard:
         self.round_score = 0
         self.row_for_strike = {0: 7, 1: 4, 2: 1}
 
+        # Initialize the music
+        pygame.mixer.init()
+        self.correct_sound = pygame.mixer.Sound("sfx/correct.wav")
+        self.wrong_sound = pygame.mixer.Sound("sfx/incorrect.wav")
+        self.dubel_sound = pygame.mixer.Sound("sfx/dubel.wav")
+        self.bravo_sound = pygame.mixer.Sound("sfx/bravo.wav")
+        self.write_sound = pygame.mixer.Sound("sfx/write.wav")
+        self.round_sound = pygame.mixer.Sound("sfx/round_sound.wav")
+        self.ending_music = pygame.mixer.Sound("sfx/final_ending.flac")
+        self.intro_music = pygame.mixer.Sound("sfx/show_music.flac")
+        
+        # Initialize the blackboard window
+        pygame.init()
+        self.surface = pygame.display.set_mode((900, 700), pygame.RESIZABLE)
+        pygame.display.set_caption("Familiada")
+        self.programIcon = pygame.image.load("familiada.ico")
+        pygame.display.set_icon(self.programIcon)
+        self.refresh()
+
+
+    def refresh(self):
+        self.surface.fill((0, 0, 255))
+        # Determine responsive width and height of the rectangles
+        if self.surface.get_width() < self.surface.get_height() * (192 / 108):
+            block_width = (self.surface.get_width() - 125 - (28 * 2)) / 29
+            block_height = block_width * 3 / 2
+
+            # Move blocks to the center of the screen
+            block_x = 0
+            block_y = (self.surface.get_height() - (block_height * 10) - (9 * 2) - 100) / 2
+        else:
+            block_height = (self.surface.get_height() - 100 - (9 * 2)) / 10
+            block_width = block_height * 2 / 3
+
+            # Move blocks to the center of the screen
+            block_x = (self.surface.get_width() - (block_width * 29) - (28 * 2) - 125) / 2
+            block_y = 0
+
+        # Draw a grey rectangle around the game board
+        rectangle_rgb = (81, 81, 81)
+        rectangle_width = self.surface.get_width() - self.stroke * 2
+        rectangle_height = self.surface.get_height() - self.stroke * 2
+        rectangle_dimensions = (self.stroke, self.stroke, rectangle_width, rectangle_height)
+        pygame.draw.rect(self.surface, rectangle_rgb, rectangle_dimensions)
+
+        # Anti-bug SUPERmaxxx
+        font_height = max(round(block_height * 0.75), 2)
+
+        # Set the font
+        myfont = pygame.font.Font("familiada.ttf", font_height)
+
+        # Draw black rectangles & letters on the self.surface.
+        for i in range(10):
+            for j in range(29):
+                pos_x = block_x + 50 + (block_width + 3) * j
+                pos_y = block_y + 50 + (block_height + 3) * i
+                label = myfont.render(self.letter_matrix[i][j], 1, (255, 255, 0))
+                rectangle_rgb = (0, 0, 0)
+                rectangle_dimensions = (pos_x, pos_y, block_width, block_height)
+                pygame.draw.rect(self.surface, rectangle_rgb, rectangle_dimensions)
+                self.surface.blit(label, (pos_x + block_width * 0.146, pos_y + block_height / 2 - font_height / 2))
+
+        # Refresh both windows
+        pygame.display.update()
+
+
     # CHECK IF TEAM INPUT IS CORRECT
     @staticmethod
     def check_team_input(team):
         if team not in ("L", "R"):
             raise ValueError("A team must be either 'L' or 'R'")
+        
+    def playsound(self, sound_ID):
+        match sound_ID:
+            case "correct":
+                pygame.mixer.Sound.play(self.correct_sound)
+            case "wrong":
+                pygame.mixer.Sound.play(self.wrong_sound)
+            case "dubel":
+                pygame.mixer.Sound.play(self.dubel_sound)
+            case "bravo":
+                pygame.mixer.Sound.play(self.bravo_sound)
+            case "write":
+                pygame.mixer.Sound.play(self.write_sound)
+            case "round":
+                pygame.mixer.Sound.play(self.round_sound)
+            case "intro":
+                pygame.mixer.Sound.play(self.intro_music)
+            case "ending":
+                pygame.mixer.Sound.play(self.ending_music)
+            case _:
+                raise ValueError("Sound ID must be either 'correct', 'wrong', 'dubel', 'bravo', 'write', 'round', 'intro' or 'ending'")
+            
 
     # change the team thaht is winner of the roud
     def change_winner(self):
@@ -52,22 +129,25 @@ class Blackboard:
             self.score[self.round_winner] += self.round_score
             self.round_score = 0
 
-    # Write a word horizontally to the matrix
+    # Write a word horizontally 
     def write_hor(self, word, start_row, start_col):
         letters = list(str(word))
         for i, letter in enumerate(letters):
             self.letter_matrix[start_row][start_col + i] = letter
+        self.refresh()
 
-    # Write a word vertically to the matrix
+    # Write a word vertically 
     def write_ver(self, word, start_row, start_col):
         # niewiedzeć czemu nie działa word = str(word)
         letters = list(str(word))
         for i, letter in enumerate(letters):
             self.letter_matrix[start_row + i][start_col] = letter
+        self.refresh()
 
     # Fill whole board with one character
     def fill(self, char=""):
         self.letter_matrix = [[char for _ in range(29)] for _ in range(10)]
+        self.refresh()
 
     # Print a small x on selected row and column
     def draw_small_x(self, start_row, start_col):
@@ -78,6 +158,7 @@ class Blackboard:
             i = i << 1
             self.letter_matrix[start_row + i][start_col + i] = "G"
             self.letter_matrix[start_row - i + 2][start_col + i] = "H"
+        self.refresh()
 
     # Print a big x on selected row and column
     def draw_gross_x(self, start_row, start_col):
@@ -123,7 +204,7 @@ class Blackboard:
         for answer_dict in self.answers[round_number]:
             answer_dict[2] = False
         # Play round SFX
-        pygame.mixer.Sound.play(round_sound)
+        self.playsound("round")
 
     # Print selected answer for selected round
     def show_answer(self, round_number, answer_number):
@@ -145,7 +226,7 @@ class Blackboard:
         self.write_hor(answer_points.rjust(2), row_coords + answer_number, 23)
         self.write_hor(str(self.round_score).rjust(3), row_coords + no_answers + 1, 22)
 
-        pygame.mixer.Sound.play(correct_sound)
+        self.playsound("correct")
 
         # Set the answer as printed
         self.answers[round_number][answer_number][2] = self.correct_answer = True
@@ -169,7 +250,6 @@ class Blackboard:
         l_len = len(l_score_str)
         r_score_str = str(self.score["R"])
         r_len = len(r_score_str)
-
         self.write_hor(l_score_str, 5, 11 - l_len)
         self.write_hor(r_score_str, 5, 15 + r_len)
 
@@ -180,6 +260,7 @@ class Blackboard:
                 self.letter_matrix[i][j] = self.letter_matrix[i][j + 26] = ""
 
         self.strike = {"L": 0, "R": 0}
+        self.refresh()
 
     # Draw a big x on the blackboard for a selected team and play a sound
     def big_strike(self, team):
@@ -188,11 +269,11 @@ class Blackboard:
         if team == "L" and self.strike["L"] == 0:
             self.draw_gross_x(3, 0)
             self.strike["L"] = 4
-            pygame.mixer.Sound.play(wrong_sound)
+            self.playsound("wrong")
         elif team == "R" and self.strike["R"] == 0:
             self.draw_gross_x(3, 26)
             self.strike["R"] = 4
-            pygame.mixer.Sound.play(wrong_sound)
+            self.playsound("wrong")
         if self.strike["L"] == 4 and self.strike["R"] == 4:
             Delay(5, self.clear_x).start()
             self.chance_reset_allowed = False
@@ -218,7 +299,8 @@ class Blackboard:
         if current_strikes == 2:
             self.change_winner()
 
-        pygame.mixer.Sound.play(wrong_sound)
+        self.playsound("wrong")
+        
 
     def show_final_answer(self, answer_input, point_input, row, col):
         answer = str(answer_input.get())
@@ -242,7 +324,7 @@ class Blackboard:
         else:
             answer_str = f"{answer.ljust(11)}"
             output_str = f"{answer.ljust(11)} {points.rjust(2)}"
-        pygame.mixer.Sound.play(write_sound)
+        self.playsound("write")
 
         self.write_hor(answer_str, row + 1, col * 15)
 
@@ -250,11 +332,11 @@ class Blackboard:
             self.write_hor(output_str, row + 1, col * 15)
             if int(points) > 0:
                 self.round_score += int(points)
-                pygame.mixer.Sound.play(correct_sound)
+                self.playsound("correct")
                 self.write_hor(str(self.round_score).rjust(3), 8, 15)
 
             else:
-                pygame.mixer.Sound.play(wrong_sound)
+                self.playsound("wrong")
 
         Delay(2, show_score_for_answer).start()
 
