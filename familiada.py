@@ -1,4 +1,3 @@
-# import sys
 from sys import exit, argv
 import tkinter
 import os
