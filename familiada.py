@@ -1,11 +1,12 @@
 from sys import exit, argv
 import os
 from blackboard import Blackboard as Bb
-from PyQt6.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBox, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QGridLayout, QWidget, QLineEdit, QTabWidget, QTextEdit, QComboBox
+from PyQt6.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBox, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QGridLayout, QWidget, QLineEdit, QTabWidget, QTextEdit, QComboBox, QSlider, QSpacerItem, QSizePolicy
 from PyQt6.QtCore import QTimer
 from PyQt6 import QtGui
 from PyQt6.QtGui import QCursor
 from PyQt6 import QtCore
+from PyQt6.QtCore import Qt
 
 gameWindow = Bb()
 # The program provides a graphical interface for the game Familiada.gameWindow
@@ -71,13 +72,27 @@ class ControlRoom(QMainWindow):
 
         button_brawo = self.create_buttons("Brawa")
         button_stop = self.create_buttons("Stop")
+        verticalspacer = QSpacerItem(0,0, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
         button_intro = self.create_buttons("Intro")
         button_outro = self.create_buttons("Outro")
+        self.slider = QSlider(Qt.Orientation.Horizontal)
+        self.slider.setRange(0,1000)
+        self.slider.setValue(1000)
+        self.label_glosnosc = QLabel("Głośność: " + str(self.slider.value()/10) + "%")
+        self.slider.valueChanged.connect(self.slider_moved)
 
         sfxlayout.addWidget(button_brawo, 0, 0)
-        sfxlayout.addWidget(button_stop, 1, 0)
+        sfxlayout.addWidget(button_stop, 2, 0)
+        sfxlayout.addItem(verticalspacer, 1, 0, 2, 1)
         sfxlayout.addWidget(button_intro, 0, 1)
-        sfxlayout.addWidget(button_outro, 1, 1)
+        sfxlayout.addWidget(button_outro, 2, 1)
+        sfxlayout.addWidget(self.label_glosnosc, 0, 2, 1, 4, alignment = Qt.AlignmentFlag.AlignHCenter)
+        sfxlayout.addWidget(self.slider, 2, 2, 2, 4)
+
+        self.slider.setMinimumWidth(400)
+        self.label_glosnosc.setStyleSheet(
+            "font-size: 16px;"
+        )
 
         punktacja = QWidget()
         tab_widget.addTab(punktacja, "Punktacja")
@@ -86,10 +101,18 @@ class ControlRoom(QMainWindow):
         pagelayout.addWidget(tab_widget)
         pagelayout.addWidget(sfx_widget)
 
+    def slider_moved(self):
+        value_slider = self.slider.value()
+        self.label_glosnosc.setText("Głośność: " + str(self.slider.value()/10) + "%")
+
     def create_buttons(self, name):
         button = QPushButton(name)
         button.setCursor(QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
-        button.setFixedWidth(300)
+        button.setMinimumWidth(200)
+        button.setStyleSheet(
+            "padding: 15px 10px;" +
+            "font-size: 14px;" 
+        )
         return button
 
     def terminate_error(self, error_description):
