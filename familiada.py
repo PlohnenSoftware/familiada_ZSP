@@ -1,21 +1,7 @@
 from sys import exit, argv
 import os
 from blackboard import Blackboard as Bb
-from PyQt6.QtWidgets import (
-    QApplication,
-    QMainWindow,
-    QFileDialog,
-    QMessageBox,
-    QLabel,
-    QPushButton,
-    QVBoxLayout,
-    QHBoxLayout,
-    QGridLayout,
-    QWidget,
-    QLineEdit,
-    QTabWidget,
-    QTextEdit,
-)
+from PyQt6.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBox, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QGridLayout, QWidget, QLineEdit, QTabWidget, QTextEdit, QComboBox
 from PyQt6.QtCore import QTimer
 from PyQt6 import QtGui
 
@@ -64,8 +50,8 @@ class ControlRoom(QMainWindow):
         super().__init__()
         self.getFileName()
         self.setWindowTitle("Familiada")
-        self.setGeometry(300,150,1000,600)
-        self.setWindowIcon(QtGui.QIcon('familiada.ico'))
+        self.setGeometry(300, 150, 1000, 600)
+        self.setWindowIcon(QtGui.QIcon("familiada.ico"))
         central_widget = QWidget(self)
         self.setCentralWidget(central_widget)
         layout = QVBoxLayout(central_widget)
@@ -73,11 +59,10 @@ class ControlRoom(QMainWindow):
         self.tab_widget = QTabWidget(self)
 
         for i, round_answers in enumerate(gameWindow.answers):
-             newtab = QWidget()
-             self.tab_widget.addTab(newtab, f"Runda {i+1}")
+            newtab = QWidget()
+            self.tab_widget.addTab(newtab, f"Runda {i+1}")
 
         layout.addWidget(self.tab_widget)
-
 
     def terminate_error(self, error_description):
         dlg = QMessageBox(self)
@@ -125,7 +110,6 @@ class ControlRoom(QMainWindow):
                     # Check if the  is valid
                     points = line[i + 1]
                     if not points.isdigit() or int(points) not in range(100):
-                        print(line[i])
                         self.terminate_error(f"Points {points} at line {j+1} are not valid")
 
                     round_data.append([round_answer.lower(), points, True])
@@ -150,7 +134,6 @@ if __name__ == "__main__":
     window = ControlRoom()
     window.show()
     gameWindow.refresh()
-    print(gameWindow.answers)
     exit(app.exec())
 
 
