@@ -3,7 +3,25 @@ import tkinter
 import os
 from tkinter import messagebox, ttk, filedialog
 from blackboard import Blackboard as Bb
-from PyQt6.QtWidgets import QApplication, QMainWindow, QPushButton, QVBoxLayout, QWidget, QFileDialog, QMessageBox
+from PyQt6.QtWidgets import (
+    QApplication,
+    QMainWindow,
+    QPushButton,
+    QVBoxLayout,
+    QWidget,
+    QFileDialog,
+    QMessageBox,
+    QApplication,
+    QMainWindow,
+    QLabel,
+    QPushButton,
+    QVBoxLayout,
+    QHBoxLayout,
+    QWidget,
+    QLineEdit,
+    QTabWidget,
+    QTextEdit,
+)
 from PyQt6.QtCore import QTimer
 
 gameWindow = Bb()
@@ -50,6 +68,22 @@ class ControlRoom(QMainWindow):
     def __init__(self):
         super().__init__()
         self.getFileName()
+        self.setWindowTitle("Simple GUI")
+        self.setGeometry(300, 300, 400, 200)
+
+        # Create a central widget and set it as the main window's central widget
+        central_widget = QWidget(self)
+        self.setCentralWidget(central_widget)
+
+        # Create a vertical layout
+        layout = QVBoxLayout(central_widget)
+
+        # Create a tab widget
+        self.tab_widget = QTabWidget(self)
+
+        for i in range(0, 6):
+             newtab = QWidget()
+             self.tab_widget.addTab(newtab, f"Tab {i}")
 
     def terminate_error(self, error_description):
         dlg = QMessageBox(self)
@@ -58,7 +92,7 @@ class ControlRoom(QMainWindow):
         dlg.setText(error_description)
         button = dlg.exec()
         if button == QMessageBox.StandardButton.Ok:
-                exit()
+            exit()
 
     def getFileName(self):
         file_filter = "CSV File (*.csv)"
