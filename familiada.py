@@ -3,9 +3,10 @@ import tkinter
 import os
 from tkinter import messagebox, ttk, filedialog
 from blackboard import Blackboard as Bb
-from PyQt6.QtWidgets import QApplication, QMainWindow, QPushButton, QVBoxLayout, QWidget
+from PyQt6.QtWidgets import QApplication, QMainWindow, QPushButton, QVBoxLayout, QWidget, QFileDialog, QMessageBox
 from PyQt6.QtCore import QTimer
 
+gameWindow = Bb()
 # The program provides a graphical interface for the game Familiada.gameWindow
 
 # Game data is a csv selected by the user upon startup.
@@ -19,78 +20,110 @@ from PyQt6.QtCore import QTimer
 
 # Safely exit the program
 
-
-def terminate_error(error_description):
-    if messagebox.showerror("FAMILIADA ERROR", error_description):
-        exit()
+###############TKINTER##################
+# if messagebox.showerror("FAMILIADA ERROR", error_description):
+#     exit()
 
 
 # Initialize the main game object
-gameWindow = Bb()
 
 # Read data from the disk
-current_dir = os.path.dirname(os.path.abspath(__file__))
+
 # lepiej zrobić pulpit na start, do finalnej wersji bo jak sie d exe spakuje to wywala do jakiegoś folderu temp,
 # gdzie jest interpreter pythona przenosny z Pyinstallera
 # current_dir=os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop')
 
-filename = filedialog.askopenfilename(initialdir=current_dir, title="Wybierz plik z danymi", filetypes=(("csv files", "*.csv"), ("all files", "*.*")))
 
-if filename == "":
-    terminate_error("Nie wybrano pliku")
+###############TKINTER##################
+# filename = filedialog.askopenfilename(initialdir=current_dir, title="Wybierz plik z danymi", filetypes=(("csv files", "*.csv"), ("all files", "*.*")))
 
-if filename[-4:] != ".csv":
-    terminate_error("Zly format pliku, musi to byc .csv")
 
 # Create a list containing tuples of answers and points for every round
-with open(filename, "r+") as f:
-    file_str = f.read()
 
-    # Put an endline at the end of the file
-    if file_str[-1] != "\n":
-        f.write("\n")
-    lines = file_str.split("\n")
+#################################################################################################################
 
-    for j, line in enumerate(lines):
-        # Skip empty lines
-        if line == "":
-            continue
 
-        line = line.split(",")
+# current_dir = os.path.dirname(os.path.abspath(__file__))
 
-        # Check if the line is valid
-        if len(line) > 14:
-            terminate_error(f"Every round must have at most 7 answers, {line} has {len(line)//2}")
 
-        round_data = []
-        for i in range(0, len(line), 2):
-            round_answer = line[i]
+class ControlRoom(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        self.getFileName()
 
-            # Check if the answer is valid
-            if len(round_answer) > 16:
-                terminate_error(f"Answer {round_answer} at line {i-1} is too long")
+    def terminate_error(self, error_description):
+        dlg = QMessageBox(self)
+        dlg.setIcon(QMessageBox.Icon.Critical)
+        dlg.setWindowTitle("Błąd")
+        dlg.setText(error_description)
+        button = dlg.exec()
+        if button == QMessageBox.StandardButton.Ok:
+                exit()
 
-            # Check if the  is valid
-            points = line[i + 1]
-            if not points.isdigit() or int(points) not in range(100):
-                print(line[i])
-                terminate_error(f"Points {points} at line {j+1} are not valid")
+    def getFileName(self):
+        file_filter = "CSV File (*.csv)"
+        filename = QFileDialog.getOpenFileName(parent=self, caption="Wybierz plik", directory=os.getcwd(), filter=file_filter, initialFilter="CSV File (*.csv)")
+        filename = str(filename[0])
+        if filename == "":
+            self.terminate_error("Nie wybrano pliku")
 
-            round_data.append([round_answer.lower(), points, True])
-        gameWindow.answers.append(round_data)
+        with open(filename, "r+") as f:
+            file_str = f.read()
 
-    # Sort answers by points
-    for i, round_answers in enumerate(gameWindow.answers):
-        gameWindow.answers[i] = sorted(round_answers, key=lambda x: int(x[1]), reverse=True)
+            # Put an endline at the end of the file
+            if file_str[-1] != "\n":
+                f.write("\n")
+            lines = file_str.split("\n")
 
-    # Write sorted answers to the disk
-    f.seek(0)
-    for round_answers in gameWindow.answers:
-        answer_numbers = []
-        for answer in round_answers:
-            answer_numbers.append(answer[0])
-            answer_numbers.append(answer[1])
-        f.write(",".join(answer_numbers) + "\n")
+            for j, line in enumerate(lines):
+                # Skip empty lines
+                if line == "":
+                    continue
+
+                line = line.split(",")
+
+                # Check if the line is valid
+                if len(line) > 14:
+                    self.terminate_error(f"Every round must have at most 7 answers, {line} has {len(line)//2}")
+
+                round_data = []
+                for i in range(0, len(line), 2):
+                    round_answer = line[i]
+
+                    # Check if the answer is valid
+                    if len(round_answer) > 16:
+                        self.terminate_error(f"Answer {round_answer} at line {i-1} is too long")
+
+                    # Check if the  is valid
+                    points = line[i + 1]
+                    if not points.isdigit() or int(points) not in range(100):
+                        print(line[i])
+                        self.terminate_error(f"Points {points} at line {j+1} are not valid")
+
+                    round_data.append([round_answer.lower(), points, True])
+                gameWindow.answers.append(round_data)
+
+            # Sort answers by points
+            for i, round_answers in enumerate(gameWindow.answers):
+                gameWindow.answers[i] = sorted(round_answers, key=lambda x: int(x[1]), reverse=True)
+
+            # Write sorted answers to the disk
+            f.seek(0)
+            for round_answers in gameWindow.answers:
+                answer_numbers = []
+                for answer in round_answers:
+                    answer_numbers.append(answer[0])
+                    answer_numbers.append(answer[1])
+                f.write(",".join(answer_numbers) + "\n")
+
+
+if __name__ == "__main__":
+    app = QApplication(argv)
+    window = ControlRoom()
+    window.show()
+    gameWindow.refresh()
+    print(gameWindow.answers)
+    exit(app.exec())
 
 
 # Create the window, saving it to a variable.
@@ -193,62 +226,6 @@ with open(filename, "r+") as f:
 
 # tabControl.add(sfx_tab, text="SFX")
 # tabControl.pack(expand=1, fill="both")
-
-
-class ControlRoom(QMainWindow):
-    def __init__(self):
-        super().__init__()
-
-        self.counter = 0
-        self.is_running = False
-
-        self.setWindowTitle("Counter Window")
-        self.setGeometry(100, 100, 300, 150)
-
-        self.layout = QVBoxLayout()
-
-        self.start_button = QPushButton("Start", self)
-        self.start_button.clicked.connect(self.start_timer)
-        self.layout.addWidget(self.start_button)
-
-        self.stop_button = QPushButton("Stop", self)
-        self.stop_button.clicked.connect(self.stop_timer)
-        self.layout.addWidget(self.stop_button)
-
-        self.reset_button = QPushButton("Reset", self)
-        self.reset_button.clicked.connect(gameWindow.refresh)
-        self.layout.addWidget(self.reset_button)
-
-        self.timer = QTimer(self)
-        self.timer.timeout.connect(lambda: print("NIGGA"))
-
-        central_widget = QWidget(self)
-        central_widget.setLayout(self.layout)
-        self.setCentralWidget(central_widget)
-
-    def start_timer(self):
-        if not self.is_running:
-            self.is_running = True
-            self.timer.start(500)  # 500 milliseconds (0.5 seconds)
-
-    def stop_timer(self):
-        if self.is_running:
-            self.is_running = False
-            self.timer.stop()
-
-    def reset_timer(self):
-        self.counter = 0
-
-    def update_counter(self):
-        self.counter += 1
-
-
-if __name__ == "__main__":
-    app = QApplication(argv)
-    window = ControlRoom()
-    window.show()
-    gameWindow.refresh()
-    exit(app.exec())
 
 
 #   try:
