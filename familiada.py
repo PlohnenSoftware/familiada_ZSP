@@ -18,6 +18,8 @@ from PyQt6.QtWidgets import (
 )
 from PyQt6.QtCore import QTimer
 from PyQt6 import QtGui
+from PyQt6.QtGui import QCursor
+from PyQt6 import QtCore
 
 gameWindow = Bb()
 # The program provides a graphical interface for the game Familiada.gameWindow
@@ -66,18 +68,44 @@ class ControlRoom(QMainWindow):
         self.setWindowTitle("Familiada")
         self.setGeometry(300,150,1000,600)
         self.setWindowIcon(QtGui.QIcon('familiada.ico'))
-        central_widget = QWidget(self)
+        
+        central_widget = QWidget()
+        tab_widget = QTabWidget() 
+        sfx_widget = QWidget()
+        pagelayout = QVBoxLayout(central_widget)
+        sfxlayout = QGridLayout(sfx_widget)
         self.setCentralWidget(central_widget)
-        layout = QVBoxLayout(central_widget)
-        self.setLayout(layout)
-        self.tab_widget = QTabWidget(self)
+        self.setLayout(pagelayout)
+        tab_widget.setTabPosition(QTabWidget.TabPosition.North)
+        tab_widget.setMovable(True)
 
         for i, round_answers in enumerate(gameWindow.answers):
              newtab = QWidget()
-             self.tab_widget.addTab(newtab, f"Runda {i+1}")
+             tab_widget.addTab(newtab, f"Runda {i+1}")
 
-        layout.addWidget(self.tab_widget)
+        button_brawo = self.create_buttons("Brawa")
+        button_stop = self.create_buttons("Stop")
+        button_intro = self.create_buttons("Intro")
+        button_outro = self.create_buttons("Outro")
 
+        sfxlayout.addWidget(button_brawo, 0, 0)
+        sfxlayout.addWidget(button_stop, 1, 0)
+        sfxlayout.addWidget(button_intro, 0, 1)
+        sfxlayout.addWidget(button_outro, 1, 1)
+
+
+        punktacja = QWidget()
+        tab_widget.addTab(punktacja, "Punktacja")
+        final = QWidget()
+        tab_widget.addTab(final, "Finał")
+        pagelayout.addWidget(tab_widget)
+        pagelayout.addWidget(sfx_widget)
+
+    def create_buttons(self, name):
+        button = QPushButton(name)
+        button.setCursor(QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
+        button.setFixedWidth(300)
+        return button
 
     def terminate_error(self, error_description):
         dlg = QMessageBox(self)
