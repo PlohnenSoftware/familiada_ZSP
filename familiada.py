@@ -1,6 +1,6 @@
 from sys import exit, argv
 import os
-from blackboard import Blackboard as Bb
+from blackboard import Blackboard 
 from PyQt6.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBox, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QGridLayout, QWidget, QLineEdit, QTabWidget, QTextEdit, QComboBox, QSlider, QSpacerItem, QSizePolicy
 from PyQt6.QtCore import QTimer
 from PyQt6 import QtGui
@@ -8,7 +8,7 @@ from PyQt6.QtGui import QCursor
 from PyQt6 import QtCore
 from PyQt6.QtCore import Qt
 
-gameWindow = Bb()
+gameWindow = Blackboard()
 # The program provides a graphical interface for the game Familiada.gameWindow
 
 # Game data is a csv selected by the user upon startup.
@@ -75,6 +75,10 @@ class ControlRoom(QMainWindow):
         verticalspacer = QSpacerItem(0,0, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
         button_intro = self.create_buttons("Intro")
         button_outro = self.create_buttons("Outro")
+        button_intro.clicked.connect(lambda: gameWindow.playsound("intro"))
+        button_outro.clicked.connect(lambda: gameWindow.playsound("ending"))
+        button_brawo.clicked.connect(lambda: gameWindow.playsound("bravo"))
+        button_stop.clicked.connect(gameWindow.stop_playing)
         self.slider = QSlider(Qt.Orientation.Horizontal)
         self.slider.setRange(0,1000)
         self.slider.setValue(1000)
@@ -102,8 +106,9 @@ class ControlRoom(QMainWindow):
         pagelayout.addWidget(sfx_widget)
 
     def slider_moved(self):
-        value_slider = self.slider.value()
-        self.label_glosnosc.setText("Głośność: " + str(self.slider.value()/10) + "%")
+        value_of_slider = self.slider.value()
+        self.label_glosnosc.setText("Głośność: " + str(value_of_slider/10) + "%")
+        gameWindow.set_global_volume(value_of_slider/1000)
 
     def create_buttons(self, name):
         button = QPushButton(name)
@@ -283,8 +288,8 @@ if __name__ == "__main__":
 # button4 = tkinter.Button(sfx_tab, text="ROUND", command=lambda: pygame.mixer.Sound.play(round_sound))
 # button4.pack()
 
-# button4 = tkinter.Button(sfx_tab, text="STOP", command=lambda: pygame.mixer.fadeout(500))
-# button4.pack()
+# button5 = tkinter.Button(sfx_tab, text="STOP", command=lambda: pygame.mixer.fadeout(500))
+# button5.pack()
 
 # tabControl.add(sfx_tab, text="SFX")
 # tabControl.pack(expand=1, fill="both")
