@@ -67,7 +67,7 @@ class ControlRoom(QMainWindow):
     def __init__(self):
         super().__init__()
         self.open_file()
-        self.setWindowTitle("Familiada")
+        self.setWindowTitle("Familiada - reżyserka")
         self.setGeometry(300, 150, 1000, 600)
         self.setWindowIcon(QIcon("familiada.ico"))
 
@@ -85,8 +85,19 @@ class ControlRoom(QMainWindow):
 
         for i, round_answers in enumerate(gameWindow.answers):
             newtab = QWidget()
+            newtablayout = QGridLayout(newtab)
+            start_button = self.create_buttons("ZACZNIJ")
+            start_button.clicked.connect(lambda state, round=i: gameWindow.round_init(round))
+            newtablayout.addWidget(start_button, 0, 0)
+
             for j, answer_dict in enumerate(round_answers):
-                print(answer_dict)
+                answer = answer_dict[0].ljust(16)
+                points = answer_dict[1].rjust(2)
+                answer_text = f"{answer} {points}"
+                answer_button = self.create_buttons(answer_text)
+                answer_button.clicked.connect(lambda state, round=i, answer=j: gameWindow.show_answer(round, answer))
+                newtablayout.addWidget(answer_button, j+1, 0)
+
 
             tab_widget.addTab(newtab, f"Runda {i+1}")
 
@@ -140,7 +151,7 @@ class ControlRoom(QMainWindow):
         button = QPushButton(name)
         button.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
         button.setMinimumWidth(200)
-        button.setStyleSheet("padding: 15px 10px;" + "font-size: 14px;")
+        button.setStyleSheet("padding: 15px 10px;font-size: 14px;")
         return button
 
     def terminate_error(self, error_description):
@@ -176,8 +187,8 @@ class ControlRoom(QMainWindow):
                 # Check if the line is valid
                 if len(line) > 14:
                     self.terminate_error(f"Every round must have at most 7 answers, {line} has {len(line)//2}")
-
                 round_data = []
+
                 for i in range(0, len(line), 2):
                     round_answer = line[i]
 
