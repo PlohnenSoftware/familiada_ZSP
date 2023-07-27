@@ -1,12 +1,27 @@
 from sys import exit, argv
-import os
-from blackboard import Blackboard 
-from PyQt6.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBox, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QGridLayout, QWidget, QLineEdit, QTabWidget, QTextEdit, QComboBox, QSlider, QSpacerItem, QSizePolicy
-from PyQt6.QtCore import QTimer
-from PyQt6 import QtGui
-from PyQt6.QtGui import QCursor
-from PyQt6 import QtCore
-from PyQt6.QtCore import Qt
+from os import getcwd
+from blackboard import Blackboard
+from PyQt6.QtWidgets import (
+    QApplication,
+    QMainWindow,
+    QFileDialog,
+    QMessageBox,
+    QLabel,
+    QPushButton,
+    QVBoxLayout,
+    QHBoxLayout,
+    QGridLayout,
+    QWidget,
+    QLineEdit,
+    QTabWidget,
+    QTextEdit,
+    QComboBox,
+    QSlider,
+    QSpacerItem,
+    QSizePolicy,
+)
+from PyQt6.QtGui import QCursor, QIcon
+from PyQt6.QtCore import Qt, QTimer
 
 gameWindow = Blackboard()
 # The program provides a graphical interface for the game Familiada.gameWindow
@@ -51,18 +66,20 @@ gameWindow = Blackboard()
 class ControlRoom(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.getFileName()
+        self.open_file()
         self.setWindowTitle("Familiada")
         self.setGeometry(300, 150, 1000, 600)
-        self.setWindowIcon(QtGui.QIcon("familiada.ico"))
+        self.setWindowIcon(QIcon("familiada.ico"))
 
         central_widget = QWidget()
         tab_widget = QTabWidget()
         sfx_widget = QWidget()
         pagelayout = QVBoxLayout(central_widget)
         sfxlayout = QGridLayout(sfx_widget)
+
         self.setCentralWidget(central_widget)
         self.setLayout(pagelayout)
+
         tab_widget.setTabPosition(QTabWidget.TabPosition.North)
         tab_widget.setMovable(True)
 
@@ -70,36 +87,39 @@ class ControlRoom(QMainWindow):
             newtab = QWidget()
             for j, answer_dict in enumerate(round_answers):
                 print(answer_dict)
-                
+
             tab_widget.addTab(newtab, f"Runda {i+1}")
 
+        # Create widgets - buttons
         button_brawo = self.create_buttons("Brawa")
         button_stop = self.create_buttons("Stop")
-        verticalspacer = QSpacerItem(0,0, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
+        verticalspacer = QSpacerItem(0, 0, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
         button_intro = self.create_buttons("Intro")
         button_outro = self.create_buttons("Outro")
+
+        # Connect buttons to functions
         button_intro.clicked.connect(lambda: gameWindow.playsound("intro"))
         button_outro.clicked.connect(lambda: gameWindow.playsound("ending"))
         button_brawo.clicked.connect(lambda: gameWindow.playsound("bravo"))
         button_stop.clicked.connect(gameWindow.stop_playing)
-        self.slider = QSlider(Qt.Orientation.Horizontal)
-        self.slider.setRange(0,1000)
-        self.slider.setValue(1000)
-        self.label_glosnosc = QLabel("Głośność: " + str(self.slider.value()/10) + "%")
-        self.slider.valueChanged.connect(self.slider_moved)
 
+        # Create widgets - slider and label
+        self.slider = QSlider(Qt.Orientation.Horizontal)
+        self.slider.setRange(0, 1000)
+        self.slider.setValue(1000)
+        self.slider.setMinimumWidth(400)
+        self.slider.valueChanged.connect(self.slider_moved)
+        self.label_glosnosc = QLabel("Głośność: " + str(self.slider.value() / 10) + "%")
+        self.label_glosnosc.setStyleSheet("font-size: 16px;")
+
+        # Add widgets to layouts
         sfxlayout.addWidget(button_brawo, 0, 0)
         sfxlayout.addWidget(button_stop, 2, 0)
         sfxlayout.addItem(verticalspacer, 1, 0, 2, 1)
         sfxlayout.addWidget(button_intro, 0, 1)
         sfxlayout.addWidget(button_outro, 2, 1)
-        sfxlayout.addWidget(self.label_glosnosc, 0, 2, 1, 4, alignment = Qt.AlignmentFlag.AlignHCenter)
+        sfxlayout.addWidget(self.label_glosnosc, 0, 2, 1, 4, alignment=Qt.AlignmentFlag.AlignHCenter)
         sfxlayout.addWidget(self.slider, 2, 2, 2, 4)
-
-        self.slider.setMinimumWidth(400)
-        self.label_glosnosc.setStyleSheet(
-            "font-size: 16px;"
-        )
 
         punktacja = QWidget()
         tab_widget.addTab(punktacja, "Punktacja")
@@ -107,20 +127,20 @@ class ControlRoom(QMainWindow):
         tab_widget.addTab(final, "Finał")
         pagelayout.addWidget(tab_widget)
         pagelayout.addWidget(sfx_widget)
+        refresher = QTimer(self)
+        refresher.timeout.connect(gameWindow.refresh)
+        refresher.start(250)
 
     def slider_moved(self):
         value_of_slider = self.slider.value()
-        self.label_glosnosc.setText("Głośność: " + str(value_of_slider/10) + "%")
-        gameWindow.set_global_volume(value_of_slider/1000)
+        self.label_glosnosc.setText("Głośność: " + str(value_of_slider / 10) + "%")
+        gameWindow.set_global_volume(value_of_slider / 1000)
 
     def create_buttons(self, name):
         button = QPushButton(name)
-        button.setCursor(QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
+        button.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
         button.setMinimumWidth(200)
-        button.setStyleSheet(
-            "padding: 15px 10px;" +
-            "font-size: 14px;" 
-        )
+        button.setStyleSheet("padding: 15px 10px;" + "font-size: 14px;")
         return button
 
     def terminate_error(self, error_description):
@@ -132,9 +152,9 @@ class ControlRoom(QMainWindow):
         if button == QMessageBox.StandardButton.Ok:
             exit()
 
-    def getFileName(self):
+    def open_file(self):
         file_filter = "CSV File (*.csv)"
-        filename = QFileDialog.getOpenFileName(parent=self, caption="Wybierz plik", directory=os.getcwd(), filter=file_filter, initialFilter="CSV File (*.csv)")
+        filename = QFileDialog.getOpenFileName(parent=self, caption="Wybierz plik", directory=getcwd(), filter=file_filter, initialFilter="CSV File (*.csv)")
         filename = str(filename[0])
         if filename == "":
             self.terminate_error("Nie wybrano pliku")
@@ -151,7 +171,6 @@ class ControlRoom(QMainWindow):
                 # Skip empty lines
                 if line == "":
                     continue
-
                 line = line.split(",")
 
                 # Check if the line is valid
