@@ -68,6 +68,9 @@ class ControlRoom(QMainWindow):
 
         for i, round_answers in enumerate(gameWindow.answers):
             newtab = QWidget()
+            for j, answer_dict in enumerate(round_answers):
+                print(answer_dict)
+                
             tab_widget.addTab(newtab, f"Runda {i+1}")
 
         button_brawo = self.create_buttons("Brawa")
@@ -207,7 +210,7 @@ if __name__ == "__main__":
 # # Create tab controler in the window1
 # tabControl = ttk.Notebook(window1)
 
-# # Create a tab for every round
+# Create a tab for every round
 # for i, round_answers in enumerate(gameWindow.answers):
 #     round_tab = ttk.Frame(tabControl)
 #     round_tab.grid_columnconfigure((0, 4), weight=1)
