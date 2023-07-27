@@ -1,4 +1,3 @@
-
 from sys import exit, argv
 import tkinter
 import os
@@ -242,6 +241,7 @@ class ControlRoom(QMainWindow):
 
     def update_counter(self):
         self.counter += 1
+
 
 if __name__ == "__main__":
     app = QApplication(argv)
