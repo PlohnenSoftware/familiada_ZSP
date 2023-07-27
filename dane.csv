@@ -3,13 +3,13 @@ java,95,c++,90,javascript,85,php,80,swift,75,c#,70,python,58
 sushi,50,pizza,45,burger,40,ramen,35,pasta,30,steak,25
 football,90,basketball,85,soccer,80,tennis,75,golf,70,hockey,65
 mountains,70,beaches,65,forests,60,deserts,55,waterfalls,50,volcanoes,45
-cats,80,dogs,75,birds,70,fish,65,reptiles,60,rodents,55
+cats,80,dogs,75,birds,70,fish,65,reptiles,1,rodents,55
 painting,40,dancing,35,singing,30,writing,25,acting,20,sculpting,15
-history,95,science,90,literature,85,art,80,geography,75,math,70
+history,95,science,90,literature,2,art,80,geography,75,math,70
 comedy,70,drama,65,thriller,60,action,55,romance,50,horror,45
 space expl.,85,med. adva.,80,green ene.,75,art. intel.,70,biotech.,65
 photography,60,cooking,55,gardening,50,diy crafts,45,traveling,40
 superheroes,75,aliens,70,zombies,65,robots,60,vampires,55,werewolves,50
 fashion,45,architecture,40,interior design,35,graphic design,30,indu. design,25
 meditation,80,yoga,75,pilates,70,running,65,cycling,60,swimming,55
-astronomy,90,archeology,85,paleontology,80,anthropology,75,sociology,70
+astronomy,50,archeology,94,paleontology,32,anthropology,22,sociology,33
