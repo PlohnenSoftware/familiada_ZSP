@@ -39,8 +39,8 @@ class Blackboard:
         pygame.init()
         self.surface = pygame.display.set_mode((900, 700), pygame.RESIZABLE)
         pygame.display.set_caption("Familiada")
-        self.programIcon = pygame.image.load("familiada.ico")
-        pygame.display.set_icon(self.programIcon)
+        self.program_icon = pygame.image.load("familiada.ico")
+        pygame.display.set_icon(self.program_icon)
         self.refresh()
 
     def refresh(self):
@@ -94,8 +94,11 @@ class Blackboard:
         if team not in ("L", "R"):
             raise ValueError("A team must be either 'L' or 'R'")
 
-    def playsound(self, sound_ID):
-        self.sounds[sound_ID].play()
+    def playsound(self, sound_id):
+        self.sounds[sound_id].play()
+
+    def stop_playing(self):
+        pygame.mixer.fadeout(500)
 
     def set_global_volume(self, volume):
         for sound in self.sounds.values():
