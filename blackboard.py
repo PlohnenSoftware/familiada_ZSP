@@ -24,15 +24,17 @@ class Blackboard:
 
         # Initialize the music
         pygame.mixer.init()
-        self.correct_sound = pygame.mixer.Sound("sfx/correct.wav")
-        self.wrong_sound = pygame.mixer.Sound("sfx/incorrect.wav")
-        self.dubel_sound = pygame.mixer.Sound("sfx/dubel.wav")
-        self.bravo_sound = pygame.mixer.Sound("sfx/bravo.wav")
-        self.write_sound = pygame.mixer.Sound("sfx/write.wav")
-        self.round_sound = pygame.mixer.Sound("sfx/round_sound.wav")
-        self.ending_music = pygame.mixer.Sound("sfx/final_ending.flac")
-        self.intro_music = pygame.mixer.Sound("sfx/show_music.flac")
-        
+        self.sounds = {
+            "correct": pygame.mixer.Sound("sfx/correct.wav"),
+            "wrong": pygame.mixer.Sound("sfx/incorrect.wav"),
+            "dubel": pygame.mixer.Sound("sfx/dubel.wav"),
+            "bravo": pygame.mixer.Sound("sfx/bravo.wav"),
+            "write": pygame.mixer.Sound("sfx/write.wav"),
+            "round": pygame.mixer.Sound("sfx/round_sound.wav"),
+            "ending": pygame.mixer.Sound("sfx/final_ending.flac"),
+            "intro": pygame.mixer.Sound("sfx/show_music.flac"),
+        }
+
         # Initialize the blackboard window
         pygame.init()
         self.surface = pygame.display.set_mode((900, 700), pygame.RESIZABLE)
@@ -40,7 +42,6 @@ class Blackboard:
         self.programIcon = pygame.image.load("familiada.ico")
         pygame.display.set_icon(self.programIcon)
         self.refresh()
-
 
     def refresh(self):
         self.surface.fill((0, 0, 255))
@@ -87,34 +88,24 @@ class Blackboard:
         # Refresh both windows
         pygame.display.update()
 
-
     # CHECK IF TEAM INPUT IS CORRECT
     @staticmethod
     def check_team_input(team):
         if team not in ("L", "R"):
             raise ValueError("A team must be either 'L' or 'R'")
-        
+
     def playsound(self, sound_ID):
-        match sound_ID:
-            case "correct":
-                pygame.mixer.Sound.play(self.correct_sound)
-            case "wrong":
-                pygame.mixer.Sound.play(self.wrong_sound)
-            case "dubel":
-                pygame.mixer.Sound.play(self.dubel_sound)
-            case "bravo":
-                pygame.mixer.Sound.play(self.bravo_sound)
-            case "write":
-                pygame.mixer.Sound.play(self.write_sound)
-            case "round":
-                pygame.mixer.Sound.play(self.round_sound)
-            case "intro":
-                pygame.mixer.Sound.play(self.intro_music)
-            case "ending":
-                pygame.mixer.Sound.play(self.ending_music)
-            case _:
-                raise ValueError("Sound ID must be either 'correct', 'wrong', 'dubel', 'bravo', 'write', 'round', 'intro' or 'ending'")
-            
+        self.sounds[sound_ID].play()
+
+    def set_global_volume(self, volume):
+        for sound in self.sounds.values():
+            sound.set_volume(volume)
+
+    def set_volume(self, volume, *keys):
+        for key in keys:
+            if key in self.sounds:
+                sound = self.sounds[key]
+                sound.set_volume(volume)
 
     # change the team thaht is winner of the roud
     def change_winner(self):
@@ -129,14 +120,14 @@ class Blackboard:
             self.score[self.round_winner] += self.round_score
             self.round_score = 0
 
-    # Write a word horizontally 
+    # Write a word horizontally
     def write_hor(self, word, start_row, start_col):
         letters = list(str(word))
         for i, letter in enumerate(letters):
             self.letter_matrix[start_row][start_col + i] = letter
         self.refresh()
 
-    # Write a word vertically 
+    # Write a word vertically
     def write_ver(self, word, start_row, start_col):
         # niewiedzeć czemu nie działa word = str(word)
         letters = list(str(word))
@@ -208,7 +199,6 @@ class Blackboard:
 
     # Print selected answer for selected round
     def show_answer(self, round_number, answer_number):
-
         # Check if the answer is already printed
         if self.answers[round_number][answer_number][2]:
             return
@@ -280,7 +270,6 @@ class Blackboard:
 
     # Draw a small x on the blackboard for a selected team and play a sound
     def small_strike(self, team):
-
         self.check_team_input(team)
         current_strikes = self.strike[team]
 
@@ -300,7 +289,6 @@ class Blackboard:
             self.change_winner()
 
         self.playsound("wrong")
-        
 
     def show_final_answer(self, answer_input, point_input, row, col):
         answer = str(answer_input.get())
