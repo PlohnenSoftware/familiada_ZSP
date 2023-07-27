@@ -1,28 +1,23 @@
 from sys import exit, argv
-import tkinter
 import os
-from tkinter import messagebox, ttk, filedialog
 from blackboard import Blackboard as Bb
 from PyQt6.QtWidgets import (
     QApplication,
     QMainWindow,
-    QPushButton,
-    QVBoxLayout,
-    QWidget,
     QFileDialog,
     QMessageBox,
-    QApplication,
-    QMainWindow,
     QLabel,
     QPushButton,
     QVBoxLayout,
     QHBoxLayout,
+    QGridLayout,
     QWidget,
     QLineEdit,
     QTabWidget,
     QTextEdit,
 )
 from PyQt6.QtCore import QTimer
+from PyQt6 import QtGui
 
 gameWindow = Bb()
 # The program provides a graphical interface for the game Familiada.gameWindow
@@ -68,22 +63,21 @@ class ControlRoom(QMainWindow):
     def __init__(self):
         super().__init__()
         self.getFileName()
-        self.setWindowTitle("Simple GUI")
-        self.setGeometry(300, 300, 400, 200)
-
-        # Create a central widget and set it as the main window's central widget
+        self.setWindowTitle("Familiada")
+        self.setGeometry(300,150,1000,600)
+        self.setWindowIcon(QtGui.QIcon('familiada.ico'))
         central_widget = QWidget(self)
         self.setCentralWidget(central_widget)
-
-        # Create a vertical layout
         layout = QVBoxLayout(central_widget)
-
-        # Create a tab widget
+        self.setLayout(layout)
         self.tab_widget = QTabWidget(self)
 
-        for i in range(0, 6):
+        for i, round_answers in enumerate(gameWindow.answers):
              newtab = QWidget()
-             self.tab_widget.addTab(newtab, f"Tab {i}")
+             self.tab_widget.addTab(newtab, f"Runda {i+1}")
+
+        layout.addWidget(self.tab_widget)
+
 
     def terminate_error(self, error_description):
         dlg = QMessageBox(self)
