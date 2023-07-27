@@ -1,21 +1,7 @@
 from sys import exit, argv
 import os
 from blackboard import Blackboard as Bb
-from PyQt6.QtWidgets import (
-    QApplication,
-    QMainWindow,
-    QFileDialog,
-    QMessageBox,
-    QLabel,
-    QPushButton,
-    QVBoxLayout,
-    QHBoxLayout,
-    QGridLayout,
-    QWidget,
-    QLineEdit,
-    QTabWidget,
-    QTextEdit,
-)
+from PyQt6.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBox, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QGridLayout, QWidget, QLineEdit, QTabWidget, QTextEdit, QComboBox
 from PyQt6.QtCore import QTimer
 from PyQt6 import QtGui
 from PyQt6.QtGui import QCursor
@@ -66,11 +52,11 @@ class ControlRoom(QMainWindow):
         super().__init__()
         self.getFileName()
         self.setWindowTitle("Familiada")
-        self.setGeometry(300,150,1000,600)
-        self.setWindowIcon(QtGui.QIcon('familiada.ico'))
-        
+        self.setGeometry(300, 150, 1000, 600)
+        self.setWindowIcon(QtGui.QIcon("familiada.ico"))
+
         central_widget = QWidget()
-        tab_widget = QTabWidget() 
+        tab_widget = QTabWidget()
         sfx_widget = QWidget()
         pagelayout = QVBoxLayout(central_widget)
         sfxlayout = QGridLayout(sfx_widget)
@@ -80,8 +66,8 @@ class ControlRoom(QMainWindow):
         tab_widget.setMovable(True)
 
         for i, round_answers in enumerate(gameWindow.answers):
-             newtab = QWidget()
-             tab_widget.addTab(newtab, f"Runda {i+1}")
+            newtab = QWidget()
+            tab_widget.addTab(newtab, f"Runda {i+1}")
 
         button_brawo = self.create_buttons("Brawa")
         button_stop = self.create_buttons("Stop")
@@ -92,7 +78,6 @@ class ControlRoom(QMainWindow):
         sfxlayout.addWidget(button_stop, 1, 0)
         sfxlayout.addWidget(button_intro, 0, 1)
         sfxlayout.addWidget(button_outro, 1, 1)
-
 
         punktacja = QWidget()
         tab_widget.addTab(punktacja, "Punktacja")
@@ -153,7 +138,6 @@ class ControlRoom(QMainWindow):
                     # Check if the  is valid
                     points = line[i + 1]
                     if not points.isdigit() or int(points) not in range(100):
-                        print(line[i])
                         self.terminate_error(f"Points {points} at line {j+1} are not valid")
 
                     round_data.append([round_answer.lower(), points, True])
@@ -178,7 +162,6 @@ if __name__ == "__main__":
     window = ControlRoom()
     window.show()
     gameWindow.refresh()
-    print(gameWindow.answers)
     exit(app.exec())
 
 
