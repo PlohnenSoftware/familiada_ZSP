@@ -24,43 +24,9 @@ from PyQt6.QtGui import QCursor, QIcon
 from PyQt6.QtCore import Qt, QTimer
 
 gameWindow = Blackboard()
-# The program provides a graphical interface for the game Familiada.gameWindow
-
-# Game data is a csv selected by the user upon startup.
-# The file should contain lines of answers for round with points
-# in the form of dicts {word,score} all separated by commas.
-
-# Currently all gui texts are written in Polish.
-
-# Blackboard class containing the matrix object used to draw characters on the screen
-
-
-# Safely exit the program
-
-###############TKINTER##################
-# if messagebox.showerror("FAMILIADA ERROR", error_description):
-#     exit()
-
-
-# Initialize the main game object
-
-# Read data from the disk
-
-# lepiej zrobić pulpit na start, do finalnej wersji bo jak sie d exe spakuje to wywala do jakiegoś folderu temp,
-# gdzie jest interpreter pythona przenosny z Pyinstallera
-# current_dir=os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop')
-
-
-###############TKINTER##################
-# filename = filedialog.askopenfilename(initialdir=current_dir, title="Wybierz plik z danymi", filetypes=(("csv files", "*.csv"), ("all files", "*.*")))
-
-
-# Create a list containing tuples of answers and points for every round
-
-#################################################################################################################
-
 
 # current_dir = os.path.dirname(os.path.abspath(__file__))
+# current_dir=os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop')
 
 
 class ControlRoom(QMainWindow):
@@ -74,11 +40,11 @@ class ControlRoom(QMainWindow):
         central_widget = QWidget()
         tab_widget = QTabWidget()
         sfx_widget = QWidget()
+
         pagelayout = QVBoxLayout(central_widget)
         sfxlayout = QGridLayout(sfx_widget)
 
         self.setCentralWidget(central_widget)
-        self.setLayout(pagelayout)
 
         tab_widget.setTabPosition(QTabWidget.TabPosition.North)
         tab_widget.setMovable(True)
@@ -96,8 +62,7 @@ class ControlRoom(QMainWindow):
                 answer_text = f"{answer} {points}"
                 answer_button = self.create_buttons(answer_text)
                 answer_button.clicked.connect(lambda state, round=i, answer=j: gameWindow.show_answer(round, answer))
-                newtablayout.addWidget(answer_button, j+1, 0)
-
+                newtablayout.addWidget(answer_button, j + 1, 0)
 
             tab_widget.addTab(newtab, f"Runda {i+1}")
 
@@ -170,51 +135,54 @@ class ControlRoom(QMainWindow):
         if filename == "":
             self.terminate_error("Nie wybrano pliku")
 
-        with open(filename, "r+") as f:
-            file_str = f.read()
+        file_str = self.read_file(filename)
+        if file_str is None:
+            return
 
-            # Put an endline at the end of the file
-            if file_str[-1] != "\n":
-                f.write("\n")
-            lines = file_str.split("\n")
+        lines = file_str.split("\n")
+        gameWindow.answers = self.parse_lines(lines)
+        self.write_sorted_answers(filename)
 
-            for j, line in enumerate(lines):
-                # Skip empty lines
-                if line == "":
-                    continue
-                line = line.split(",")
+    def read_file(self, filename):
+        try:
+            with open(filename, "r") as f:
+                file_str = f.read()
+            return file_str
+        except FileNotFoundError:
+            self.terminate_error(f"Plik '{filename}' nie został znaleziony")
+            return None
 
-                # Check if the line is valid
-                if len(line) > 14:
-                    self.terminate_error(f"Every round must have at most 7 answers, {line} has {len(line)//2}")
-                round_data = []
+    def parse_lines(self, lines):
+        parsed_answers = []
+        for j, line in enumerate(lines):
+            if line == "":
+                continue
+            line = line.split(",")
+            if len(line) > 14:
+                self.terminate_error(f"Każda runda musi mieć maksymalnie 7 odpowiedzi, {line} ma {len(line) // 2}")
+            round_data = self.parse_round(line, j)
+            parsed_answers.append(round_data)
+        return parsed_answers
 
-                for i in range(0, len(line), 2):
-                    round_answer = line[i]
+    def parse_round(self, line, j):
+        round_data = []
+        for i in range(0, len(line), 2):
+            round_answer = line[i]
+            if len(round_answer) > 16:
+                self.terminate_error(f"Odpowiedź {round_answer} w linii {i-1} jest za długa")
+            points = line[i + 1]
+            if not points.isdigit() or int(points) not in range(100):
+                self.terminate_error(f"Punkty {points} w linii {j+1} są nieprawidłowe")
+            round_data.append([round_answer.lower(), points, True])
 
-                    # Check if the answer is valid
-                    if len(round_answer) > 16:
-                        self.terminate_error(f"Answer {round_answer} at line {i-1} is too long")
+        # Sortowanie odpowiedzi po punktach, a następnie alfabetycznie
+        round_data.sort(key=lambda x: (-int(x[1]), x[0]))
+        return round_data
 
-                    # Check if the  is valid
-                    points = line[i + 1]
-                    if not points.isdigit() or int(points) not in range(100):
-                        self.terminate_error(f"Points {points} at line {j+1} are not valid")
-
-                    round_data.append([round_answer.lower(), points, True])
-                gameWindow.answers.append(round_data)
-
-            # Sort answers by points
-            for i, round_answers in enumerate(gameWindow.answers):
-                gameWindow.answers[i] = sorted(round_answers, key=lambda x: int(x[1]), reverse=True)
-
-            # Write sorted answers to the disk
-            f.seek(0)
+    def write_sorted_answers(self, filename):
+        with open(filename, "w") as f:
             for round_answers in gameWindow.answers:
-                answer_numbers = []
-                for answer in round_answers:
-                    answer_numbers.append(answer[0])
-                    answer_numbers.append(answer[1])
+                answer_numbers = [f"{answer[0]},{answer[1]}" for answer in round_answers]
                 f.write(",".join(answer_numbers) + "\n")
 
 
