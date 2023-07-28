@@ -159,7 +159,7 @@ class ControlRoom(QMainWindow):
                 continue
             line = line.split(",")
             if len(line) > 14:
-                self.terminate_error(f"Każda runda musi mieć maksymalnie 7 odpowiedzi, {line} ma {len(line) // 2}")
+                self.terminate_error(f"Każda runda musi mieć maksymalnie 7 odpowiedzi, runda {j+1} ma ich aż {len(line) // 2}")
             round_data = self.parse_round(line, j)
             parsed_answers.append(round_data)
         return parsed_answers
@@ -169,10 +169,10 @@ class ControlRoom(QMainWindow):
         for i in range(0, len(line), 2):
             round_answer = line[i]
             if len(round_answer) > 16:
-                self.terminate_error(f"Odpowiedź {round_answer} w linii {i-1} jest za długa")
+                self.terminate_error(f'Odpowiedź "{round_answer}" w linii {j+1} pliku CSV jest za długa')
             points = line[i + 1]
             if not points.isdigit() or int(points) not in range(100):
-                self.terminate_error(f"Punkty {points} w linii {j+1} są nieprawidłowe")
+                self.terminate_error(f'Punkty "{points}" w linii {j+1} pliku CSV są nieprawidłowe')
             round_data.append([round_answer.lower(), points, True])
 
         # Sortowanie odpowiedzi po punktach, a następnie alfabetycznie
