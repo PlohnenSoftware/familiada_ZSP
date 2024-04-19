@@ -7,8 +7,9 @@ class Blackboard:
     def __init__(self):
         # Initialize the blackboard containing object
         self.letter_matrix = [["" for _ in range(29)] for _ in range(10)]
-        self.stroke = 20
+        self.offset = 20
         self.answers = []
+        self.spacing = 2
         self.round_score = 0
         self.current_round = -1
         self.answers_shown_final = [[True for _ in range(5)] for _ in range(2)]
@@ -44,49 +45,60 @@ class Blackboard:
         self.refresh()
 
     def refresh(self):
-        self.surface.fill((0, 0, 255))
-        rect_width = self.surface.get_width() - self.stroke * 2
-        rect_height = self.surface.get_height() - self.stroke * 2
-        # Determine responsive width and height of the rectangles
-        if rect_width < rect_height * (192 / 108):
-            block_width = (rect_width - 125 - (28 * 2)) / 29
-            block_height = block_width * 3 / 2
+        # Set the background color
+        self.surface.fill((0, 0, 255))  # Blue background
 
-            # Move blocks to the center of the screen
-            block_x = 0
-            block_y = (rect_height - (block_height * 10) - (9 * 2) - 100) / 2
+        # Calculate dimensions for the gray rectangle
+        rect_width = self.surface.get_width() - 2 * self.offset
+        rect_height = self.surface.get_height() - 2 * self.offset
+        pygame.draw.rect(self.surface, (81, 81, 81), (self.offset, self.offset, rect_width, rect_height))
+
+        # Calculate dimensions and positions for the grid
+        rows, cols = 10, 29
+        aspect_ratio_rect = 3 / 2
+        aspect_ratio_grid = 16 / 9
+
+        # Calculate the maximum possible size of the grid within the gray rectangle
+        grid_width = rect_width - 2 * self.spacing
+        grid_height = rect_height - 2 * self.spacing
+
+        if grid_width / grid_height > aspect_ratio_grid:
+            grid_width = grid_height * aspect_ratio_grid
         else:
-            block_height = (rect_height - 100 - (9 * 2)) / 10
-            block_width = block_height * 2 / 3
+            grid_height = grid_width / aspect_ratio_grid
 
-            # Move blocks to the center of the screen
-            block_x = (rect_width - (block_width * 29) - (28 * 2) - 125) / 2
-            block_y = 0
+        block_width = (grid_width - (cols - 1) * self.spacing) / cols
+        block_height = block_width * aspect_ratio_rect
 
-        # Draw a grey rectangle around the game board
-        rectangle_rgb = (81, 81, 81)
-        rectangle_dimensions = (self.stroke, self.stroke, rect_width, rect_height)
-        pygame.draw.rect(self.surface, rectangle_rgb, rectangle_dimensions)
+        # print grid and block aspect ratio, declared and calculated from final dimentions:
+        print(f"Grid aspect ratio: {grid_width / grid_height}, Grid aspect ratio target:{aspect_ratio_grid}, Block aspect ratio: {block_height/block_width}, Block aspect ratio target:{aspect_ratio_rect}")
 
-        # Anti-bug SUPERmaxxx
-        font_height = max(round(block_height * 0.75), 2)
+        # Recalculate block sizes based on height constraints
+        if block_height > (grid_height - (rows - 1) * self.spacing) / rows:
+            block_height = (grid_height - (rows - 1) * self.spacing) / rows
+            block_width = block_height / aspect_ratio_rect
 
-        # Set the font
-        myfont = pygame.font.Font("familiada.ttf", font_height)
+        # Calculate the starting position of the grid
+        start_x = self.offset + (rect_width - grid_width) / 2
+        start_y = self.offset + (rect_height - grid_height) / 2
+        
+        # Initialize the font module and set the font size
+        pygame.font.init()  # Initialize the font module
+        font_size = max(round(block_height * 0.75), 2)  # Font size based on block height
+        myfont = myfont = pygame.font.Font("familiada.ttf", font_size)  # Use default font
 
-        # Draw black rectangles & letters on the self.surface.
+        # Drawing grid and text within each block
         for i in range(10):
             for j in range(29):
-                pos_x = block_x + 50 + (block_width + 3) * j
-                pos_y = block_y + 50 + (block_height + 3) * i
-                label = myfont.render(self.letter_matrix[i][j], 1, (255, 255, 0))
-                rectangle_rgb = (0, 0, 0)
-                rectangle_dimensions = (pos_x, pos_y, block_width, block_height)
-                pygame.draw.rect(self.surface, rectangle_rgb, rectangle_dimensions)
-                self.surface.blit(label, (pos_x + block_width * 0.146, pos_y + block_height / 2 - font_height / 2))
+                rect_x = start_x + j * (block_width + self.spacing)
+                rect_y = start_y + i * (block_height + self.spacing)
+                pygame.draw.rect(self.surface, (0, 0, 0), (rect_x, rect_y, block_width, block_height))
+                label = myfont.render(self.letter_matrix[i][j], True, (255, 255, 0))  # Render the text in yellow
+                # Calculate text position to center it in the rectangle
+                label_rect = label.get_rect(center=(rect_x + 0.5 * block_width, rect_y + 0.5 * block_height))
+                self.surface.blit(label, label_rect)  # Draw text at the calculated position
 
-        # Refresh both windows
-        pygame.display.update()
+        pygame.display.update()  # Update the display
 
     # CHECK IF TEAM INPUT IS CORRECT
     @staticmethod
