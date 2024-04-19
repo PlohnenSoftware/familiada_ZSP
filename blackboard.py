@@ -45,27 +45,27 @@ class Blackboard:
 
     def refresh(self):
         self.surface.fill((0, 0, 255))
+        rect_width = self.surface.get_width() - self.stroke * 2
+        rect_height = self.surface.get_height() - self.stroke * 2
         # Determine responsive width and height of the rectangles
-        if self.surface.get_width() < self.surface.get_height() * (192 / 108):
-            block_width = (self.surface.get_width() - 125 - (28 * 2)) / 29
+        if rect_width < rect_height * (192 / 108):
+            block_width = (rect_width - 125 - (28 * 2)) / 29
             block_height = block_width * 3 / 2
 
             # Move blocks to the center of the screen
             block_x = 0
-            block_y = (self.surface.get_height() - (block_height * 10) - (9 * 2) - 100) / 2
+            block_y = (rect_height - (block_height * 10) - (9 * 2) - 100) / 2
         else:
-            block_height = (self.surface.get_height() - 100 - (9 * 2)) / 10
+            block_height = (rect_height - 100 - (9 * 2)) / 10
             block_width = block_height * 2 / 3
 
             # Move blocks to the center of the screen
-            block_x = (self.surface.get_width() - (block_width * 29) - (28 * 2) - 125) / 2
+            block_x = (rect_width - (block_width * 29) - (28 * 2) - 125) / 2
             block_y = 0
 
         # Draw a grey rectangle around the game board
         rectangle_rgb = (81, 81, 81)
-        rectangle_width = self.surface.get_width() - self.stroke * 2
-        rectangle_height = self.surface.get_height() - self.stroke * 2
-        rectangle_dimensions = (self.stroke, self.stroke, rectangle_width, rectangle_height)
+        rectangle_dimensions = (self.stroke, self.stroke, rect_width, rect_height)
         pygame.draw.rect(self.surface, rectangle_rgb, rectangle_dimensions)
 
         # Anti-bug SUPERmaxxx
