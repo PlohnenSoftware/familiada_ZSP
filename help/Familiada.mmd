@@ -1,0 +1,26 @@
+flowchart TD
+    A(Start of round) --> C
+    C{Family Member Buzzes}
+    C -->|First to buzz| D[First to buzz]
+    D -->|Yes| B[Answers]
+    D -->|No| I
+    B --> E{Is response on board?}
+    E -->|Yes| F[Check if answer is highest]
+    F -->|Yes| G[Family continues answering]
+    F -->|No| I
+    E -->|No| I[Chance to other family's member]
+    I --> J[answers]
+    J -->|yes| L{Is new response on board?}
+    L -->|Yes| M[Check if new answer is higher]
+    M -->|Yes| N[New family continues answering]
+    M -->|No| G
+    L -->|No| ee
+    J -->|No| ee
+    C -->|Second to buzz| I
+    G --> O{Compare results}
+    O -->|Higher from original family| P[Original family wins round]
+    O -->|Higher from other family| Q[Other family wins round]
+
+
+    
+
