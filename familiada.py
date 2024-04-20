@@ -168,7 +168,7 @@ class ControlRoom(QMainWindow):
         round_data = []
         for i in range(0, len(line), 2):
             round_answer = line[i]
-            if len(round_answer) > 16:
+            if len(round_answer) > 17:
                 self.terminate_error(f'Odpowiedź "{round_answer}" w linii {j+1} pliku CSV jest za długa')
             points = line[i + 1]
             if not points.isdigit() or int(points) not in range(100):

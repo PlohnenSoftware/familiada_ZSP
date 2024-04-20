@@ -6,8 +6,10 @@ from threading import Timer as Delay
 class Blackboard:
     def __init__(self):
         # Initialize the blackboard containing object
-        self.letter_matrix = [["" for _ in range(29)] for _ in range(10)]
+        self.rows, self.cols = 10, 30
+        self.letter_matrix = [["" for _ in range(self.cols)] for _ in range(self.rows)]
         self.offset = 20
+        self.max_ans_len = 17
         self.answers = []
         self.spacing = 2
         self.round_score = 0
@@ -54,7 +56,6 @@ class Blackboard:
         pygame.draw.rect(self.surface, (81, 81, 81), (self.offset, self.offset, rect_width, rect_height))
 
         # Calculate dimensions and positions for the grid
-        rows, cols = 10, 29
         aspect_ratio_rect = 3 / 2
         aspect_ratio_grid = 16 / 9
 
@@ -67,29 +68,31 @@ class Blackboard:
         else:
             grid_height = grid_width / aspect_ratio_grid
 
-        block_width = (grid_width - (cols - 1) * self.spacing) / cols
+        block_width = (grid_width - (self.cols - 1) * self.spacing) / self.cols
         block_height = block_width * aspect_ratio_rect
 
         # print grid and block aspect ratio, declared and calculated from final dimentions:
-        print(f"Grid aspect ratio: {grid_width / grid_height}, Grid aspect ratio target:{aspect_ratio_grid}, Block aspect ratio: {block_height/block_width}, Block aspect ratio target:{aspect_ratio_rect}")
+        print(
+            f"Grid aspect ratio: {grid_width / grid_height}, Grid aspect ratio target:{aspect_ratio_grid}, Block aspect ratio: {block_height/block_width}, Block aspect ratio target:{aspect_ratio_rect}"
+        )
 
         # Recalculate block sizes based on height constraints
-        if block_height > (grid_height - (rows - 1) * self.spacing) / rows:
-            block_height = (grid_height - (rows - 1) * self.spacing) / rows
+        if block_height > (grid_height - (self.rows - 1) * self.spacing) / self.rows:
+            block_height = (grid_height - (self.rows - 1) * self.spacing) / self.rows
             block_width = block_height / aspect_ratio_rect
 
         # Calculate the starting position of the grid
         start_x = self.offset + (rect_width - grid_width) / 2
         start_y = self.offset + (rect_height - grid_height) / 2
-        
+
         # Initialize the font module and set the font size
         pygame.font.init()  # Initialize the font module
         font_size = max(round(block_height * 0.75), 2)  # Font size based on block height
         myfont = myfont = pygame.font.Font("familiada.ttf", font_size)  # Use default font
 
         # Drawing grid and text within each block
-        for i in range(10):
-            for j in range(29):
+        for i in range(self.rows):
+            for j in range(self.cols):
                 rect_x = start_x + j * (block_width + self.spacing)
                 rect_y = start_y + i * (block_height + self.spacing)
                 pygame.draw.rect(self.surface, (0, 0, 0), (rect_x, rect_y, block_width, block_height))
@@ -152,7 +155,7 @@ class Blackboard:
 
     # Fill whole board with one character
     def fill(self, char=""):
-        self.letter_matrix = [[char for _ in range(29)] for _ in range(10)]
+        self.letter_matrix = [[char for _ in range(self.cols)] for _ in range(self.rows)]
         self.refresh()
 
     # Print a small x on selected row and column
@@ -197,10 +200,10 @@ class Blackboard:
 
         # Write blank spaces to the blackboard
         for i in range(no_answers):
-            self.write_hor("________________ --", row_coords + i, 6)
+            self.write_hor("_________________ --", row_coords + i, 6)
 
         # Write the sum
-        self.write_hor("suma   0", row_coords + no_answers + 1, 17)
+        self.write_hor("suma   0", row_coords + no_answers + 1, 18)
 
         for round_answers in self.answers:
             for answer in round_answers:
@@ -227,8 +230,8 @@ class Blackboard:
         no_answers, row_coords = self.calculate_coords(round_number)
         answer_text = str(self.answers[round_number][answer_number][0])
         answer_points = str(self.answers[round_number][answer_number][1])
-        self.write_hor(answer_text.ljust(16), row_coords + answer_number, 6)
-        self.write_hor(answer_points.rjust(2), row_coords + answer_number, 23)
+        self.write_hor(answer_text.ljust(self.max_ans_len), row_coords + answer_number, 6)
+        self.write_hor(answer_points.rjust(2), row_coords + answer_number, 6 + (self.max_ans_len + 1))
         self.write_hor(str(self.round_score).rjust(3), row_coords + no_answers + 1, 22)
 
         self.playsound("correct")
