@@ -1,14 +1,15 @@
 import pygame
-from numba import jit
+from numba import njit
 from math import floor
 from threading import Timer as Delay
 
 #helping static functions
-@jit(nopython=True)
+@njit
 def check_team_input(team):
     if team not in ("L", "R"):
         raise ValueError("A team must be either 'L' or 'R'")
-@jit(nopython=True)
+    
+@njit
 def calc_grid_size(surf_h, surf_w, offset, spacing, cols, rows):
     # Calculate dimensions for the gray rectangle
     rect_width = surf_w - 2 * offset
@@ -32,13 +33,18 @@ def calc_grid_size(surf_h, surf_w, offset, spacing, cols, rows):
     start_y = offset + (rect_height - grid_height_recalc) / 2
     font_size = max(round(block_height * 0.8), 2)  # Font size based on block height
     return (start_x, start_y, font_size, block_width, block_height, rect_width, rect_height)
-@jit(nopython=True)
+
+@njit
 def grid_creator_calc(spa, start_x, start_y, block_width, block_height, i, j):
     rect_x = start_x + j * (block_width + spa)
     rect_y = start_y + i * (block_height + spa)
     coord_cent = (rect_x + 0.55 * block_width, rect_y + 0.5 * block_height)
     return rect_x, rect_y, coord_cent
 
+@njit
+def calculate_coords(no_answers) -> tuple:
+        row_coords = 1 + max(floor((6 - no_answers) / 2), 0)
+        return no_answers, row_coords
 
 class Blackboard:
     def __init__(self):
@@ -47,20 +53,14 @@ class Blackboard:
         self.letter_matrix = [["" for _ in range(self.cols)] for _ in range(self.rows)]
         self.offset = 20
         self.max_ans_len = 17
-        self.answers = []
         self.spacing = 2
+        self.answers_shown_final = [[True for _ in range(5)] for _ in range(2)]
+        self.odm=False #only display mode, turns off game logic
+
+        # Initialize the round variables
+        self.answers = []
         self.round_score = 0
         self.current_round = -1
-        self.answers_shown_final = [[True for _ in range(5)] for _ in range(2)]
-        self.correct_answer = False
-        self.round_winner = ""
-        self.faster_team = ""
-
-        # Initialize team scores
-        self.score = {"L": 0, "R": 0}
-        self.strike = {"L": 5, "R": 5}
-        self.round_score = 0
-        self.row_for_strike = {0: 7, 1: 4, 2: 1}
 
         # Initialize the music
         pygame.mixer.init()
@@ -183,24 +183,13 @@ class Blackboard:
         self.write_ver("CE DF", start_row, start_col + 2)
         self.write_hor("I", start_row + 2, start_col + 1)
 
-    def calculate_coords(self, round_number) -> tuple:
-        # Get and set some parameters of the round
-        no_answers = len(self.answers[round_number])
-        # Center the answers on the blackboard
-        row_coords = 1 + max(floor((6 - no_answers) / 2), 0)
-        return no_answers, row_coords
+
 
     # Initialize the round printing a blank blackboard
     def round_init(self, round_number):
-        self.add_score()
-        self.chance_reset_allowed = True
-        self.round_winner = ""
-        self.strike = {"L": 0, "R": 0}
-        self.faster_team = ""
-        self.correct_answer = False
         self.fill()
         self.current_round = round_number
-        no_answers, row_coords = self.calculate_coords(round_number)
+        no_answers, row_coords = calculate_coords(len(self.answers[round_number]))
 
         # Write the indices of the answers to the blackboard
         self.write_ver("".join([str(i) for i in range(1, no_answers + 1)]), row_coords, 4)
@@ -234,7 +223,7 @@ class Blackboard:
 
         # Write the answer
         self.round_score = int(self.answers[round_number][answer_number][1]) + self.round_score
-        no_answers, row_coords = self.calculate_coords(round_number)
+        no_answers, row_coords = calculate_coords(len(self.answers[round_number]))
         answer_text = str(self.answers[round_number][answer_number][0])
         answer_points = str(self.answers[round_number][answer_number][1])
         self.write_hor(answer_text.ljust(self.max_ans_len), row_coords + answer_number, 6)
@@ -269,53 +258,6 @@ class Blackboard:
         r_len = len(r_score_str)
         self.write_hor(l_score_str, 5, 11 - l_len)
         self.write_hor(r_score_str, 5, 15 + r_len)
-
-    # Function that clears all printed X from blackboard
-    def clear_x(self):
-        for i in range(10):
-            for j in range(3):
-                self.letter_matrix[i][j] = self.letter_matrix[i][j + 26] = ""
-
-        self.strike = {"L": 0, "R": 0}
-        self.refresh()
-
-    # Draw a big x on the blackboard for a selected team and play a sound
-    def big_strike(self, team):
-        check_team_input(team)
-        self.change_winner()
-        if team == "L" and self.strike["L"] == 0:
-            self.draw_gross_x(3, 0)
-            self.strike["L"] = 4
-            self.playsound("wrong")
-        elif team == "R" and self.strike["R"] == 0:
-            self.draw_gross_x(3, 26)
-            self.strike["R"] = 4
-            self.playsound("wrong")
-        if self.strike["L"] == 4 and self.strike["R"] == 4:
-            Delay(5, self.clear_x).start()
-            self.chance_reset_allowed = False
-
-    # Draw a small x on the blackboard for a selected team and play a sound
-    def small_strike(self, team):
-        check_team_input(team)
-        current_strikes = self.strike[team]
-
-        # Determine the row of the small x to be drawn
-        if current_strikes not in (0, 1, 2):
-            return
-        y = self.row_for_strike[current_strikes]
-
-        if team == "L":
-            self.draw_small_x(y, 0)
-        else:
-            self.draw_small_x(y, 26)
-
-        self.strike[team] = current_strikes + 1
-
-        if current_strikes == 2:
-            self.change_winner()
-
-        self.playsound("wrong")
 
     def show_final_answer(self, answer_input, point_input, row, col):
         answer = str(answer_input.get())
@@ -354,19 +296,6 @@ class Blackboard:
                 self.playsound("wrong")
 
         Delay(2, show_score_for_answer).start()
-
-    def set_starting_team(self, team_signature):
-        check_team_input(team_signature)
-        if self.round_winner != "":
-            return
-        self.round_winner = self.faster_team = team_signature
-
-    def incorrect_answer(self, team_signature):
-        check_team_input(team_signature)
-        if self.correct_answer and self.faster_team == team_signature:
-            self.small_strike(team_signature)
-        else:
-            self.big_strike(team_signature)
 
 
 # corrections, adding the final card and buttons to handle, start working on the function of displaying the answers from the final,
