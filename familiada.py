@@ -63,6 +63,17 @@ class ControlRoom(QMainWindow):
                 answer_button = self.create_buttons(answer_text)
                 answer_button.clicked.connect(lambda state, round=i, answer=j: gameWindow.show_answer(round, answer))
                 newtablayout.addWidget(answer_button, j + 1, 0)
+            # add butto for incorect answer
+            answer_button = self.create_buttons("Nieznana odpowiedź")
+            answer_button.clicked.connect(lambda: gameWindow.incorrect_answer("R"))
+            newtablayout.addWidget(answer_button, j + 2, 0)
+            # buttons for strting teams
+            team1_button = self.create_buttons("Zaczyna drużyna L")
+            team1_button.clicked.connect(lambda: gameWindow.set_starting_team("L"))
+            newtablayout.addWidget(team1_button, j + 3, 0)
+            team2_button = self.create_buttons("Zaczyna drużyna P")
+            team2_button.clicked.connect(lambda: gameWindow.set_starting_team("P"))
+            newtablayout.addWidget(team2_button, j + 4, 0)
 
             tab_widget.addTab(newtab, f"Runda {i+1}")
 
@@ -72,12 +83,14 @@ class ControlRoom(QMainWindow):
         verticalspacer = QSpacerItem(0, 0, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
         button_intro = self.create_buttons("Intro")
         button_outro = self.create_buttons("Outro")
+        button_name = self.create_buttons("Napis")
 
         # Connect buttons to functions
         button_intro.clicked.connect(lambda: gameWindow.playsound("intro"))
         button_outro.clicked.connect(lambda: gameWindow.playsound("ending"))
         button_brawo.clicked.connect(lambda: gameWindow.playsound("bravo"))
         button_stop.clicked.connect(gameWindow.stop_playing)
+        button_name.clicked.connect(gameWindow.show_name)
 
         # Create widgets - slider and label
         self.slider = QSlider(Qt.Orientation.Horizontal)
@@ -96,6 +109,7 @@ class ControlRoom(QMainWindow):
         sfxlayout.addWidget(button_outro, 2, 1)
         sfxlayout.addWidget(self.label_glosnosc, 0, 2, 1, 4, alignment=Qt.AlignmentFlag.AlignHCenter)
         sfxlayout.addWidget(self.slider, 2, 2, 2, 4)
+        sfxlayout.addWidget(button_name, 0, 6)
 
         punktacja = QWidget()
         tab_widget.addTab(punktacja, "Punktacja")

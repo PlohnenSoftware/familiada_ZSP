@@ -1,6 +1,43 @@
 import pygame
+from numba import jit
 from math import floor
 from threading import Timer as Delay
+
+#helping static functions
+@jit(nopython=True)
+def check_team_input(team):
+    if team not in ("L", "R"):
+        raise ValueError("A team must be either 'L' or 'R'")
+@jit(nopython=True)
+def calc_grid_size(surf_h, surf_w, offset, spacing, cols, rows):
+    # Calculate dimensions for the gray rectangle
+    rect_width = surf_w - 2 * offset
+    rect_height = surf_h - 2 * offset
+
+    # Aspect ratios
+    aspect_ratio_rect = 3 / 2
+    aspect_ratio_grid = 16 / 9
+
+    # Calculate the maximum possible size of the grid within the gray rectangle
+    if rect_width / rect_height > aspect_ratio_grid:
+        grid_width = (rect_height - 2 * spacing) * aspect_ratio_grid
+    else:
+        grid_width = rect_width - 2 * spacing
+    block_width = (grid_width - (cols - 1) * spacing) / cols
+    block_height = block_width * aspect_ratio_rect
+    grid_height_recalc = (block_height + spacing) * rows - spacing
+
+    # Calculate the starting position of the grid
+    start_x = offset + (rect_width - grid_width) / 2
+    start_y = offset + (rect_height - grid_height_recalc) / 2
+    font_size = max(round(block_height * 0.8), 2)  # Font size based on block height
+    return (start_x, start_y, font_size, block_width, block_height, rect_width, rect_height)
+@jit(nopython=True)
+def grid_creator_calc(spa, start_x, start_y, block_width, block_height, i, j):
+    rect_x = start_x + j * (block_width + spa)
+    rect_y = start_y + i * (block_height + spa)
+    coord_cent = (rect_x + 0.55 * block_width, rect_y + 0.5 * block_height)
+    return rect_x, rect_y, coord_cent
 
 
 class Blackboard:
@@ -40,7 +77,7 @@ class Blackboard:
 
         # Initialize the blackboard window
         pygame.init()
-        self.surface = pygame.display.set_mode((900, 700), pygame.RESIZABLE)
+        self.surface = pygame.display.set_mode((192 * 4, 108 * 4), pygame.RESIZABLE)
         pygame.display.set_caption("Familiada")
         self.program_icon = pygame.image.load("familiada.ico")
         pygame.display.set_icon(self.program_icon)
@@ -49,65 +86,26 @@ class Blackboard:
     def refresh(self):
         # Set the background color
         self.surface.fill((0, 0, 255))  # Blue background
-
-        # Calculate dimensions for the gray rectangle
-        rect_width = self.surface.get_width() - 2 * self.offset
-        rect_height = self.surface.get_height() - 2 * self.offset
-        pygame.draw.rect(self.surface, (81, 81, 81), (self.offset, self.offset, rect_width, rect_height))
-
-        # Calculate dimensions and positions for the grid
-        aspect_ratio_rect = 3 / 2
-        aspect_ratio_grid = 16 / 9
-
-        # Calculate the maximum possible size of the grid within the gray rectangle
-        grid_width = rect_width - 2 * self.spacing
-        grid_height = rect_height - 2 * self.spacing
-
-        if grid_width / grid_height > aspect_ratio_grid:
-            grid_width = grid_height * aspect_ratio_grid
-        else:
-            grid_height = grid_width / aspect_ratio_grid
-
-        block_width = (grid_width - (self.cols - 1) * self.spacing) / self.cols
-        block_height = block_width * aspect_ratio_rect
-
-        # print grid and block aspect ratio, declared and calculated from final dimentions:
-        print(
-            f"Grid aspect ratio: {grid_width / grid_height}, Grid aspect ratio target:{aspect_ratio_grid}, Block aspect ratio: {block_height/block_width}, Block aspect ratio target:{aspect_ratio_rect}"
+        # Calculate dimensions for objects
+        (start_x, start_y, font_size, block_width, block_height, rect_width, rect_height) = calc_grid_size(
+            self.surface.get_height(), self.surface.get_width(), self.offset, self.spacing, self.cols, self.rows
         )
-
-        # Recalculate block sizes based on height constraints
-        if block_height > (grid_height - (self.rows - 1) * self.spacing) / self.rows:
-            block_height = (grid_height - (self.rows - 1) * self.spacing) / self.rows
-            block_width = block_height / aspect_ratio_rect
-
-        # Calculate the starting position of the grid
-        start_x = self.offset + (rect_width - grid_width) / 2
-        start_y = self.offset + (rect_height - grid_height) / 2
-
+        pygame.draw.rect(self.surface, (81, 81, 81), (self.offset, self.offset, rect_width, rect_height))
         # Initialize the font module and set the font size
         pygame.font.init()  # Initialize the font module
-        font_size = max(round(block_height * 0.75), 2)  # Font size based on block height
         myfont = myfont = pygame.font.Font("familiada.ttf", font_size)  # Use default font
 
         # Drawing grid and text within each block
         for i in range(self.rows):
             for j in range(self.cols):
-                rect_x = start_x + j * (block_width + self.spacing)
-                rect_y = start_y + i * (block_height + self.spacing)
+                rect_x, rect_y, coord_cent = grid_creator_calc(self.spacing, start_x, start_y, block_width, block_height, i, j)
                 pygame.draw.rect(self.surface, (0, 0, 0), (rect_x, rect_y, block_width, block_height))
                 label = myfont.render(self.letter_matrix[i][j], True, (255, 255, 0))  # Render the text in yellow
                 # Calculate text position to center it in the rectangle
-                label_rect = label.get_rect(center=(rect_x + 0.5 * block_width, rect_y + 0.5 * block_height))
+                label_rect = label.get_rect(center=coord_cent)
                 self.surface.blit(label, label_rect)  # Draw text at the calculated position
 
-        pygame.display.update()  # Update the display
-
-    # CHECK IF TEAM INPUT IS CORRECT
-    @staticmethod
-    def check_team_input(team):
-        if team not in ("L", "R"):
-            raise ValueError("A team must be either 'L' or 'R'")
+        pygame.display.update()
 
     def playsound(self, sound_id):
         self.sounds[sound_id].play()
@@ -127,7 +125,7 @@ class Blackboard:
 
     # change the team thaht is winner of the roud
     def change_winner(self):
-        self.check_team_input(self.round_winner)
+        check_team_input(self.round_winner)
         if self.round_winner == "L":
             self.round_winner = "R"
         else:
@@ -169,6 +167,16 @@ class Blackboard:
             self.letter_matrix[start_row - i + 2][start_col + i] = "H"
         self.refresh()
 
+    # print show name
+    def show_name(self):
+        self.fill()
+        n = 2
+        self.write_hor("AAACAD A  A A A  A CAD AAD CAD", n, 0)
+        self.write_hor("A  A A AGHA A A  A A A A A A A", n + 1, 0)
+        self.write_hor("AA AAA A  A A A  A AAA A A AAA", n + 2, 0)
+        self.write_hor("A  A A A  A A A  A A A A A A A", n + 3, 0)
+        self.write_hor("A  A A A  A A AA A A A AAE A A", n + 4, 0)
+
     # Print a big x on selected row and column
     def draw_gross_x(self, start_row, start_col):
         self.write_ver("DF CE", start_row, start_col)
@@ -178,7 +186,6 @@ class Blackboard:
     def calculate_coords(self, round_number) -> tuple:
         # Get and set some parameters of the round
         no_answers = len(self.answers[round_number])
-
         # Center the answers on the blackboard
         row_coords = 1 + max(floor((6 - no_answers) / 2), 0)
         return no_answers, row_coords
@@ -200,7 +207,7 @@ class Blackboard:
 
         # Write blank spaces to the blackboard
         for i in range(no_answers):
-            self.write_hor("_________________ --", row_coords + i, 6)
+            self.write_hor("_" * self.max_ans_len + " --", row_coords + i, 6)
 
         # Write the sum
         self.write_hor("suma   0", row_coords + no_answers + 1, 18)
@@ -231,8 +238,10 @@ class Blackboard:
         answer_text = str(self.answers[round_number][answer_number][0])
         answer_points = str(self.answers[round_number][answer_number][1])
         self.write_hor(answer_text.ljust(self.max_ans_len), row_coords + answer_number, 6)
-        self.write_hor(answer_points.rjust(2), row_coords + answer_number, 6 + (self.max_ans_len + 1))
-        self.write_hor(str(self.round_score).rjust(3), row_coords + no_answers + 1, 22)
+
+        point_coor = 6 + self.max_ans_len
+        self.write_hor(answer_points.rjust(2), row_coords + answer_number, point_coor + 1)
+        self.write_hor(str(self.round_score).rjust(3), row_coords + no_answers + 1, point_coor)
 
         self.playsound("correct")
 
@@ -272,7 +281,7 @@ class Blackboard:
 
     # Draw a big x on the blackboard for a selected team and play a sound
     def big_strike(self, team):
-        self.check_team_input(team)
+        check_team_input(team)
         self.change_winner()
         if team == "L" and self.strike["L"] == 0:
             self.draw_gross_x(3, 0)
@@ -288,7 +297,7 @@ class Blackboard:
 
     # Draw a small x on the blackboard for a selected team and play a sound
     def small_strike(self, team):
-        self.check_team_input(team)
+        check_team_input(team)
         current_strikes = self.strike[team]
 
         # Determine the row of the small x to be drawn
@@ -347,13 +356,13 @@ class Blackboard:
         Delay(2, show_score_for_answer).start()
 
     def set_starting_team(self, team_signature):
-        self.check_team_input(team_signature)
+        check_team_input(team_signature)
         if self.round_winner != "":
             return
         self.round_winner = self.faster_team = team_signature
 
     def incorrect_answer(self, team_signature):
-        self.check_team_input(team_signature)
+        check_team_input(team_signature)
         if self.correct_answer and self.faster_team == team_signature:
             self.small_strike(team_signature)
         else:

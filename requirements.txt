@@ -1,3 +1,5 @@
 pygame
 pyinstaller
+numba
 pyqt6
+icecream
