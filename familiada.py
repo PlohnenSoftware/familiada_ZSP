@@ -64,17 +64,20 @@ class ControlRoom(QMainWindow):
                 answer_button = self.create_buttons(answer_text)
                 answer_button.clicked.connect(lambda state, round=i, answer=j: gameWindow.show_answer(round, answer))
                 newtablayout.addWidget(answer_button, j + 1, 0)
-            # # add butto for incorect answer
-            # answer_button = self.create_buttons("Nieznana odpowiedź")
-            # answer_button.clicked.connect(lambda: gameWindow.incorrect_answer("R"))
-            # newtablayout.addWidget(answer_button, j + 2, 0)
-            # # buttons for strting teams
-            # team1_button = self.create_buttons("Zaczyna drużyna L")
-            # team1_button.clicked.connect(lambda: gameWindow.set_starting_team("L"))
-            # newtablayout.addWidget(team1_button, j + 3, 0)
-            # team2_button = self.create_buttons("Zaczyna drużyna P")
-            # team2_button.clicked.connect(lambda: gameWindow.set_starting_team("P"))
-            # newtablayout.addWidget(team2_button, j + 4, 0)
+
+            if gameWindow.fgm:
+                # add butto for incorect answer
+                answer_button = self.create_buttons("Nieznana odpowiedź")
+                answer_button.clicked.connect(lambda: gameWindow.incorrect_answer("R"))
+                newtablayout.addWidget(answer_button, j + 2, 0)
+                
+                # buttons for strting teams
+                team1_button = self.create_buttons("Zaczyna drużyna L")
+                team1_button.clicked.connect(lambda: gameWindow.set_starting_team("L"))
+                newtablayout.addWidget(team1_button, j + 3, 0)
+                team2_button = self.create_buttons("Zaczyna drużyna P")
+                team2_button.clicked.connect(lambda: gameWindow.set_starting_team("P"))
+                newtablayout.addWidget(team2_button, j + 4, 0)
 
             tab_widget.addTab(newtab, f"Runda {i+1}")
 
@@ -112,12 +115,20 @@ class ControlRoom(QMainWindow):
         sfxlayout.addWidget(self.slider, 2, 2, 2, 4)
         sfxlayout.addWidget(button_name, 0, 6)
 
-        punktacja = QWidget()
-        tab_widget.addTab(punktacja, "Punktacja")
+        # crate points tab if full game logic is on
+        if gameWindow.fgm:
+            punktacja = QWidget()
+            tab_widget.addTab(punktacja, "Punktacja")
+
+        # create finals tabt
         final = QWidget()
         tab_widget.addTab(final, "Finał")
+
+        # Add layouts to window
         pagelayout.addWidget(tab_widget)
         pagelayout.addWidget(sfx_widget)
+
+        # Create a timer to refresh the window
         refresher = QTimer(self)
         refresher.timeout.connect(gameWindow.refresh)
         refresher.start(250)
@@ -134,11 +145,11 @@ class ControlRoom(QMainWindow):
         button.setStyleSheet("padding: 15px 10px;font-size: 14px;")
         return button
 
-    def check_odm(self, in_str: str):        
+    def check_odm(self, in_str: str):
         if self.secret_phrase in in_str:
-            return True, in_str.replace(self.secret_phrase, "")
+            return False, in_str.replace(self.secret_phrase, "")
         else:
-            return False, in_str
+            return True, in_str
 
     def terminate_error(self, error_description):
         dlg = QMessageBox(self)
@@ -157,7 +168,7 @@ class ControlRoom(QMainWindow):
             self.terminate_error("Nie wybrano pliku")
 
         file_str = self.read_file(filename)
-        gameWindow.odm, file_str = self.check_odm(file_str)
+        gameWindow.fgm, file_str = self.check_odm(file_str)
         if file_str is None:
             return
 
@@ -206,7 +217,7 @@ class ControlRoom(QMainWindow):
             for round_answers in gameWindow.answers:
                 answer_numbers = [f"{answer[0]},{answer[1]}" for answer in round_answers]
                 f.write(",".join(answer_numbers) + "\n")
-            if gameWindow.odm:
+            if not gameWindow.fgm:
                 f.write(self.secret_phrase)
 
 

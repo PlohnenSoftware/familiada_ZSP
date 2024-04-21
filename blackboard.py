@@ -3,12 +3,14 @@ from numba import njit
 from math import floor
 from threading import Timer as Delay
 
-#helping static functions
+
+# helping static functions
 @njit
 def check_team_input(team):
     if team not in ("L", "R"):
         raise ValueError("A team must be either 'L' or 'R'")
-    
+
+
 @njit
 def calc_grid_size(surf_h, surf_w, offset, spacing, cols, rows):
     # Calculate dimensions for the gray rectangle
@@ -34,6 +36,7 @@ def calc_grid_size(surf_h, surf_w, offset, spacing, cols, rows):
     font_size = max(round(block_height * 0.8), 2)  # Font size based on block height
     return (start_x, start_y, font_size, block_width, block_height, rect_width, rect_height)
 
+
 @njit
 def grid_creator_calc(spa, start_x, start_y, block_width, block_height, i, j):
     rect_x = start_x + j * (block_width + spa)
@@ -41,10 +44,13 @@ def grid_creator_calc(spa, start_x, start_y, block_width, block_height, i, j):
     coord_cent = (rect_x + 0.55 * block_width, rect_y + 0.5 * block_height)
     return rect_x, rect_y, coord_cent
 
+
 @njit
 def calculate_coords(no_answers) -> tuple:
-        row_coords = 1 + max(floor((6 - no_answers) / 2), 0)
-        return no_answers, row_coords
+    row_coords = 1 + max(floor((6 - no_answers) / 2), 0)
+    return no_answers, row_coords
+
+# [MermaidChart: aeccf2e7-d26c-4109-9efc-2f2e1af1659f]
 
 class Blackboard:
     def __init__(self):
@@ -55,7 +61,7 @@ class Blackboard:
         self.max_ans_len = 17
         self.spacing = 2
         self.answers_shown_final = [[True for _ in range(5)] for _ in range(2)]
-        self.odm=False #only display mode, turns off game logic
+        self.fgm = True  # full game mode, turns on game logic
 
         # Initialize the round variables
         self.answers = []
@@ -77,7 +83,7 @@ class Blackboard:
 
         # Initialize the blackboard window
         pygame.init()
-        self.surface = pygame.display.set_mode((192 * 4, 108 * 4), pygame.RESIZABLE)
+        self.surface = pygame.display.set_mode((72 * 16, 72 * 9), pygame.RESIZABLE)
         pygame.display.set_caption("Familiada")
         self.program_icon = pygame.image.load("familiada.ico")
         pygame.display.set_icon(self.program_icon)
@@ -131,11 +137,6 @@ class Blackboard:
         else:
             self.round_winner = "L"
 
-    def add_score(self):
-        if self.round_winner != "":
-            self.score[self.round_winner] += self.round_score
-            self.round_score = 0
-
     # Write a word horizontally
     def write_hor(self, word, start_row, start_col):
         letters = list(str(word))
@@ -182,8 +183,6 @@ class Blackboard:
         self.write_ver("DF CE", start_row, start_col)
         self.write_ver("CE DF", start_row, start_col + 2)
         self.write_hor("I", start_row + 2, start_col + 1)
-
-
 
     # Initialize the round printing a blank blackboard
     def round_init(self, round_number):
@@ -246,18 +245,6 @@ class Blackboard:
             self.write_hor("----------- @@|@@ -----------", k, 0)
         self.answers_shown_final = [[False for _ in range(5)] for _ in range(2)]
 
-    def show_scores(self):
-        self.add_score()
-        self.fill()
-        self.write_hor("suma punktów:", 3, 8)
-
-        # Write the scores
-        l_score_str = str(self.score["L"])
-        l_len = len(l_score_str)
-        r_score_str = str(self.score["R"])
-        r_len = len(r_score_str)
-        self.write_hor(l_score_str, 5, 11 - l_len)
-        self.write_hor(r_score_str, 5, 15 + r_len)
 
     def show_final_answer(self, answer_input, point_input, row, col):
         answer = str(answer_input.get())
