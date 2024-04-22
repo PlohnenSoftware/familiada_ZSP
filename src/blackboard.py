@@ -51,19 +51,17 @@ def calculate_coords(no_answers) -> tuple:
     row_coords = 1 + max(floor((6 - no_answers) / 2), 0)
     return no_answers, row_coords
 
+if getattr(sys, 'frozen', False):
+    application_path = sys._MEIPASS
+    CWD_PATH = getcwd()
+elif __file__:
+    application_path = path.abspath("../")
+    CWD_PATH = application_path
 
 def res_path(relative_path):
-    global CWD_PATH
-    try:
-        base_path = sys._MEIPASS
-        CWD_PATH = getcwd()
-    except Exception:
-        base_path = path.abspath("../")
-        CWD_PATH = base_path
+    return path.join(application_path, relative_path)
 
-    return path.join(base_path, relative_path)
 
-CWD_PATH = None
 ICON_PATH = res_path("familiada.ico")
 FONT_PATH = res_path("familiada.ttf")
 
