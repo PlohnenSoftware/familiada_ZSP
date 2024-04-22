@@ -11,4 +11,4 @@
 #### pyinstaller.exe --onefile --windowed --icon=familiada.ico familiada.py
 
 #### pip install pygame --pre 
-pyinstaller --onefile --windowed --icon=../familiada.ico --add-data="../sfx;sfx" --distpath=../download --add-data="../familiada.ico;./" --add-data="../familiada.ttf;./" --add-data="../dane.csv;./" familiada.py
+pyinstaller --onefile --windowed --icon=../familiada.ico --add-data="../sfx;sfx" --distpath=../download --add-data="../familiada.ico;./" --add-data="../familiada.ttf;./" --add-data="../dane.csv;./" --name Familiada main.py
