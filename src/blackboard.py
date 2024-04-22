@@ -55,7 +55,7 @@ if getattr(sys, 'frozen', False):
     application_path = sys._MEIPASS
     CWD_PATH = getcwd()
 elif __file__:
-    application_path = path.abspath("../")
+    application_path = path.abspath("./")
     CWD_PATH = application_path
 
 def res_path(relative_path):
@@ -170,6 +170,29 @@ class Blackboard:
         self.letter_matrix = [[char for _ in range(self.cols)] for _ in range(self.rows)]
         self.refresh()
 
+    def zero(self, start_row, start_col):
+        self.write_hor("CAAAD", start_row, start_col)
+        self.write_ver("AAAAA", start_row+1, start_col)
+        self.write_ver("AAAAA", start_row+1, start_col+4)
+        self.write_hor("FAAAE", start_row+6, start_col)
+
+    def two(self, start_row, start_col):
+        self.write_hor("CAAAD", start_row, start_col)
+        self.write_hor("A   A", start_row+1, start_col)
+        self.write_hor("A", start_row+2, start_col+4)
+        self.write_hor("A", start_row+3, start_col+3)
+        self.write_hor("A", start_row+4, start_col+2)
+        self.write_hor("A", start_row+5, start_col+1)
+        self.write_hor("AAAAA", start_row+6, start_col)
+
+    def five(self, start_row, start_col):
+        self.write_hor("AAAAA", start_row, start_col)
+        self.write_hor("A", start_row+1, start_col)
+        self.write_hor("AAAAD", start_row+2, start_col)
+        self.write_ver("AAA", start_row+3, start_col+4)
+        self.write_ver("A", start_row+5, start_col)
+        self.write_hor("FAAAE", start_row+6, start_col)
+
     # Print a small x on selected row and column
     def draw_small_x(self, start_row, start_col):
         self.write_hor("Y", start_row, start_col + 1)
@@ -190,6 +213,8 @@ class Blackboard:
         self.write_hor("AA AAA A  A A A  A AAA A A AAA", n + 2, 0)
         self.write_hor("A  A A A  A A A  A A A A A A A", n + 3, 0)
         self.write_hor("A  A A A  A A AA A A A AAE A A", n + 4, 0)
+        Delay(2, self.fill).start()
+        Delay(3, lambda: self.five(0,5)).start()
 
     # Print a big x on selected row and column
     def draw_gross_x(self, start_row, start_col):
