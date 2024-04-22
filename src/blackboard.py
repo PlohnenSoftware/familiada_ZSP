@@ -19,14 +19,14 @@ def calc_grid_size(surf_h, surf_w, offset, spacing, cols, rows):
     rect_height = surf_h - 2 * offset
 
     # Aspect ratios
-    aspect_ratio_rect = 3 / 2
-    aspect_ratio_grid = 16 / 9
+    aspect_ratio_rect = 1.5 #3 / 2
+    aspect_ratio_grid = 2   #16 / 8
 
     # Calculate the maximum possible size of the grid within the gray rectangle
     if rect_width / rect_height > aspect_ratio_grid:
-        grid_width = (rect_height - 2 * spacing) * aspect_ratio_grid
+        grid_width = (rect_height - 2 * offset) * aspect_ratio_grid
     else:
-        grid_width = rect_width - 2 * spacing
+        grid_width = rect_width - 2 * offset
     block_width = (grid_width - (cols - 1) * spacing) / cols
     block_height = block_width * aspect_ratio_rect
     grid_height_recalc = (block_height + spacing) * rows - spacing
