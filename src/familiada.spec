@@ -2,7 +2,7 @@
 
 
 a = Analysis(
-    ['main.py'],
+    ['familiada.py'],
     pathex=[],
     binaries=[],
     datas=[('../sfx', 'sfx'), ('../familiada.ico', './'), ('../familiada.ttf', './'), ('../dane.csv', './')],
@@ -21,7 +21,7 @@ exe = EXE(
     a.binaries,
     a.datas,
     [],
-    name='main',
+    name='familiada',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
