@@ -3,7 +3,7 @@ name: Package Familiada App with Pyinstaller
 
 on:
   push:
-    branches: [ main ]
+    branches: [ PY-INSTALLER-AUTOMATION ]
   pull_request:
     branches: [ main ]
 
