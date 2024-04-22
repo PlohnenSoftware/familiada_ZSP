@@ -161,7 +161,7 @@ class ControlRoom(QMainWindow):
 
     def open_file(self):
         file_filter = "CSV File (*.csv)"
-        filename = QFileDialog.getOpenFileName(parent=self, caption="Wybierz plik", directory=CWD_PATH, filter=file_filter, initialFilter="CSV File (*.csv)")
+        filename = QFileDialog.getOpenFileName(parent=self, caption="Wybierz plik", directory=CWD_PATH, filter=file_filter, initialFilter=file_filter)
         filename = str(filename[0])
         if filename == "":
             self.terminate_error("Nie wybrano pliku")
