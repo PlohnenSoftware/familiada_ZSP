@@ -1,18 +1,30 @@
-import pygame
+import pygame,sys
 from math import floor
 from threading import Timer as Delay
+from os import path, getcwd
 
+
+if getattr(sys, "frozen", False):
+    application_path = path.dirname(path.abspath(__file__))
+    CWD_PATH = getcwd()
+elif __file__:
+    application_path = path.abspath("./")
+    CWD_PATH = application_path
+
+
+def res_path(relative_path):
+    return path.join(application_path, relative_path)
 
 # Import pygame SFX
 pygame.mixer.init()
-correct_sound = pygame.mixer.Sound("sfx/correct.wav")
-wrong_sound = pygame.mixer.Sound("sfx/incorrect.wav")
-dubel_sound = pygame.mixer.Sound("sfx/dubel.wav")
-bravo_sound = pygame.mixer.Sound("sfx/bravo.wav")
-write_sound = pygame.mixer.Sound("sfx/write.wav")
-round_sound = pygame.mixer.Sound("sfx/round_sound.wav")
-ending_music = pygame.mixer.Sound("sfx/final_ending.flac")
-intro_music = pygame.mixer.Sound("sfx/show_music.flac")
+correct_sound = pygame.mixer.Sound(res_path("sfx/correct.wav"))
+wrong_sound = pygame.mixer.Sound(res_path("sfx/incorrect.wav"))
+dubel_sound = pygame.mixer.Sound(res_path("sfx/dubel.wav"))
+bravo_sound = pygame.mixer.Sound(res_path("sfx/bravo.wav"))
+write_sound = pygame.mixer.Sound(res_path("sfx/write.wav"))
+round_sound = pygame.mixer.Sound(res_path("sfx/round_sound.wav"))
+ending_music = pygame.mixer.Sound(res_path("sfx/final_ending.flac"))
+intro_music = pygame.mixer.Sound(res_path("sfx/show_music.flac"))
 
 
 class Blackboard:

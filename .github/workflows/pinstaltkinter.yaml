@@ -1,0 +1,20 @@
+name: Package Tkinter version of Familiada app
+on:
+  push:
+    branches: [ tkinterVersion ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Package Application
+      uses: JackMcKew/pyinstaller-action-windows@main
+      with:
+        path: src
+    - uses: actions/upload-artifact@v2
+      with:
+        name: Familiada
+        path: |
+          src/dist/windows
+          dane.csv
