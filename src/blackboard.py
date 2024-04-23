@@ -5,6 +5,7 @@ from threading import Timer as Delay
 from os import path, getcwd
 import sys
 
+
 # helping static functions
 @njit
 def check_team_input(team):
@@ -19,8 +20,8 @@ def calc_grid_size(surf_h, surf_w, offset, spacing, cols, rows):
     rect_height = surf_h - 2 * offset
 
     # Aspect ratios
-    aspect_ratio_rect = 1.5 #3 / 2
-    aspect_ratio_grid = 2   #16 / 8
+    aspect_ratio_rect = 1.5  # 3 / 2
+    aspect_ratio_grid = 2  # 16 / 8
 
     # Calculate the maximum possible size of the grid within the gray rectangle
     if rect_width / rect_height > aspect_ratio_grid:
@@ -51,12 +52,14 @@ def calculate_coords(no_answers) -> tuple:
     row_coords = 1 + max(floor((6 - no_answers) / 2), 0)
     return no_answers, row_coords
 
-if getattr(sys, 'frozen', False):
+
+if getattr(sys, "frozen", False):
     application_path = sys._MEIPASS
     CWD_PATH = getcwd()
 elif __file__:
     application_path = path.abspath("./")
     CWD_PATH = application_path
+
 
 def res_path(relative_path):
     return path.join(application_path, relative_path)
@@ -64,6 +67,7 @@ def res_path(relative_path):
 
 ICON_PATH = res_path("familiada.ico")
 FONT_PATH = res_path("familiada.ttf")
+
 
 class Blackboard:
     def __init__(self):
@@ -172,26 +176,42 @@ class Blackboard:
 
     def zero(self, start_row, start_col):
         self.write_hor("CAAAD", start_row, start_col)
-        self.write_ver("AAAAA", start_row+1, start_col)
-        self.write_ver("AAAAA", start_row+1, start_col+4)
-        self.write_hor("FAAAE", start_row+6, start_col)
+        self.write_ver("AAAAA", start_row + 1, start_col)
+        self.write_ver("AAAAA", start_row + 1, start_col + 4)
+        self.write_hor("FAAAE", start_row + 6, start_col)
 
     def two(self, start_row, start_col):
         self.write_hor("CAAAD", start_row, start_col)
-        self.write_hor("A   A", start_row+1, start_col)
-        self.write_hor("A", start_row+2, start_col+4)
-        self.write_hor("A", start_row+3, start_col+3)
-        self.write_hor("A", start_row+4, start_col+2)
-        self.write_hor("A", start_row+5, start_col+1)
-        self.write_hor("AAAAA", start_row+6, start_col)
+        self.write_hor("A   A", start_row + 1, start_col)
+        self.write_hor("A", start_row + 2, start_col + 4)
+        self.write_hor("A", start_row + 3, start_col + 3)
+        self.write_hor("A", start_row + 4, start_col + 2)
+        self.write_hor("A", start_row + 5, start_col + 1)
+        self.write_hor("AAAAA", start_row + 6, start_col)
 
     def five(self, start_row, start_col):
         self.write_hor("AAAAA", start_row, start_col)
-        self.write_hor("A", start_row+1, start_col)
-        self.write_hor("AAAAD", start_row+2, start_col)
-        self.write_ver("AAA", start_row+3, start_col+4)
-        self.write_ver("A", start_row+5, start_col)
-        self.write_hor("FAAAE", start_row+6, start_col)
+        self.write_hor("A", start_row + 1, start_col)
+        self.write_hor("AAAAD", start_row + 2, start_col)
+        self.write_ver("AAA", start_row + 3, start_col + 4)
+        self.write_ver("A", start_row + 5, start_col)
+        self.write_hor("FAAAE", start_row + 6, start_col)
+
+    def six(self, start_row, start_col):
+        self.write_hor("AA", start_row, start_col + 2)
+        self.write_hor("A", start_row + 1, start_col + 1)
+        self.write_hor("AAAD", start_row + 3, start_col + 1)
+        self.write_ver("AAAA", start_row + 2, start_col)
+        self.write_ver("AA", start_row + 4, start_col + 4)
+        self.write_hor("FAAAE", start_row + 6, start_col)
+
+    def nine(self, start_row, start_col):
+        self.write_hor("CAAAD", start_row, start_col)
+        self.write_ver("AA", start_row + 1, start_col)
+        self.write_ver("AAAA", start_row + 1, start_col+4)
+        self.write_hor("FAAA", start_row + 3, start_col)
+        self.write_hor("A", start_row + 5, start_col + 3)
+        self.write_hor("AA", start_row+6, start_col + 1)
 
     # Print a small x on selected row and column
     def draw_small_x(self, start_row, start_col):
@@ -214,7 +234,7 @@ class Blackboard:
         self.write_hor("A  A A A  A A A  A A A A A A A", n + 3, 0)
         self.write_hor("A  A A A  A A AA A A A AAE A A", n + 4, 0)
         Delay(2, self.fill).start()
-        Delay(3, lambda: self.five(0,5)).start()
+        Delay(3, lambda: self.nine(0, 5)).start()
 
     # Print a big x on selected row and column
     def draw_gross_x(self, start_row, start_col):
@@ -282,7 +302,6 @@ class Blackboard:
         for k in range(1, 6):
             self.write_hor("----------- @@|@@ -----------", k, 0)
         self.answers_shown_final = [[False for _ in range(5)] for _ in range(2)]
-
 
     def show_final_answer(self, answer_input, point_input, row, col):
         answer = str(answer_input.get())
