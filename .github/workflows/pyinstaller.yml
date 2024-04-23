@@ -17,4 +17,6 @@ jobs:
     - uses: actions/upload-artifact@v2
       with:
         name: Familiada
-        path: src/dist/windows
+        path: |
+          src/dist/windows/Familiada.exe
+          dane.csv
