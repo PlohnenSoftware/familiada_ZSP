@@ -56,7 +56,7 @@ def calculate_coords(no_answers) -> tuple:
 if getattr(sys, "frozen", False):
     try:
         application_path = sys._MEIPASS
-    except:
+    except Exception:
         application_path = path.dirname(path.abspath(__file__))
     finally:
         CWD_PATH = getcwd()
@@ -256,9 +256,8 @@ class Blackboard:
         self.refresh()
 
     # print show name
-    def show_name(self):
+    def show_name(self, n=2):
         self.fill()
-        n = 2
         self.write_hor("AAACAD A  A A A  A CAD AAD CAD", n, 0)
         self.write_hor("A  A A AGHA A A  A A A A A A A", n + 1, 0)
         self.write_hor("AA AAA A  A A A  A AAA A A AAA", n + 2, 0)
