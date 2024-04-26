@@ -1,4 +1,5 @@
 name: Package Familiada App with Pyinstaller
+
 on:
   push:
     branches: [ main ]
@@ -9,14 +10,21 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - name: Package Application
-      uses: JackMcKew/pyinstaller-action-windows@main
-      with:
-        path: src
-    - uses: actions/upload-artifact@v2
-      with:
-        name: Familiada
-        path: |
-          src/dist/windows/Familiada.exe
-          dane.csv
+      - uses: actions/checkout@v2
+      - name: Package Application
+        uses: JackMcKew/pyinstaller-action-windows@main
+        with:
+          path: src
+
+      # New step to copy files into a flat structure
+      - name: Prepare files for distribution
+        run: |
+          mkdir flat
+          cp src/dist/windows/* flat/  # Adjust the path if your executable is deeper in the directory tree
+          cp dane.csv flat/
+
+      # Update artifact upload to new flat directory
+      - uses: actions/upload-artifact@v2
+        with:
+          name: Familiada
+          path: flat/
