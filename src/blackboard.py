@@ -54,8 +54,12 @@ def calculate_coords(no_answers) -> tuple:
 
 
 if getattr(sys, "frozen", False):
-    application_path = sys._MEIPASS
-    CWD_PATH = getcwd()
+    try:
+        application_path = sys._MEIPASS
+    except:
+        application_path = path.dirname(path.abspath(__file__))
+    finally:
+        CWD_PATH = getcwd()
 elif __file__:
     application_path = path.abspath("./")
     CWD_PATH = application_path
@@ -154,20 +158,45 @@ class Blackboard:
         else:
             self.round_winner = "L"
 
-    # Write a word horizontally
     def write_hor(self, word, start_row, start_col):
         letters = list(str(word))
         for i, letter in enumerate(letters):
             self.letter_matrix[start_row][start_col + i] = letter
         self.refresh()
 
-    # Write a word vertically
     def write_ver(self, word, start_row, start_col):
-        # niewiedzeć czemu nie działa word = str(word)
         letters = list(str(word))
         for i, letter in enumerate(letters):
             self.letter_matrix[start_row + i][start_col] = letter
         self.refresh()
+
+    def write_diag(self, word, start_row, start_col, end_row, end_col):
+        step_row = 1 if start_row < end_row else -1
+        step_col = 1 if start_col < end_col else -1
+        letters = list(str(word))
+        for i, letter in enumerate(letters):
+            self.letter_matrix[start_row + i * step_row][start_col + i * step_col] = letter
+        self.refresh()
+
+    def write_on_line(self, word, start_row, start_col, end_row, end_col):
+        delta_x = abs(end_col - start_col)
+        delta_y = abs(end_row - start_row)
+
+        # Determine the length and verify if the word fits
+        if start_row == end_row:
+            length = delta_x + 1
+            self.write_hor(word, start_row, start_col)
+        elif start_col == end_col:
+            length = delta_y + 1
+            self.write_ver(word, start_row, start_col)
+        elif delta_x == delta_y:
+            length = delta_x + 1
+            self.write_diag(word, start_row, start_col, end_row, end_col)
+        else:
+            raise ValueError("Line must be either horizontal, vertical, or diagonal (45 degrees)")
+
+        if length != len(word):
+            raise ValueError("Word length does not match the available space on the line")
 
     # Fill whole board with one character
     def fill(self, char=""):
@@ -183,11 +212,13 @@ class Blackboard:
     def two(self, start_row, start_col):
         self.write_hor("CAAAD", start_row, start_col)
         self.write_hor("A   A", start_row + 1, start_col)
-        self.write_hor("A", start_row + 2, start_col + 4)
-        self.write_hor("A", start_row + 3, start_col + 3)
-        self.write_hor("A", start_row + 4, start_col + 2)
-        self.write_hor("A", start_row + 5, start_col + 1)
-        self.write_hor("AAAAA", start_row + 6, start_col)
+        self.write_on_line("AAAAA", start_row + 2, start_col + 4, start_row + 6, start_col)
+        self.write_hor("AAAA", start_row + 6, start_col + 1)
+
+    def four(self, start_row, start_col):
+        self.write_on_line("AAAA", start_row, start_col + 3, start_row + 3, start_col)
+        self.write_ver("AAAAAA", start_row + 1, start_col + 3)
+        self.write_hor("AAAAA", start_row + 4, start_col)
 
     def five(self, start_row, start_col):
         self.write_hor("AAAAA", start_row, start_col)
@@ -208,10 +239,10 @@ class Blackboard:
     def nine(self, start_row, start_col):
         self.write_hor("CAAAD", start_row, start_col)
         self.write_ver("AA", start_row + 1, start_col)
-        self.write_ver("AAAA", start_row + 1, start_col+4)
+        self.write_ver("AAAA", start_row + 1, start_col + 4)
         self.write_hor("FAAA", start_row + 3, start_col)
         self.write_hor("A", start_row + 5, start_col + 3)
-        self.write_hor("AA", start_row+6, start_col + 1)
+        self.write_hor("AA", start_row + 6, start_col + 1)
 
     # Print a small x on selected row and column
     def draw_small_x(self, start_row, start_col):
@@ -234,7 +265,7 @@ class Blackboard:
         self.write_hor("A  A A A  A A A  A A A A A A A", n + 3, 0)
         self.write_hor("A  A A A  A A AA A A A AAE A A", n + 4, 0)
         Delay(2, self.fill).start()
-        Delay(3, lambda: self.nine(0, 5)).start()
+        Delay(3, lambda: self.two(0, 5)).start()
 
     # Print a big x on selected row and column
     def draw_gross_x(self, start_row, start_col):
@@ -340,8 +371,3 @@ class Blackboard:
                 self.playsound("wrong")
 
         Delay(2, show_score_for_answer).start()
-
-
-# corrections, adding the final card and buttons to handle, start working on the function of displaying the answers from the final,
-#  correct the symbol of the small loss to a more acurate one, but by doing so, the large loss should be corrected; the function from the answers
-#  in the final should be finished writing; the font should be coded from large numbers and the large title caption should be coded

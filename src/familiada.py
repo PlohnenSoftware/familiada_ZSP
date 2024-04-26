@@ -1,5 +1,5 @@
 from sys import exit, argv
-from blackboard import Blackboard, ICON_PATH,CWD_PATH
+from blackboard import Blackboard, ICON_PATH, CWD_PATH
 from PyQt6.QtWidgets import (
     QApplication,
     QMainWindow,
@@ -23,10 +23,6 @@ from PyQt6.QtGui import QCursor, QIcon
 from PyQt6.QtCore import Qt, QTimer
 
 gameWindow = Blackboard()
-
-# current_dir = os.path.dirname(os.path.abspath(__file__))
-# current_dir=os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop')
-
 
 class ControlRoom(QMainWindow):
     def __init__(self):
@@ -69,7 +65,7 @@ class ControlRoom(QMainWindow):
                 answer_button = self.create_buttons("Nieznana odpowiedź")
                 answer_button.clicked.connect(lambda: gameWindow.incorrect_answer("R"))
                 newtablayout.addWidget(answer_button, j + 2, 0)
-                
+
                 # buttons for strting teams
                 team1_button = self.create_buttons("Zaczyna drużyna L")
                 team1_button.clicked.connect(lambda: gameWindow.set_starting_team("L"))
