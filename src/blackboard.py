@@ -9,12 +9,45 @@ import sys
 # helping static functions
 @njit
 def check_team_input(team):
+    """
+    Check if the team input is valid.
+
+    Parameters:
+    team (str): The team to be checked.
+
+    Raises:
+    ValueError: If the team is not 'L' or 'R'.
+
+    Returns:
+    None
+    """
     if team not in ("L", "R"):
         raise ValueError("A team must be either 'L' or 'R'")
 
 
 @njit
 def calc_grid_size(surf_h, surf_w, offset, spacing, cols, rows):
+    """
+    Calculate the size and position of a grid within a gray rectangle.
+
+    Args:
+        surf_h (int): Height of the surface.
+        surf_w (int): Width of the surface.
+        offset (int): Offset from the edges of the surface to the gray rectangle.
+        spacing (int): Spacing between blocks in the grid.
+        cols (int): Number of columns in the grid.
+        rows (int): Number of rows in the grid.
+
+    Returns:
+        tuple: A tuple containing the following values:
+            - start_x (float): The x-coordinate of the starting position of the grid.
+            - start_y (float): The y-coordinate of the starting position of the grid.
+            - font_size (int): The font size based on the block height.
+            - block_width (float): The width of each block in the grid.
+            - block_height (float): The height of each block in the grid.
+            - rect_width (int): The width of the gray rectangle.
+            - rect_height (int): The height of the gray rectangle.
+    """
     # Calculate dimensions for the gray rectangle
     rect_width = surf_w - 2 * offset
     rect_height = surf_h - 2 * offset
@@ -41,6 +74,21 @@ def calc_grid_size(surf_h, surf_w, offset, spacing, cols, rows):
 
 @njit
 def grid_creator_calc(spa, start_x, start_y, block_width, block_height, i, j):
+    """
+    Calculates the coordinates and center of a rectangle in a grid.
+
+    Parameters:
+    spa (float): The spacing between each rectangle.
+    start_x (float): The starting x-coordinate of the grid.
+    start_y (float): The starting y-coordinate of the grid.
+    block_width (float): The width of each rectangle.
+    block_height (float): The height of each rectangle.
+    i (int): The row index of the rectangle in the grid.
+    j (int): The column index of the rectangle in the grid.
+
+    Returns:
+    tuple: A tuple containing the x-coordinate, y-coordinate, and center coordinates of the rectangle.
+    """
     rect_x = start_x + j * (block_width + spa)
     rect_y = start_y + i * (block_height + spa)
     coord_cent = (rect_x + 0.55 * block_width, rect_y + 0.5 * block_height)
@@ -49,6 +97,15 @@ def grid_creator_calc(spa, start_x, start_y, block_width, block_height, i, j):
 
 @njit
 def calculate_coords(no_answers) -> tuple:
+    """
+    Calculate the coordinates based on the number of answers.
+
+    Parameters:
+    - no_answers (int): The number of answers.
+
+    Returns:
+    - tuple: A tuple containing the number of answers and the row coordinates.
+    """
     row_coords = 1 + max(floor((6 - no_answers) / 2), 0)
     return no_answers, row_coords
 
@@ -263,8 +320,8 @@ class Blackboard:
         self.write_hor("AA AAA A  A A A  A AAA A A AAA", n + 2, 0)
         self.write_hor("A  A A A  A A A  A A A A A A A", n + 3, 0)
         self.write_hor("A  A A A  A A AA A A A AAE A A", n + 4, 0)
-        Delay(2, self.fill).start()
-        Delay(3, lambda: self.two(0, 5)).start()
+        # Delay(2, self.fill).start()
+        # Delay(3, lambda: self.two(0, 5)).start()
 
     # Print a big x on selected row and column
     def draw_gross_x(self, start_row, start_col):
