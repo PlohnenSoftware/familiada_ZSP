@@ -2,9 +2,8 @@ name: Package Tkinter version of Familiada app
 
 on:
   push:
-    branches: [ tkinterVersion ]
     tags:
-      - 'tkinter_v*' # Push events to tkinterVersion branch with a tag that starts with 'tkinter_v'
+      - 'tkinter_v*' # Push events with a tag that starts with 'tkinter_v'
 
 jobs:
   build:
@@ -19,29 +18,25 @@ jobs:
 
       # Step to create a flat directory for carrying output files
       - name: Create output directory
-        run: mkdir flat
+        run: mkdir familiada_all
 
       # Step to move compiled Windows binaries
       - name: Move Windows binaries
-        run: mv src/dist/windows/* flat/
+        run: mv src/dist/windows/* familiada_all/
 
       # Step to move data file
       - name: Move data file
-        run: mv dane.csv flat/
-    
-      # Upload artifacts as an artifact in the workflow (optional)
-      - name: Upload artifacts for download
-        uses: actions/upload-artifact@v4
-        with:
-          name: Familiada
-          path: flat
-          compression-level: 0
+        run: mv dane.csv familiada_all/
 
-      # Step to create a release and upload the artifacts
+      # Step to zip the flat folder
+      - name: Zip output folder
+        run: zip -r familiada.zip familiada_all
+
+      # Step to create a release and upload the zipped folder as an asset
       - name: Create Release
         id: create_release
         uses: softprops/action-gh-release@v1
         with:
-          files: flat
+          files: familiada.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
