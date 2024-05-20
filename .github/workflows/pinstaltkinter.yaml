@@ -3,6 +3,8 @@ name: Package Tkinter version of Familiada app
 on:
   push:
     branches: [ tkinterVersion ]
+    tags:
+      - 'tkinter_v*' # Push events to tkinterVersion branch with a tag that starts with 'tkinter_v'
 
 jobs:
   build:
