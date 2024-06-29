@@ -2,9 +2,8 @@ name: Package Familiada App with Pyinstaller
 
 on:
   push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+    tags:
+      - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
 
 jobs:
   build:
@@ -18,20 +17,25 @@ jobs:
 
       # Step to create a flat directory for carrying output files
       - name: Create output directory
-        run: mkdir flat
+        run: mkdir familiada
 
       # Step to move compiled Windows binaries
       - name: Move Windows binaries
-        run: mv src/dist/windows/* flat/
+        run: mv src/dist/windows/* familiada/
 
       # Step to move data file
       - name: Move data file
-        run: mv dane.csv flat/
-    
-      # Update artifact upload to new flat directory
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+        run: mv dane.csv familiada/
+
+      # Step to zip the flat folder
+      - name: Zip output folder
+        run: zip -r familiada.zip familiada
+
+      # Step to create a release and upload the zipped folder as an asset
+      - name: Create Release
+        id: create_release
+        uses: softprops/action-gh-release@v1
         with:
-          name: Familiada
-          path: flat
-          compression-level: 0
+          files: familiada.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
