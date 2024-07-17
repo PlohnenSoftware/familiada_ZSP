@@ -1,5 +1,6 @@
 from sys import exit, argv
-from blackboard import Blackboard, ICON_PATH, CWD_PATH
+from blackboard import ICON_PATH, CWD_PATH
+from logic import Game
 from PyQt6.QtWidgets import (
     QApplication,
     QMainWindow,
@@ -22,7 +23,7 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtGui import QCursor, QIcon
 from PyQt6.QtCore import Qt, QTimer
 
-gameWindow = Blackboard()
+gameWindow = Game()
 
 class ControlRoom(QMainWindow):
     def __init__(self):

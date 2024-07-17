@@ -139,7 +139,6 @@ class Blackboard:
         self.max_ans_len = 17
         self.spacing = 2
         self.answers_shown_final = [[True for _ in range(5)] for _ in range(2)]
-        self.fgm = True  # full game mode, turns on game logic
 
         # Initialize the round variables
         self.answers = []
