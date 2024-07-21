@@ -119,7 +119,7 @@ class ControlRoom(QMainWindow):
         # create finals tabt
         final = QWidget()
         tab_widget.addTab(final, "Finał")
-
+        
         # Add layouts to window
         pagelayout.addWidget(tab_widget)
         pagelayout.addWidget(sfx_widget)

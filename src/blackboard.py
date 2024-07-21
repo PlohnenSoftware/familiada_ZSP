@@ -167,6 +167,7 @@ class Blackboard:
         self.refresh()
 
     def refresh(self):
+        pygame.event.get()
         # Set the background color
         self.surface.fill((0, 0, 255))  # Blue background
         # Calculate dimensions for objects
