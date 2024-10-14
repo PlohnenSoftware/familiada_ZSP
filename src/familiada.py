@@ -215,6 +215,7 @@ class ControlRoom(QMainWindow):
                 f.write(",".join(answer_numbers) + "\n")
             if not gameWindow.fgm:
                 f.write(self.secret_phrase)
+                f.write("\n")
 
 
 if __name__ == "__main__":

@@ -1,31 +1,12 @@
 import pygame
-from numba import njit
+# from numba import njit
 from math import floor
-from threading import Timer as Delay
 from os import path, getcwd
 import sys
 
 
 # helping static functions
-@njit
-def check_team_input(team):
-    """
-    Check if the team input is valid.
-
-    Parameters:
-    team (str): The team to be checked.
-
-    Raises:
-    ValueError: If the team is not 'L' or 'R'.
-
-    Returns:
-    None
-    """
-    if team not in ("L", "R"):
-        raise ValueError("A team must be either 'L' or 'R'")
-
-
-@njit
+# @njit
 def calc_grid_size(surf_h, surf_w, offset, spacing, cols, rows):
     """
     Calculate the size and position of a grid within a gray rectangle.
@@ -72,7 +53,7 @@ def calc_grid_size(surf_h, surf_w, offset, spacing, cols, rows):
     return (start_x, start_y, font_size, block_width, block_height, rect_width, rect_height)
 
 
-@njit
+# @njit
 def grid_creator_calc(spa, start_x, start_y, block_width, block_height, i, j):
     """
     Calculates the coordinates and center of a rectangle in a grid.
@@ -95,7 +76,7 @@ def grid_creator_calc(spa, start_x, start_y, block_width, block_height, i, j):
     return rect_x, rect_y, coord_cent
 
 
-@njit
+# @njit
 def calculate_coords(no_answers) -> tuple:
     """
     Calculate the coordinates based on the number of answers.
@@ -142,8 +123,6 @@ class Blackboard:
 
         # Initialize the round variables
         self.answers = []
-        self.round_score = 0
-        self.current_round = -1
 
         # Initialize the music
         pygame.mixer.init()
@@ -166,6 +145,10 @@ class Blackboard:
         pygame.display.set_icon(self.program_icon)
         self.refresh()
 
+    # temporary handler
+    def calculate_coords(self, no_answers) -> tuple:
+        return calculate_coords(no_answers)
+    
     def refresh(self):
         pygame.event.get()
         # Set the background color
@@ -206,14 +189,6 @@ class Blackboard:
             if key in self.sounds:
                 sound = self.sounds[key]
                 sound.set_volume(volume)
-
-    # change the team thaht is winner of the roud
-    def change_winner(self):
-        check_team_input(self.round_winner)
-        if self.round_winner == "L":
-            self.round_winner = "R"
-        else:
-            self.round_winner = "L"
 
     def write_hor(self, word, start_row, start_col):
         letters = list(str(word))
@@ -328,102 +303,3 @@ class Blackboard:
         self.write_ver("DF CE", start_row, start_col)
         self.write_ver("CE DF", start_row, start_col + 2)
         self.write_hor("I", start_row + 2, start_col + 1)
-
-    # Initialize the round printing a blank blackboard
-    def round_init(self, round_number):
-        self.fill()
-        self.current_round = round_number
-        no_answers, row_coords = calculate_coords(len(self.answers[round_number]))
-
-        # Write the indices of the answers to the blackboard
-        self.write_ver("".join([str(i) for i in range(1, no_answers + 1)]), row_coords, 4)
-
-        # Write blank spaces to the blackboard
-        for i in range(no_answers):
-            self.write_hor("_" * self.max_ans_len + " --", row_coords + i, 6)
-
-        # Write the sum
-        self.write_hor("suma   0", row_coords + no_answers + 1, 18)
-
-        for round_answers in self.answers:
-            for answer in round_answers:
-                answer[2] = True
-
-        # Set the answers as not printed
-        for answer_dict in self.answers[round_number]:
-            answer_dict[2] = False
-        # Play round SFX
-        self.playsound("round")
-
-    # Print selected answer for selected round
-    def show_answer(self, round_number, answer_number):
-        # Check if the answer is already printed
-        if self.answers[round_number][answer_number][2]:
-            return
-
-        # Assure that the correct round is being shown
-        if self.current_round != round_number:
-            self.round_init(round_number)
-
-        # Write the answer
-        self.round_score = int(self.answers[round_number][answer_number][1]) + self.round_score
-        no_answers, row_coords = calculate_coords(len(self.answers[round_number]))
-        answer_text = str(self.answers[round_number][answer_number][0])
-        answer_points = str(self.answers[round_number][answer_number][1])
-        self.write_hor(answer_text.ljust(self.max_ans_len), row_coords + answer_number, 6)
-
-        point_coor = 6 + self.max_ans_len
-        self.write_hor(answer_points.rjust(2), row_coords + answer_number, point_coor + 1)
-        self.write_hor(str(self.round_score).rjust(3), row_coords + no_answers + 1, point_coor)
-
-        self.playsound("correct")
-
-        # Set the answer as printed
-        self.answers[round_number][answer_number][2] = self.correct_answer = True
-
-    def init_final_round(self):
-        self.fill()
-        self.round_winner = ""
-        self.round_score = 0
-        self.write_hor("suma   0", 8, 10)
-        for k in range(1, 6):
-            self.write_hor("----------- @@|@@ -----------", k, 0)
-        self.answers_shown_final = [[False for _ in range(5)] for _ in range(2)]
-
-    def show_final_answer(self, answer_input, point_input, row, col):
-        answer = str(answer_input.get())
-        points = str(point_input.get())
-        answer = answer.lower()
-
-        # Check if inputs are valid
-        if len(answer) > 11 or len(points) > 2 or points.isdigit() is False:
-            return
-
-        # Check if the answer is already printed
-        if self.answers_shown_final[col][row]:
-            return
-
-        # Set answer as printed
-        self.answers_shown_final[col][row] = True
-
-        if col:
-            answer_str = f"@@ {answer.rjust(11)}"
-            output_str = f"{points.rjust(2)} {answer.rjust(11)}"
-        else:
-            answer_str = f"{answer.ljust(11)}"
-            output_str = f"{answer.ljust(11)} {points.rjust(2)}"
-        self.playsound("write")
-
-        self.write_hor(answer_str, row + 1, col * 15)
-
-        def show_score_for_answer():
-            self.write_hor(output_str, row + 1, col * 15)
-            if int(points) > 0:
-                self.round_score += int(points)
-                self.playsound("correct")
-                self.write_hor(str(self.round_score).rjust(3), 8, 15)
-
-            else:
-                self.playsound("wrong")
-
-        Delay(2, show_score_for_answer).start()
