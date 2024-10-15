@@ -1,4 +1,5 @@
 pygame
-numba
+cython
+setuptools
 pyqt6
 icecream

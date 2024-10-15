@@ -1,0 +1,14 @@
+
+
+#### git config commit.gpgsign true
+#### git config --global user.name "FIRST_NAME LAST_NAME"
+#### git config --global user.email "MY_NAME@example.com"
+
+#### git for-each-ref --format '%(refname:short)' refs/heads | xargs git branch -D   #usuwa zbędne locale
+#### git remote update origin --prune            #aktualizuje brancze z remota
+#### git gc --prune=now --aggressive               #czyszczenie git
+
+#### .\pipunall.ps1
+
+#### pip install pygame --pre 
+#### pyinstaller --onefile --windowed --icon=../familiada.ico --add-data="../sfx;sfx" --distpath=../download --add-data="../familiada.ico;./" --add-data="../familiada.ttf;./" --add-data="../dane.csv;./" --name Familiada familiada.py

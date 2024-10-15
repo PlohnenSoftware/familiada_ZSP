@@ -6,6 +6,4 @@ __pycache__
 stare.py
 build
 *.exe
-*.pyd
-*.ps1
 familiada_game_data.csv

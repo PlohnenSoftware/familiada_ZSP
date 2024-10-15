@@ -149,17 +149,17 @@ class ControlRoom(QMainWindow):
         else:
             return True, in_str
 
-    def terminate_error(self, error_description):
+    def display_error_and_exit(self, error_description, term=True):
         dlg = QMessageBox(self)
         dlg.setIcon(QMessageBox.Icon.Critical)
         dlg.setWindowTitle("Błąd")
         dlg.setText(error_description)
         button = dlg.exec()
-        if button == QMessageBox.StandardButton.Ok:
+        if button == QMessageBox.StandardButton.Ok and term:
             exit()
 
     def open_file(self):
-        filename = self.choose_file_dialog()
+        filename = self.choose_file_dialog(True)
 
         file_str = self.read_file(filename)
         gameWindow.fgm, file_str = self.check_odm(file_str)
@@ -170,12 +170,12 @@ class ControlRoom(QMainWindow):
         gameWindow.answers = self.parse_lines(lines)
         self.write_sorted_answers(filename)
 
-    def choose_file_dialog(self):
+    def choose_file_dialog(self, term):
         file_filter = "CSV File (*.csv)"
         filename = QFileDialog.getOpenFileName(parent=self, caption="Wybierz plik", directory=CWD_PATH, filter=file_filter, initialFilter=file_filter)
         filename = str(filename[0])
         if filename == "":
-            self.terminate_error("Nie wybrano pliku")
+            self.display_error_and_exit("Nie wybrano pliku",term)
         return filename
 
     def read_file(self, filename):
@@ -184,7 +184,7 @@ class ControlRoom(QMainWindow):
                 file_str = f.read()
             return file_str
         except FileNotFoundError:
-            self.terminate_error(f"Plik '{filename}' nie został znaleziony")
+            self.display_error_and_exit(f"Plik '{filename}' nie został znaleziony")
             return None
 
     def parse_lines(self, lines):
@@ -194,7 +194,7 @@ class ControlRoom(QMainWindow):
                 continue
             line = line.split(",")
             if len(line) > 14:
-                self.terminate_error(f"Każda runda musi mieć maksymalnie 7 odpowiedzi, runda {j+1} ma ich aż {len(line) // 2}")
+                self.display_error_and_exit(f"Każda runda musi mieć maksymalnie 7 odpowiedzi, runda {j+1} ma ich aż {len(line) // 2}")
             round_data = self.parse_round(line, j)
             parsed_answers.append(round_data)
         return parsed_answers
@@ -204,10 +204,10 @@ class ControlRoom(QMainWindow):
         for i in range(0, len(line), 2):
             round_answer = line[i]
             if len(round_answer) > 17:
-                self.terminate_error(f'Odpowiedź "{round_answer}" w linii {j+1} pliku CSV jest za długa')
+                self.display_error_and_exit(f'Odpowiedź "{round_answer}" w linii {j+1} pliku CSV jest za długa')
             points = line[i + 1]
             if not points.isdigit() or int(points) not in range(100):
-                self.terminate_error(f'Punkty "{points}" w linii {j+1} pliku CSV są nieprawidłowe')
+                self.display_error_and_exit(f'Punkty "{points}" w linii {j+1} pliku CSV są nieprawidłowe')
             round_data.append([round_answer.lower(), points, True])
 
         # Sortowanie odpowiedzi po punktach, a następnie alfabetycznie
@@ -231,14 +231,15 @@ class ControlRoom(QMainWindow):
         dlg.setWindowFlags(Qt.WindowType.Dialog | Qt.WindowType.CustomizeWindowHint | Qt.WindowType.WindowTitleHint)
 
         # Add custom buttons instead of using setButtonText
-        button_designer = dlg.addButton("Designer", QMessageBox.ButtonRole.YesRole)
-        button_game = dlg.addButton("Gra", QMessageBox.ButtonRole.NoRole)
+        button_designer = dlg.addButton("Designer", QMessageBox.ButtonRole.AcceptRole)
+        button_game = dlg.addButton("Gra",QMessageBox.ButtonRole.ActionRole)
 
         dlg.exec()
+        clicked_button = dlg.clickedButton()
 
-        if dlg.clickedButton() == button_designer:
+        if clicked_button  == button_designer:
             self.run_designer()  # Funkcja do uruchomienia Designera
-        elif dlg.clickedButton() == button_game:
+        elif clicked_button  == button_game:
             global gameWindow
             gameWindow = Game()
             gameWindow.refresh()

@@ -104,7 +104,7 @@ class FamiliadaDesigner(QMainWindow):
         QMessageBox.critical(self, "Error", message)
 
     def open_file(self):
-        filename = self.choose_file_dialog()        
+        filename = self.choose_file_dialog(False)        
         if filename:
             try:
                 with open(filename, 'r') as f:
