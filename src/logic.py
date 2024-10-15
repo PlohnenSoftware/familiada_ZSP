@@ -1,5 +1,6 @@
 from blackboard import Blackboard
 from threading import Timer
+from helpers import calculate_coords
 
 
 # @njit
@@ -30,7 +31,7 @@ class Game(Blackboard):  # Extending the Blackboard class
     def round_init(self, round_number):
         self.fill()
         self.current_round = round_number
-        no_answers, row_coords = self.calculate_coords(len(self.answers[round_number]))
+        no_answers, row_coords = calculate_coords(len(self.answers[round_number]))
 
         # Write the indices of the answers to the blackboard
         self.write_ver("".join([str(i) for i in range(1, no_answers + 1)]), row_coords, 4)
@@ -64,7 +65,7 @@ class Game(Blackboard):  # Extending the Blackboard class
 
         # Write the answer
         self.round_score = int(self.answers[round_number][answer_number][1]) + self.round_score
-        no_answers, row_coords = self.calculate_coords(len(self.answers[round_number]))
+        no_answers, row_coords = calculate_coords(len(self.answers[round_number]))
         answer_text = str(self.answers[round_number][answer_number][0])
         answer_points = str(self.answers[round_number][answer_number][1])
         self.write_hor(answer_text.ljust(self.max_ans_len), row_coords + answer_number, 6)

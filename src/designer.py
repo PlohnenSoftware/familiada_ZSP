@@ -1,10 +1,8 @@
-import sys
-from PyQt6.QtWidgets import QApplication, QMainWindow, QLabel, QLineEdit, QPushButton, QVBoxLayout, QWidget, QSpinBox, QTextEdit, QMessageBox, QCheckBox
-from PyQt6.QtCore import Qt
-
+from PyQt6.QtWidgets import  QMainWindow, QLabel,QPushButton, QVBoxLayout, QWidget, QSpinBox, QTextEdit, QMessageBox, QCheckBox, QFileDialog
 class FamiliadaDesigner(QMainWindow):
-    def __init__(self):
+    def __init__(self, filechooser):
         super().__init__()
+        self.choose_file_dialog = filechooser
         self.initUI()
 
     def initUI(self):
@@ -36,6 +34,11 @@ class FamiliadaDesigner(QMainWindow):
         self.generate_button = QPushButton('Generate Data File', self)
         self.generate_button.clicked.connect(self.generate_file)
         layout.addWidget(self.generate_button)
+
+        # Open file button
+        self.open_file_button = QPushButton('Otwórz plik CSV', self)
+        self.open_file_button.clicked.connect(self.open_file)
+        layout.addWidget(self.open_file_button)
 
     def validate_round(self, line, round_number):
         # Parsing and validation similar to provided code
@@ -100,8 +103,12 @@ class FamiliadaDesigner(QMainWindow):
     def show_error(self, message):
         QMessageBox.critical(self, "Error", message)
 
-if __name__ == '__main__':
-    app = QApplication(sys.argv)
-    designer = FamiliadaDesigner()
-    designer.show()
-    sys.exit(app.exec())
+    def open_file(self):
+        filename = self.choose_file_dialog()        
+        if filename:
+            try:
+                with open(filename, 'r') as f:
+                    content = f.read()
+                    self.answers_text.setText(content)
+            except Exception as e:
+                QMessageBox.critical(self, "Błąd", f"Nie udało się otworzyć pliku: {str(e)}")

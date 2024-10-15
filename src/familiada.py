@@ -23,17 +23,17 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtGui import QCursor, QIcon
 from PyQt6.QtCore import Qt, QTimer
 
-gameWindow = Game()
-
 class ControlRoom(QMainWindow):
     def __init__(self):
         super().__init__()
         self.secret_phrase = "::DISPLAY_MODE_ONLY::"
-        self.open_file()
         self.setWindowTitle("Familiada - reżyserka")
         self.setGeometry(300, 150, 1000, 600)
-        self.setWindowIcon(QIcon(ICON_PATH))
+        self.fam_icon = QIcon(ICON_PATH)
+        self.setWindowIcon(self.fam_icon)
 
+    def setup_game_controls(self):
+        self.open_file()  # Teraz otwórz plik po wyborze trybu gry
         central_widget = QWidget()
         tab_widget = QTabWidget()
         sfx_widget = QWidget()
@@ -62,12 +62,12 @@ class ControlRoom(QMainWindow):
                 newtablayout.addWidget(answer_button, j + 1, 0)
 
             if gameWindow.fgm:
-                # add butto for incorect answer
+                # add button for incorrect answer
                 answer_button = self.create_buttons("Nieznana odpowiedź")
                 answer_button.clicked.connect(lambda: gameWindow.incorrect_answer("R"))
                 newtablayout.addWidget(answer_button, j + 2, 0)
 
-                # buttons for strting teams
+                # buttons for starting teams
                 team1_button = self.create_buttons("Zaczyna drużyna L")
                 team1_button.clicked.connect(lambda: gameWindow.set_starting_team("L"))
                 newtablayout.addWidget(team1_button, j + 3, 0)
@@ -111,12 +111,12 @@ class ControlRoom(QMainWindow):
         sfxlayout.addWidget(self.slider, 2, 2, 2, 4)
         sfxlayout.addWidget(button_name, 0, 6)
 
-        # crate points tab if full game logic is on
+        # Create points tab if full game logic is on
         if gameWindow.fgm:
             punktacja = QWidget()
             tab_widget.addTab(punktacja, "Punktacja")
 
-        # create finals tabt
+        # Create finals tab
         final = QWidget()
         tab_widget.addTab(final, "Finał")
         
@@ -128,6 +128,8 @@ class ControlRoom(QMainWindow):
         refresher = QTimer(self)
         refresher.timeout.connect(gameWindow.refresh)
         refresher.start(250)
+        self.show()  # Pokazanie obecnego okna gry
+        gameWindow.refresh()
 
     def slider_moved(self):
         value_of_slider = self.slider.value()
@@ -157,11 +159,7 @@ class ControlRoom(QMainWindow):
             exit()
 
     def open_file(self):
-        file_filter = "CSV File (*.csv)"
-        filename = QFileDialog.getOpenFileName(parent=self, caption="Wybierz plik", directory=CWD_PATH, filter=file_filter, initialFilter=file_filter)
-        filename = str(filename[0])
-        if filename == "":
-            self.terminate_error("Nie wybrano pliku")
+        filename = self.choose_file_dialog()
 
         file_str = self.read_file(filename)
         gameWindow.fgm, file_str = self.check_odm(file_str)
@@ -171,6 +169,14 @@ class ControlRoom(QMainWindow):
         lines = file_str.split("\n")
         gameWindow.answers = self.parse_lines(lines)
         self.write_sorted_answers(filename)
+
+    def choose_file_dialog(self):
+        file_filter = "CSV File (*.csv)"
+        filename = QFileDialog.getOpenFileName(parent=self, caption="Wybierz plik", directory=CWD_PATH, filter=file_filter, initialFilter=file_filter)
+        filename = str(filename[0])
+        if filename == "":
+            self.terminate_error("Nie wybrano pliku")
+        return filename
 
     def read_file(self, filename):
         try:
@@ -217,10 +223,35 @@ class ControlRoom(QMainWindow):
                 f.write(self.secret_phrase)
                 f.write("\n")
 
+    def ask_what_to_run(self):
+        dlg = QMessageBox(self)
+        dlg.setIcon(QMessageBox.Icon.Question)  # Ikona zapytania
+        dlg.setWindowTitle("Wybór trybu")
+        dlg.setText("Co chcesz uruchomić?")
+        dlg.setWindowFlags(Qt.WindowType.Dialog | Qt.WindowType.CustomizeWindowHint | Qt.WindowType.WindowTitleHint)
+
+        # Add custom buttons instead of using setButtonText
+        button_designer = dlg.addButton("Designer", QMessageBox.ButtonRole.YesRole)
+        button_game = dlg.addButton("Gra", QMessageBox.ButtonRole.NoRole)
+
+        dlg.exec()
+
+        if dlg.clickedButton() == button_designer:
+            self.run_designer()  # Funkcja do uruchomienia Designera
+        elif dlg.clickedButton() == button_game:
+            global gameWindow
+            gameWindow = Game()
+            gameWindow.refresh()
+            self.setup_game_controls()  # Konfiguracja kontroli gry
+
+    def run_designer(self):
+        from designer import FamiliadaDesigner  # Importowanie Designera
+        self.designer_window = FamiliadaDesigner(self.choose_file_dialog)
+        self.designer_window.setWindowIcon(self.fam_icon)
+        self.designer_window.show()
 
 if __name__ == "__main__":
     app = QApplication(argv)
-    window = ControlRoom()
-    window.show()
-    gameWindow.refresh()
+    control_room = ControlRoom()
+    control_room.ask_what_to_run()  # Zapytanie użytkownika, co uruchomić
     exit(app.exec())
