@@ -1,6 +1,6 @@
 from blackboard import Blackboard
 from threading import Timer
-from helpers import calculate_coords
+from prec.helpers import calculate_coords
 
 
 # @njit
