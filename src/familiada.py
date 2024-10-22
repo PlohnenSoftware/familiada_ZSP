@@ -16,6 +16,7 @@ from PyQt6.QtWidgets import (
     QTabWidget,
     QTextEdit,
     QComboBox,
+    QCheckBox,
     QSlider,
     QSpacerItem,
     QSizePolicy,
@@ -84,6 +85,7 @@ class ControlRoom(QMainWindow):
         button_intro = self.create_buttons("Intro")
         button_outro = self.create_buttons("Outro")
         button_name = self.create_buttons("Napis")
+        checkbox_gradient = QCheckBox("Show gradient?")  # Add checkbox here
 
         # Connect buttons to functions
         button_intro.clicked.connect(lambda: gameWindow.playsound("intro"))
@@ -92,6 +94,12 @@ class ControlRoom(QMainWindow):
         button_stop.clicked.connect(gameWindow.stop_playing)
         button_name.clicked.connect(gameWindow.show_name)
         # button_name.clicked.connect(lambda: gameWindow.big_digit(1,1,0))
+
+       # Use a lambda to update the show_gradient variable
+        def update_gradient_state(state):
+           gameWindow.grad_bkg = bool(state)
+           gameWindow.refresh()
+        checkbox_gradient.stateChanged.connect(update_gradient_state)
 
         # Create widgets - slider and label
         self.slider = QSlider(Qt.Orientation.Horizontal)
@@ -111,6 +119,7 @@ class ControlRoom(QMainWindow):
         sfxlayout.addWidget(self.label_glosnosc, 0, 2, 1, 4, alignment=Qt.AlignmentFlag.AlignHCenter)
         sfxlayout.addWidget(self.slider, 2, 2, 2, 4)
         sfxlayout.addWidget(button_name, 0, 6)
+        sfxlayout.addWidget(checkbox_gradient, 1, 6)
 
         # Create points tab if full game logic is on
         if gameWindow.fgm:

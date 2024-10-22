@@ -25,7 +25,7 @@ FONT_PATH = res_path("familiada.ttf")
 
 class Blackboard:
     def __init__(self):
-        #Window size multiplier
+        # Window size multiplier
         self.wsm = 70
 
         # Set the dimensions of the blackboard and the maximum length of an answer for those dimensions
@@ -35,6 +35,9 @@ class Blackboard:
         # Set the offset and spacing for the blackboard
         self.offset = 20
         self.spacing = 2
+
+        # Set the flags for the blackboard
+        self.grad_bkg = False
 
         # Initialize the blackboard containing object
         self.letter_matrix = [["" for _ in range(self.cols)] for _ in range(self.rows)]
@@ -61,10 +64,28 @@ class Blackboard:
         pygame.display.set_icon(self.program_icon)
         self.refresh()
 
+    def draw_gradient(self, color_start, color_end):
+        h = self.surface.get_height()
+        w = self.surface.get_width()
+        for x in range(w):
+            # Calculate the interpolation factor (t) based on the x position
+            t = x / w
+            # Interpolate between the start and end colors
+            r = int(color_start[0] * (1 - t) + color_end[0] * t)
+            g = int(color_start[1] * (1 - t) + color_end[1] * t)
+            b = int(color_start[2] * (1 - t) + color_end[2] * t)
+            # Draw a vertical line with the interpolated color
+            pygame.draw.line(self.surface, (r, g, b), (x, 0), (x, h))
+
     def refresh(self):
         pygame.event.pump()
+
         # Set the background color
-        self.surface.fill((0, 0, 255))  # Blue background
+        if not self.grad_bkg:
+            self.surface.fill((0, 0, 255))
+        else:
+            self.draw_gradient((0, 0, 255), (255, 0, 0))
+            
         # Calculate dimensions for objects
         (start_x, start_y, font_size, block_width, block_height, rect_width, rect_height) = calc_grid_size(
             self.surface.get_height(), self.surface.get_width(), self.offset, self.spacing, self.cols, self.rows
