@@ -1,6 +1,9 @@
 name: Build Cython Modules
 
-on: [push]
+on:
+  push:
+    paths:
+      - 'src/helpers.pyx'
 
 jobs:
   build-linux:
