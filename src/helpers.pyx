@@ -99,3 +99,4 @@ def calculate_coords(int no_answers) -> tuple:
     row_coords = 1 + max(int(floor((6 - no_answers) / 2)), 0)
 
     return no_answers, row_coords
+    
