@@ -13,9 +13,10 @@ class Game(Blackboard):  # Extending the Blackboard class
         super().__init__()
         self.fgm = True  # full game mode, turns on game logic
         self.round_winner = ""  # Track the winner of the round
-        self.round_score = 0  # Track the round score
+        self.round_score = 0  # Track the round score           
+        self.answers = []# Initialize the round variables
         self.answers_shown_final = [[False for _ in range(5)] for _ in range(2)]  # Track final answers
-
+        
     # Change the team that is winner of the round
     def change_winner(self):
         check_team_input(self.round_winner)
@@ -25,7 +26,7 @@ class Game(Blackboard):  # Extending the Blackboard class
             self.round_winner = "L"
 
             
-# functions to be redesigned and functionality slpit into smaller functions here & Blackboard class
+#TODO functions to be redesigned and functionality slpit into smaller functions here & Blackboard class
 ############################################################################################################
     # Initialize the round printing a blank blackboard
     def round_init(self, round_number):

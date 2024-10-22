@@ -8,5 +8,4 @@ build
 download/
 *.exe
 familiada_game_data.csv
-# moje
 *.so

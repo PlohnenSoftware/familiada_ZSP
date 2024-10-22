@@ -64,15 +64,15 @@ class ControlRoom(QMainWindow):
             if gameWindow.fgm:
                 # add button for incorrect answer
                 answer_button = self.create_buttons("Nieznana odpowiedź")
-                answer_button.clicked.connect(lambda: gameWindow.incorrect_answer("R"))
+                answer_button.clicked.connect(lambda: gameWindow.incorrect_answer("R")) #TODO
                 newtablayout.addWidget(answer_button, j + 2, 0)
 
                 # buttons for starting teams
                 team1_button = self.create_buttons("Zaczyna drużyna L")
-                team1_button.clicked.connect(lambda: gameWindow.set_starting_team("L"))
+                team1_button.clicked.connect(lambda: gameWindow.set_starting_team("L")) #TODO
                 newtablayout.addWidget(team1_button, j + 3, 0)
                 team2_button = self.create_buttons("Zaczyna drużyna P")
-                team2_button.clicked.connect(lambda: gameWindow.set_starting_team("P"))
+                team2_button.clicked.connect(lambda: gameWindow.set_starting_team("P")) #TODO
                 newtablayout.addWidget(team2_button, j + 4, 0)
 
             tab_widget.addTab(newtab, f"Runda {i+1}")
@@ -90,7 +90,7 @@ class ControlRoom(QMainWindow):
         button_outro.clicked.connect(lambda: gameWindow.playsound("ending"))
         button_brawo.clicked.connect(lambda: gameWindow.playsound("bravo"))
         button_stop.clicked.connect(gameWindow.stop_playing)
-        button_name.clicked.connect(gameWindow.show_name)
+        button_name.clicked.connect(lambda: gameWindow.big_digit(1,1,0))
 
         # Create widgets - slider and label
         self.slider = QSlider(Qt.Orientation.Horizontal)

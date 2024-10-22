@@ -25,17 +25,20 @@ FONT_PATH = res_path("familiada.ttf")
 
 class Blackboard:
     def __init__(self):
-        # Initialize the blackboard containing object
+        #Window size multiplier
+        self.wsm = 70
+
+        # Set the dimensions of the blackboard and the maximum length of an answer for those dimensions
         self.rows, self.cols = 10, 30
+        self.max_ans_len = 17
+
+        # Set the offset and spacing for the blackboard
+        self.offset = 20
+        self.spacing = 2
+
+        # Initialize the blackboard containing object
         self.letter_matrix = [["" for _ in range(self.cols)] for _ in range(self.rows)]
         self.secondary_letter_matrix = self.letter_matrix.copy()
-        self.offset = 20
-        self.max_ans_len = 17
-        self.spacing = 2
-        self.answers_shown_final = [[True for _ in range(5)] for _ in range(2)]
-
-        # Initialize the round variables
-        self.answers = []
 
         # Initialize the music
         pygame.mixer.init()
@@ -52,14 +55,14 @@ class Blackboard:
 
         # Initialize the blackboard window
         pygame.init()
-        self.surface = pygame.display.set_mode((72 * 16, 72 * 9), pygame.RESIZABLE)
+        self.surface = pygame.display.set_mode((self.wsm * 16, self.wsm * 9), pygame.RESIZABLE)
         pygame.display.set_caption("Familiada")
         self.program_icon = pygame.image.load(ICON_PATH)
         pygame.display.set_icon(self.program_icon)
         self.refresh()
 
     def refresh(self):
-        pygame.event.get()
+        pygame.event.pump()
         # Set the background color
         self.surface.fill((0, 0, 255))  # Blue background
         # Calculate dimensions for objects
@@ -145,12 +148,12 @@ class Blackboard:
             target_matrix[row] = [char] * self.cols
         self.refresh()
 
-    def big_digit(self, number, start_row, start_col, use_secondary=False):
-        number_map = {
+    def big_digit(self, digit, start_row, start_col, use_secondary=False):
+        digit_to_pattern_map = {
             0: "CAAADA   AA   AA   AA   AA   AFAAAE",
-            1: "",
+            1: "  A   AA    A    A    A    A    A  ",
             2: "CAAADA   A    A   A   A   A   AAAAA",
-            3: "",
+            3: "AAAAA    A   A   AA     AA   AFAAAE",
             4: "   A   AA  A A A  A AAAAA   A    A ",
             5: "AAAAAA    AAAAD    A    AA   AFAAAE",
             6: "  AA  A   A    AAAADA   AA   AFAAAE",
@@ -159,10 +162,18 @@ class Blackboard:
             9: "CAAADA   AA   AFAAAA    A   A  AA  ",
         }
 
-        if number not in number_map:
-            raise ValueError("Number must be one of the supported values: 0, 2, 4, 5, 6, 9")
-        content = number_map[number]
+        if digit not in digit_to_pattern_map:
+            raise ValueError("This function only supports digits thus from 0 to 9")
+        content = digit_to_pattern_map[digit]
         self.write_matrix(content, start_row, start_col, 7, 5, use_secondary)
+
+    def show_name(self):
+        self.fill()
+        self.write_hor("AAACAD A  A A A  A CAD AAD CAD", 2, 0)
+        self.write_hor("A  A A AGHA A A  A A A A A A A", 3, 0)
+        self.write_hor("AA AAA A  A A A  A AAA A A AAA", 4, 0)
+        self.write_hor("A  A A A  A A A  A A A A A A A", 5, 0)
+        self.write_hor("A  A A A  A A AA A A A AAE A A", 6, 0)
 
     # Print a small x on selected row and column
     def draw_small_x(self, start_row, start_col):
@@ -175,16 +186,8 @@ class Blackboard:
             self.letter_matrix[start_row - i + 2][start_col + i] = "H"
         self.refresh()
 
-    def show_name(self):
-        self.fill()
-        self.write_hor("AAACAD A  A A A  A CAD AAD CAD", 2, 0)
-        self.write_hor("A  A A AGHA A A  A A A A A A A", 3, 0)
-        self.write_hor("AA AAA A  A A A  A AAA A A AAA", 4, 0)
-        self.write_hor("A  A A A  A A A  A A A A A A A", 5, 0)
-        self.write_hor("A  A A A  A A AA A A A AAE A A", 6, 0)
-
     # Print a big x on selected row and column
-    def draw_gross_x(self, start_row, start_col):
+    def draw_big_x(self, start_row, start_col):
         self.write_ver("DF CE", start_row, start_col)
         self.write_ver("CE DF", start_row, start_col + 2)
         self.write_hor("I", start_row + 2, start_col + 1)

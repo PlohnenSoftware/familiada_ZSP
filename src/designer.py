@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import  QMainWindow, QLabel,QPushButton, QVBoxLayout, QWidget, QSpinBox, QTextEdit, QMessageBox, QCheckBox, QFileDialog
+from PyQt6.QtWidgets import  QMainWindow, QLabel,QPushButton, QVBoxLayout, QWidget, QSpinBox, QTextEdit, QMessageBox, QCheckBox
 class FamiliadaDesigner(QMainWindow):
     def __init__(self, filechooser):
         super().__init__()
