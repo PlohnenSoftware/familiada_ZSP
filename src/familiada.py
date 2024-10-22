@@ -90,7 +90,8 @@ class ControlRoom(QMainWindow):
         button_outro.clicked.connect(lambda: gameWindow.playsound("ending"))
         button_brawo.clicked.connect(lambda: gameWindow.playsound("bravo"))
         button_stop.clicked.connect(gameWindow.stop_playing)
-        button_name.clicked.connect(lambda: gameWindow.big_digit(1,1,0))
+        button_name.clicked.connect(gameWindow.show_name)
+        # button_name.clicked.connect(lambda: gameWindow.big_digit(1,1,0))
 
         # Create widgets - slider and label
         self.slider = QSlider(Qt.Orientation.Horizontal)
