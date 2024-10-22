@@ -1,0 +1,42 @@
+name: Package Tkinter version of Familiada app
+
+on:
+  push:
+    tags:
+      - 'tkinter_v*' # Push events with a tag that starts with 'tkinter_v'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4  
+      
+      - name: Package Application
+        uses: JackMcKew/pyinstaller-action-windows@main
+        with:
+          path: src
+
+      # Step to create a flat directory for carrying output files
+      - name: Create output directory
+        run: mkdir familiada_all
+
+      # Step to move compiled Windows binaries
+      - name: Move Windows binaries
+        run: mv src/dist/windows/* familiada_all/
+
+      # Step to move data file
+      - name: Move data file
+        run: mv dane.csv familiada_all/
+
+      # Step to zip the flat folder
+      - name: Zip output folder
+        run: zip -r familiada.zip familiada_all
+
+      # Step to create a release and upload the zipped folder as an asset
+      - name: Create Release
+        id: create_release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: familiada.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
