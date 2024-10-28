@@ -172,9 +172,10 @@ class ControlRoom(QMainWindow):
         filename = self.choose_file_dialog(True)
 
         file_str = self.read_file(filename)
-        gameWindow.fgm, file_str = self.check_odm(file_str)
         if file_str is None:
             return
+
+        gameWindow.fgm, file_str = self.check_odm(file_str)
 
         lines = file_str.split("\n")
         gameWindow.answers = self.parse_lines(lines)

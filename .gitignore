@@ -4,7 +4,9 @@ venv
 __pycache__
 *.pyc
 stare.py
-build
-download/
 *.exe
 familiada_game_data.csv
+test/
+build/
+download/
+prec/*
