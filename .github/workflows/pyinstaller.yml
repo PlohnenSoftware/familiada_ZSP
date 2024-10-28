@@ -10,10 +10,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4  
-      - name: Package Application
-        uses: JackMcKew/pyinstaller-action-windows@main
+      - name: Package Application using Cythinst64
+        uses: PlohnenSoftware/Cythinst64@py313
         with:
           path: src
+          cython_out: prec
 
       # Step to create a flat directory for carrying output files
       - name: Create output directory
