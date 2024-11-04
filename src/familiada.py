@@ -146,7 +146,7 @@ class ControlRoom(QMainWindow):
         self.label_glosnosc.setText("Głośność: " + str(value_of_slider / 10) + "%")
         gameWindow.set_global_volume(value_of_slider / 1000)
 
-    def create_buttons(self, name):
+    def create_buttons(self, name: str) -> QPushButton:
         button = QPushButton(name)
         button.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
         button.setMinimumWidth(200)
@@ -159,7 +159,7 @@ class ControlRoom(QMainWindow):
         else:
             return True, in_str
 
-    def display_error_and_exit(self, error_description, term=True):
+    def display_error_and_exit(self, error_description: str, term: bool = True) -> None:
         dlg = QMessageBox(self)
         dlg.setIcon(QMessageBox.Icon.Critical)
         dlg.setWindowTitle("Błąd")
@@ -181,7 +181,7 @@ class ControlRoom(QMainWindow):
         gameWindow.answers = self.parse_lines(lines)
         self.write_sorted_answers(filename)
 
-    def choose_file_dialog(self, term):
+    def choose_file_dialog(self, term) -> str:
         file_filter = "CSV File (*.csv)"
         filename = QFileDialog.getOpenFileName(parent=self, caption="Wybierz plik", directory=CWD_PATH, filter=file_filter, initialFilter=file_filter)
         filename = str(filename[0])
@@ -189,7 +189,7 @@ class ControlRoom(QMainWindow):
             self.display_error_and_exit("Nie wybrano pliku",term)
         return filename
 
-    def read_file(self, filename):
+    def read_file(self, filename) -> str | None:
         try:
             with open(filename, "r") as f:
                 file_str = f.read()
@@ -210,7 +210,7 @@ class ControlRoom(QMainWindow):
             parsed_answers.append(round_data)
         return parsed_answers
 
-    def parse_round(self, line, j):
+    def parse_round(self, line, j: int):
         round_data = []
         for i in range(0, len(line), 2):
             round_answer = line[i]
@@ -225,7 +225,7 @@ class ControlRoom(QMainWindow):
         round_data.sort(key=lambda x: (-int(x[1]), x[0]))
         return round_data
 
-    def write_sorted_answers(self, filename):
+    def write_sorted_answers(self, filename) -> None:
         with open(filename, "w") as f:
             for round_answers in gameWindow.answers:
                 answer_numbers = [f"{answer[0]},{answer[1]}" for answer in round_answers]

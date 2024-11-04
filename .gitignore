@@ -9,4 +9,4 @@ familiada_game_data.csv
 test/
 build/
 download/
-prec/*
+src/prec/*

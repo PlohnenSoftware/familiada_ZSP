@@ -4,7 +4,7 @@ from prec.helpers import calculate_coords
 
 
 # @njit
-def check_team_input(team):
+def check_team_input(team: str) -> None:
     if team not in ("L", "R"):
         raise ValueError("A team must be either 'L' or 'R'")
 
@@ -27,9 +27,13 @@ class Game(Blackboard):  # Extending the Blackboard class
 
             
 #TODO functions to be redesigned and functionality slpit into smaller functions here & Blackboard class
+    def incorrect_answer(self, team: str) -> None:
+        raise NotImplementedError("Incorrect answers are not yet implemented")
+    def set_staring_team(self, team: str) -> None:
+        raise NotImplementedError("Setting a starting team is not yet implemented")
 ############################################################################################################
     # Initialize the round printing a blank blackboard
-    def round_init(self, round_number):
+    def round_init(self, round_number: int) -> None:
         self.fill()
         self.current_round = round_number
         no_answers, row_coords = calculate_coords(len(self.answers[round_number]))
@@ -55,7 +59,7 @@ class Game(Blackboard):  # Extending the Blackboard class
         self.playsound("round")
 
     # Print selected answer for selected round
-    def show_answer(self, round_number, answer_number):
+    def show_answer(self, round_number: int, answer_number: int) -> None:
         # Check if the answer is already printed
         if self.answers[round_number][answer_number][2]:
             return
@@ -80,7 +84,7 @@ class Game(Blackboard):  # Extending the Blackboard class
         # Set the answer as printed
         self.answers[round_number][answer_number][2] = self.correct_answer = True
 
-    def init_final_round(self):
+    def init_final_round(self) -> None:
         self.fill()
         self.round_winner = ""
         self.round_score = 0
@@ -89,7 +93,7 @@ class Game(Blackboard):  # Extending the Blackboard class
             self.write_hor("----------- @@|@@ -----------", k, 0)
         self.answers_shown_final = [[False for _ in range(5)] for _ in range(2)]
 
-    def show_final_answer(self, answer_input, point_input, row, col):
+    def show_final_answer(self, answer_input, point_input, row: int, col: int) -> None:
         answer = str(answer_input.get())
         points = str(point_input.get())
         answer = answer.lower()
