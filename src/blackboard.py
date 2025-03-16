@@ -198,17 +198,27 @@ class Blackboard:
 
     # Print a small x on selected row and column
     def draw_small_x(self, start_row, start_col):
-        self.write_hor("Y", start_row, start_col + 1)
-        self.write_hor("I", start_row + 1, start_col + 1)
-        self.write_hor("X", start_row + 2, start_col + 1)
-        for i in range(2):
-            i = i << 1
-            self.letter_matrix[start_row + i][start_col + i] = "G"
-            self.letter_matrix[start_row - i + 2][start_col + i] = "H"
-        self.refresh()
+        try:
+            self.write_hor("Y", start_row, start_col + 1)
+            self.write_hor("I", start_row + 1, start_col + 1)
+            self.write_hor("X", start_row + 2, start_col + 1)
+            for i in range(2):
+                i = i << 1
+                # Sprawdzenie poprawności indeksów przed zapisem
+                if 0 <= start_row + i < self.rows and 0 <= start_col + i < self.cols:
+                    self.letter_matrix[start_row + i][start_col + i] = "G"
+                    
+                if 0 <= start_row - i + 2 < self.rows and 0 <= start_col + i < self.cols:
+                    self.letter_matrix[start_row - i + 2][start_col + i] = "H"
+            self.refresh()
+        except Exception as e:
+            print(f"Błąd podczas rysowania małego X: {e}")
 
     # Print a big x on selected row and column
     def draw_big_x(self, start_row, start_col):
-        self.write_ver("DF CE", start_row, start_col)
-        self.write_ver("CE DF", start_row, start_col + 2)
-        self.write_hor("I", start_row + 2, start_col + 1)
+        try:
+            self.write_ver("DF CE", start_row, start_col)
+            self.write_ver("CE DF", start_row, start_col + 2)
+            self.write_hor("I", start_row + 2, start_col + 1)
+        except Exception as e:
+            print(f"Błąd podczas rysowania dużego X: {e}")
