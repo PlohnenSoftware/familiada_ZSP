@@ -47,10 +47,8 @@ class Game(Blackboard):  # Extending the Blackboard class
         self.reset_strikes()
         self.round_winner = team  # Set the active team as the potential round winner right away
         
-        # Display which team has control
-        self.fill()
-        self.write_hor(f"{self.teams[team]['display_name']} zaczyna grę!", 4, 5)
-        Timer(2, lambda: self.round_init(self.current_round)).start()
+        # Zamiast pisać na blackboardzie, pokazujemy informacje tylko w interfejsie kontrolnym
+        Timer(1, lambda: self.round_init(self.current_round)).start()
     
     def reset_strikes(self):
         """Reset strikes for both teams"""
@@ -92,8 +90,7 @@ class Game(Blackboard):  # Extending the Blackboard class
         """Switch to opponent steal phase after 3 strikes"""
         self.game_phase = "opponent_steal"
         opponent = self.get_opponent_team(self.active_team)
-        self.fill()
-        self.write_hor(f"{self.teams[opponent]['display_name']} ma szansę na kradzież!", 4, 3)
+        # Nie wyświetlamy komunikatu na blackboardzie
     
     def process_steal_attempt(self, answer_number: int):
         """Process the opponent team's steal attempt"""
@@ -111,9 +108,7 @@ class Game(Blackboard):  # Extending the Blackboard class
             # Successful steal - transfer round points to opponent by changing round_winner
             self.round_winner = opponent
             
-            # Announce the steal
-            self.fill()
-            self.write_hor(f"{self.teams[opponent]['display_name']} kradnie punkty!", 4, 5)
+            # Nie wyświetlamy komunikatu na blackboardzie
             
             # End the round after delay
             Timer(2, lambda: self.end_round()).start()
@@ -121,9 +116,7 @@ class Game(Blackboard):  # Extending the Blackboard class
             # Failed steal - original team keeps points (round_winner remains unchanged)
             self.playsound("wrong")
             
-            # Announce failed steal
-            self.fill()
-            self.write_hor(f"{self.teams[self.active_team]['display_name']} zachowuje punkty!", 4, 3)
+            # Nie wyświetlamy komunikatu na blackboardzie
             
             # End the round after delay
             Timer(2, lambda: self.end_round()).start()
@@ -143,18 +136,11 @@ class Game(Blackboard):  # Extending the Blackboard class
         if self.round_winner:
             self.teams[self.round_winner]["score"] += final_round_score
             
-            # Show the updated score
-            self.fill()
-            self.write_hor(f"Koniec rundy {self.current_round + 1}!", 2, 8)
-            self.write_hor(f"{self.teams['L']['display_name']}: {self.teams['L']['score']} punktów", 4, 5)
-            self.write_hor(f"{self.teams['R']['display_name']}: {self.teams['R']['score']} punktów", 6, 5)
-            
-            # Show which team won the round
-            self.write_hor(f"Rundę wygrywa: {self.teams[self.round_winner]['display_name']}", 8, 5)
+            # Nie wyświetlamy wyników na blackboardzie
             
             # Check if game should end
             if max(self.teams["L"]["score"], self.teams["R"]["score"]) >= 300 or self.current_round >= 2:
-                Timer(3, lambda: self.check_game_end()).start()
+                Timer(2, lambda: self.check_game_end()).start()
             else:
                 # Move to next round
                 self.current_round += 1
@@ -162,7 +148,7 @@ class Game(Blackboard):  # Extending the Blackboard class
                 self.round_score = 0
                 self.round_winner = ""  # Reset round winner for next round
                 self.active_team = ""  # Reset active team for next round's face-off
-                Timer(3, lambda: self.prepare_face_off()).start()
+                Timer(2, lambda: self.prepare_face_off()).start()
     
     def check_game_end(self):
         """Check if the game should end or go to sudden death"""
@@ -185,8 +171,6 @@ class Game(Blackboard):  # Extending the Blackboard class
     
     def start_sudden_death(self):
         """Start the sudden death round"""
-        self.fill()
-        self.write_hor("RUNDA NAGŁEJ ŚMIERCI!", 4, 6)
         self.game_phase = "sudden_death"
         
         # Reset for sudden death
@@ -195,7 +179,7 @@ class Game(Blackboard):  # Extending the Blackboard class
         self.active_team = ""
         
         # Initialize sudden death round
-        Timer(2, lambda: self.round_init(self.current_round)).start()
+        Timer(1, lambda: self.round_init(self.current_round)).start()
     
     def handle_sudden_death_answer(self, team: str, answer_number: int):
         """Handle a sudden death answer attempt"""
@@ -216,37 +200,44 @@ class Game(Blackboard):  # Extending the Blackboard class
             self.playsound("wrong")
             opponent = self.get_opponent_team(team)
             
-            # Show message
-            self.fill()
-            self.write_hor(f"To nie najlepsza odpowiedź!", 3, 5)
-            self.write_hor(f"{self.teams[opponent]['display_name']} ma szansę!", 5, 5)
+            # Nie wyświetlamy komunikatu na blackboardzie
     
     def handle_game_win(self, team: str):
         """Handle a team winning the game"""
         check_team_input(team)
         
-        self.fill()
-        self.write_hor(f"{self.teams[team]['display_name']} wygrywa grę!", 3, 5)
-        self.write_hor(f"Wynik: {self.teams[team]['score']} punktów", 5, 5)
+        # Nie wyświetlamy informacji o zwycięzcy na blackboardzie
         
         # Play fanfare
         self.playsound("bravo")
         
         # Move to final round
-        Timer(5, lambda: self.init_final_round()).start()
+        Timer(3, lambda: self.init_final_round()).start()
     
     def prepare_face_off(self):
         """Prepare for the face-off phase at the start of a round"""
-        self.fill()
-        self.write_hor("Runda " + str(self.current_round + 1), 2, 12)
-        self.write_hor("Kapitanowie drużyn do środka!", 4, 6)
         self.game_phase = "face_off"
         self.face_off_state = "initial"
         self.face_off_first_answer = None
+        
+        # Inicjalizacja rundy bez wyświetlania dodatkowych informacji
+        self.round_init(self.current_round)
     
     def handle_face_off_input(self, team: str, answer_number: int):
         """Handle input during the face-off phase"""
         if self.game_phase != "face_off":
+            return
+            
+        # Zabezpieczenie przed błędami indeksowania
+        if answer_number is None or answer_number < 0 or self.current_round < 0:
+            return
+            
+        # Zabezpieczenie przed dostępem do nieistniejącej rundy
+        if self.current_round >= len(self.answers):
+            return
+            
+        # Zabezpieczenie przed dostępem do nieistniejącej odpowiedzi
+        if answer_number >= len(self.answers[self.current_round]):
             return
             
         check_team_input(team)
@@ -265,18 +256,12 @@ class Game(Blackboard):  # Extending the Blackboard class
                 
                 # Move to second player state
                 self.face_off_state = "second_player"
-                
-                # Show message for other team
-                opponent = self.get_opponent_team(team)
-                self.write_hor(f"{self.teams[opponent]['display_name']} spróbuj podać wyższą odpowiedź!", 7, 3)
             else:
                 # Invalid or already shown answer
                 self.playsound("wrong")
                 
                 # Give chance to other team
-                opponent = self.get_opponent_team(team)
                 self.face_off_state = "second_player"
-                self.write_hor(f"{self.teams[opponent]['display_name']} twoja kolej!", 7, 7)
                 
         # Second player's answer
         elif self.face_off_state == "second_player":
@@ -303,46 +288,18 @@ class Game(Blackboard):  # Extending the Blackboard class
                     # Neither player got a valid answer, restart face-off
                     self.prepare_face_off()
     
-    # Initialize the round printing a blank blackboard
-    def round_init(self, round_number: int) -> None:
-        self.fill()
-        self.current_round = round_number
-        no_answers, row_coords = calculate_coords(len(self.answers[round_number]))
-
-        # Write the indices of the answers to the blackboard
-        self.write_ver("".join([str(i) for i in range(1, no_answers + 1)]), row_coords, 4)
-
-        # Write blank spaces to the blackboard
-        for i in range(no_answers):
-            self.write_hor("_" * self.max_ans_len + " --", row_coords + i, 6)
-
-        # Write the sum
-        self.write_hor("suma   0", row_coords + no_answers + 1, 18)
-
-        for round_answers in self.answers:
-            for answer in round_answers:
-                answer[2] = True
-
-        # Set the answers as not printed
-        for answer_dict in self.answers[round_number]:
-            answer_dict[2] = False
-        # Play round SFX
-        self.playsound("round")
-        
-        # If we're in main play phase, show team scores and strikes
-        if self.game_phase == "main_play" and self.active_team:
-            self.write_hor(f"L: {self.teams['L']['score']} | R: {self.teams['R']['score']}", 1, 10)
-            self.write_hor(f"Gra: {self.teams[self.active_team]['display_name']}", 2, 10)
-            
-            # Reset player index for the active team for a new round
-            self.current_player_index[self.active_team] = 0
-            
-            # Show current player
-            player_num = self.current_player_index[self.active_team] + 1
-            self.write_hor(f"Gracz {player_num} odpowiada", 9, 10)
-
-    # Print selected answer for selected round and handle game logic
     def show_answer(self, round_number: int, answer_number: int) -> None:
+        """Print selected answer for selected round and handle game logic"""
+        # Zabezpieczenie przed błędami dostępu do tablicy
+        if round_number is None or answer_number is None:
+            return
+            
+        if round_number < 0 or round_number >= len(self.answers):
+            return
+            
+        if answer_number < 0 or answer_number >= len(self.answers[round_number]):
+            return
+            
         # Check if the answer is already printed
         if self.answers[round_number][answer_number][2]:
             return
@@ -352,39 +309,49 @@ class Game(Blackboard):  # Extending the Blackboard class
             self.round_init(round_number)
 
         # Write the answer
-        self.round_score = int(self.answers[round_number][answer_number][1]) + self.round_score
-        no_answers, row_coords = calculate_coords(len(self.answers[round_number]))
-        answer_text = str(self.answers[round_number][answer_number][0])
-        answer_points = str(self.answers[round_number][answer_number][1])
-        self.write_hor(answer_text.ljust(self.max_ans_len), row_coords + answer_number, 6)
+        try:
+            self.round_score = int(self.answers[round_number][answer_number][1]) + self.round_score
+            no_answers, row_coords = calculate_coords(len(self.answers[round_number]))
+            answer_text = str(self.answers[round_number][answer_number][0])
+            answer_points = str(self.answers[round_number][answer_number][1])
+            
+            # Skrócenie odpowiedzi jeśli jest za długa dla blackboard
+            if len(answer_text) > self.max_ans_len:
+                answer_text = answer_text[:self.max_ans_len]
+                
+            self.write_hor(answer_text.ljust(self.max_ans_len), row_coords + answer_number, 6)
 
-        point_coor = 6 + self.max_ans_len
-        self.write_hor(answer_points.rjust(2), row_coords + answer_number, point_coor + 1)
-        self.write_hor(str(self.round_score).rjust(3), row_coords + no_answers + 1, point_coor)
+            point_coor = 6 + self.max_ans_len
+            self.write_hor(answer_points.rjust(2), row_coords + answer_number, point_coor + 1)
+            self.write_hor(str(self.round_score).rjust(3), row_coords + no_answers + 1, point_coor)
 
-        self.playsound("correct")
+            self.playsound("correct")
 
-        # Set the answer as printed
-        self.answers[round_number][answer_number][2] = self.correct_answer = True
-        
-        # If we're in main play phase, check if all answers are revealed 
-        # and move to next player after a correct answer
-        if self.game_phase == "main_play" and self.active_team:
-            # Check if all answers are revealed
-            all_revealed = True
-            for answer in self.answers[round_number]:
-                if not answer[2]:  # If any answer is not revealed, we continue
-                    all_revealed = False
-                    break
+            # Set the answer as printed
+            self.answers[round_number][answer_number][2] = self.correct_answer = True
+            
+            # If we're in main play phase, check if all answers are revealed 
+            # and move to next player after a correct answer
+            if self.game_phase == "main_play" and self.active_team:
+                # Check if all answers are revealed
+                all_revealed = True
+                for answer in self.answers[round_number]:
+                    if not answer[2]:  # If any answer is not revealed, we continue
+                        all_revealed = False
+                        break
+                        
+                if all_revealed:
+                    # All answers revealed, round winner is current active team
+                    # (round_winner should already be set to active_team)
+                    Timer(1, lambda: self.end_round()).start()
+                else:
+                    # Move to the next player after a correct answer - bez wyświetlania na blackboardzie
+                    self.next_player_turn()
+        except IndexError as e:
+            print(f"Błąd indeksowania przy wyświetlaniu odpowiedzi: {e}")
+        except Exception as e:
+            print(f"Wystąpił błąd: {e}")
                     
-            if all_revealed:
-                # All answers revealed, round winner is current active team
-                # (round_winner should already be set to active_team)
-                Timer(1, lambda: self.end_round()).start()
-            else:
-                # Move to the next player after a correct answer
-                self.next_player_turn()
-
     def next_player_turn(self):
         """Move to the next player in the active team"""
         if self.game_phase != "main_play" or not self.active_team:
@@ -393,9 +360,7 @@ class Game(Blackboard):  # Extending the Blackboard class
         # Increment player index for active team (cycling 0-4)
         self.current_player_index[self.active_team] = (self.current_player_index[self.active_team] + 1) % 5
         
-        # Show message for next player
-        player_num = self.current_player_index[self.active_team] + 1
-        self.write_hor(f"{self.teams[self.active_team]['display_name']} - gracz {player_num}", 9, 10)
+        # Nie wyświetlamy informacji o aktualnym graczu na tablicy - tylko w panelu kontrolnym
 
     def init_final_round(self) -> None:
         """Initialize the Fast Money (final) round"""
@@ -458,3 +423,81 @@ class Game(Blackboard):  # Extending the Blackboard class
         self.write_hor("BRAWO! WYGRANA!", 4, 10)
         self.write_hor(f"Zdobyte punkty: {self.round_score}", 6, 8)
         self.playsound("bravo")
+
+    def write_hor(self, word, start_row, start_col, use_secondary=False):
+        """Bezpieczna wersja write_hor z obsługą błędów"""
+        try:
+            target_matrix = self.secondary_letter_matrix if use_secondary else self.letter_matrix
+            letters = list(str(word))
+            
+            # Zabezpieczenie przed wyjściem poza granice tablicy
+            if start_row < 0 or start_row >= self.rows:
+                return
+                
+            for i, letter in enumerate(letters):
+                col_index = start_col + i
+                if col_index < 0 or col_index >= self.cols:
+                    continue  # Pomijamy litery, które wyjdą poza granicę
+                target_matrix[start_row][col_index] = letter
+            self.refresh()
+        except Exception as e:
+            print(f"Błąd podczas pisania poziomo na tablicy: {e}")
+            
+    def write_ver(self, word, start_row, start_col, use_secondary=False):
+        """Bezpieczna wersja write_ver z obsługą błędów"""
+        try:
+            target_matrix = self.secondary_letter_matrix if use_secondary else self.letter_matrix
+            letters = list(str(word))
+            
+            # Zabezpieczenie przed wyjściem poza granice tablicy
+            if start_col < 0 or start_col >= self.cols:
+                return
+                
+            for i, letter in enumerate(letters):
+                row_index = start_row + i
+                if row_index < 0 or row_index >= self.rows:
+                    continue  # Pomijamy litery, które wyjdą poza granicę
+                target_matrix[row_index][start_col] = letter
+            self.refresh()
+        except Exception as e:
+            print(f"Błąd podczas pisania pionowo na tablicy: {e}")
+
+    def round_init(self, round_number: int) -> None:
+        """Initialize the round printing a blank blackboard"""
+        try:
+            self.fill()
+            self.current_round = round_number
+            
+            # Zabezpieczenie przed błędami dostępu do tablicy
+            if round_number < 0 or round_number >= len(self.answers):
+                return
+                
+            no_answers, row_coords = calculate_coords(len(self.answers[round_number]))
+
+            # Write the indices of the answers to the blackboard
+            self.write_ver("".join([str(i) for i in range(1, no_answers + 1)]), row_coords, 4)
+
+            # Write blank spaces to the blackboard
+            for i in range(no_answers):
+                self.write_hor("_" * self.max_ans_len + " --", row_coords + i, 6)
+
+            # Write the sum
+            self.write_hor("suma   0", row_coords + no_answers + 1, 18)
+
+            for round_answers in self.answers:
+                for answer in round_answers:
+                    answer[2] = True
+
+            # Set the answers as not printed
+            for answer_dict in self.answers[round_number]:
+                answer_dict[2] = False
+                
+            # Play round SFX
+            self.playsound("round")
+            
+            # Nie wyświetlamy informacji o logice gry na tablicy wyników
+            # Wszystkie informacje są widoczne w panelu kontrolnym
+        except IndexError as e:
+            print(f"Błąd indeksowania przy inicjalizacji rundy: {e}")
+        except Exception as e:
+            print(f"Wystąpił błąd przy inicjalizacji rundy: {e}")
