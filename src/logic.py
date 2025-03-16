@@ -67,8 +67,16 @@ class Game(Blackboard):  # Extending the Blackboard class
         if team is None or team not in ("L", "R") or team != self.active_team:
             team = self.active_team
             
+        # Sprawdzenie czy mamy aktywną drużynę i jesteśmy w fazie głównej rozgrywki
+        if not self.active_team or self.game_phase != "main_play":
+            return
+            
+        # Sprawdzenie czy jesteśmy w prawidłowej rundzie
+        if self.current_round < 0 or self.current_round >= len(self.answers):
+            return
+            
         # Tylko w fazie głównej rozgrywki obsługuj błędne odpowiedzi
-        if self.game_phase == "main_play" and team and team == self.active_team:
+        try:
             self.teams[team]["strikes"] += 1
             self.playsound("wrong")
             
@@ -76,15 +84,24 @@ class Game(Blackboard):  # Extending the Blackboard class
             no_answers, row_coords = calculate_coords(len(self.answers[self.current_round]))
             strike_position = 2 + self.teams[team]["strikes"]
             
+            # Bezpieczne umieszczenie symbolu X
+            strike_row = row_coords + no_answers + 1
+            
+            # Zabezpieczenie przed wyjściem poza tablicę
+            if strike_row >= self.rows:
+                strike_row = self.rows - 3  # Umieść X niżej, jeśli nie mieści się na tablicy
+                
             # Draw small or big X depending on strike number
             if self.teams[team]["strikes"] < 3:
-                self.draw_small_x(row_coords + no_answers + 1, strike_position)
+                self.draw_small_x(strike_row, strike_position)
                 # Move to next player after an incorrect answer
                 self.next_player_turn()
             else:
-                self.draw_big_x(row_coords + no_answers + 1, strike_position)
+                self.draw_big_x(strike_row, strike_position)
                 # After 3 strikes, switch to opponent steal phase
                 Timer(1, lambda: self.start_opponent_steal()).start()
+        except Exception as e:
+            print(f"Błąd podczas obsługi niepoprawnej odpowiedzi: {e}")
     
     def start_opponent_steal(self):
         """Switch to opponent steal phase after 3 strikes"""
