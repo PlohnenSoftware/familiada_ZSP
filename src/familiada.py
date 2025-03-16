@@ -36,10 +36,51 @@ class ControlRoom(QMainWindow):
     def setup_game_controls(self):
         self.open_file()  # Teraz otwórz plik po wyborze trybu gry
         central_widget = QWidget()
+        pagelayout = QVBoxLayout(central_widget)
+        
+        # Create active team indicator
+        active_team_widget = QWidget()
+        active_team_layout = QHBoxLayout(active_team_widget)
+        
+        # Left indicator for team L
+        self.team_L_indicator = QLabel("DRUŻYNA L")
+        self.team_L_indicator.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.team_L_indicator.setStyleSheet("background-color: lightblue; color: black; font-weight: bold; padding: 10px; border-radius: 5px; font-size: 16px;")
+        self.team_L_indicator.setMinimumHeight(40)
+        
+        # Right indicator for team R
+        self.team_R_indicator = QLabel("DRUŻYNA P")
+        self.team_R_indicator.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.team_R_indicator.setStyleSheet("background-color: lightgray; color: black; font-weight: bold; padding: 10px; border-radius: 5px; font-size: 16px;")
+        self.team_R_indicator.setMinimumHeight(40)
+        
+        # Current player indicator
+        self.current_player_indicator = QLabel("Gracz: -")
+        self.current_player_indicator.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.current_player_indicator.setStyleSheet("font-weight: bold; font-size: 16px; padding: 10px;")
+        
+        # Game phase indicator
+        self.game_phase_indicator = QLabel("Faza gry: -")
+        self.game_phase_indicator.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.game_phase_indicator.setStyleSheet("font-style: italic; font-size: 14px;")
+        
+        # Add indicators to layout
+        active_team_layout.addWidget(self.team_L_indicator)
+        active_team_layout.addWidget(self.current_player_indicator)
+        active_team_layout.addWidget(self.team_R_indicator)
+        
+        # Create a timer to update team indicators
+        indicator_refresher = QTimer(self)
+        indicator_refresher.timeout.connect(self.update_team_indicators)
+        indicator_refresher.start(250)
+        
+        # Add the active team widget to main layout
+        pagelayout.addWidget(active_team_widget)
+        pagelayout.addWidget(self.game_phase_indicator)
+        
+        # Create tab widget and other elements
         tab_widget = QTabWidget()
         sfx_widget = QWidget()
-
-        pagelayout = QVBoxLayout(central_widget)
         sfxlayout = QGridLayout(sfx_widget)
 
         self.setCentralWidget(central_widget)
@@ -63,17 +104,18 @@ class ControlRoom(QMainWindow):
                 newtablayout.addWidget(answer_button, j + 1, 0)
 
             if gameWindow.fgm:
-                # add button for incorrect answer
-                answer_button = self.create_buttons("Nieznana odpowiedź")
-                answer_button.clicked.connect(lambda: gameWindow.incorrect_answer("R")) #TODO
+                # Jeden przycisk dla błędnej odpowiedzi aktywnej drużyny
+                answer_button = self.create_buttons("Błędna odpowiedź")
+                answer_button.clicked.connect(lambda: gameWindow.incorrect_answer(gameWindow.active_team))
                 newtablayout.addWidget(answer_button, j + 2, 0)
 
                 # buttons for starting teams
                 team1_button = self.create_buttons("Zaczyna drużyna L")
-                team1_button.clicked.connect(lambda: gameWindow.set_starting_team("L")) #TODO
+                team1_button.clicked.connect(lambda: gameWindow.set_starting_team("L"))
                 newtablayout.addWidget(team1_button, j + 3, 0)
+                
                 team2_button = self.create_buttons("Zaczyna drużyna P")
-                team2_button.clicked.connect(lambda: gameWindow.set_starting_team("P")) #TODO
+                team2_button.clicked.connect(lambda: gameWindow.set_starting_team("R"))
                 newtablayout.addWidget(team2_button, j + 4, 0)
 
             tab_widget.addTab(newtab, f"Runda {i+1}")
@@ -124,10 +166,80 @@ class ControlRoom(QMainWindow):
         # Create points tab if full game logic is on
         if gameWindow.fgm:
             punktacja = QWidget()
+            punktacjalayout = QGridLayout(punktacja)
+            
+            # Create score display
+            score_label_L = QLabel(f"Drużyna L: 0")
+            score_label_L.setStyleSheet("font-size: 20px; font-weight: bold;")
+            punktacjalayout.addWidget(score_label_L, 0, 0)
+            
+            score_label_R = QLabel(f"Drużyna R: 0")
+            score_label_R.setStyleSheet("font-size: 20px; font-weight: bold;")
+            punktacjalayout.addWidget(score_label_R, 0, 1)
+            
+            # Create phase display
+            phase_label = QLabel(f"Faza gry: {gameWindow.game_phase}")
+            phase_label.setStyleSheet("font-size: 16px;")
+            punktacjalayout.addWidget(phase_label, 1, 0, 1, 2)
+            
+            # Add prepare face-off button
+            face_off_button = self.create_buttons("Przygotuj Face-Off")
+            face_off_button.clicked.connect(gameWindow.prepare_face_off)
+            punktacjalayout.addWidget(face_off_button, 2, 0, 1, 2)
+            
+            # Function to update score display
+            def update_scores():
+                score_label_L.setText(f"Drużyna L: {gameWindow.teams['L']['score']}")
+                score_label_R.setText(f"Drużyna R: {gameWindow.teams['R']['score']}")
+                phase_label.setText(f"Faza gry: {gameWindow.game_phase}")
+            
+            # Create a timer to refresh the scores
+            score_refresher = QTimer(self)
+            score_refresher.timeout.connect(update_scores)
+            score_refresher.start(250)
+            
             tab_widget.addTab(punktacja, "Punktacja")
 
         # Create finals tab
         final = QWidget()
+        finallayout = QGridLayout(final)
+        
+        # Create a button to initialize the final round
+        final_round_button = self.create_buttons("Rozpocznij Finał")
+        final_round_button.clicked.connect(gameWindow.init_final_round)
+        finallayout.addWidget(final_round_button, 0, 0, 1, 2)
+        
+        # Create input fields and buttons for final round answers
+        for i in range(5):
+            # Create input fields for answers and points
+            answer_input_1 = QLineEdit()
+            answer_input_1.setPlaceholderText(f"Odpowiedź {i+1} - gracz 1")
+            finallayout.addWidget(answer_input_1, i+1, 0)
+            
+            points_input_1 = QLineEdit()
+            points_input_1.setPlaceholderText("Punkty")
+            points_input_1.setMaximumWidth(50)
+            finallayout.addWidget(points_input_1, i+1, 1)
+            
+            show_button_1 = self.create_buttons("Pokaż")
+            show_button_1.clicked.connect(lambda state, row=i, a=answer_input_1, p=points_input_1: 
+                                         gameWindow.show_final_answer(a, p, row, 0))
+            finallayout.addWidget(show_button_1, i+1, 2)
+            
+            answer_input_2 = QLineEdit()
+            answer_input_2.setPlaceholderText(f"Odpowiedź {i+1} - gracz 2")
+            finallayout.addWidget(answer_input_2, i+1, 3)
+            
+            points_input_2 = QLineEdit()
+            points_input_2.setPlaceholderText("Punkty")
+            points_input_2.setMaximumWidth(50)
+            finallayout.addWidget(points_input_2, i+1, 4)
+            
+            show_button_2 = self.create_buttons("Pokaż")
+            show_button_2.clicked.connect(lambda state, row=i, a=answer_input_2, p=points_input_2: 
+                                         gameWindow.show_final_answer(a, p, row, 1))
+            finallayout.addWidget(show_button_2, i+1, 5)
+        
         tab_widget.addTab(final, "Finał")
         
         # Add layouts to window
@@ -140,6 +252,31 @@ class ControlRoom(QMainWindow):
         refresher.start(250)
         self.show()  # Pokazanie obecnego okna gry
         gameWindow.refresh()
+
+    def update_team_indicators(self):
+        """Update the team indicators based on the active team"""
+        active_team = gameWindow.active_team
+        
+        # Reset both indicators
+        self.team_L_indicator.setStyleSheet("background-color: lightgray; color: black; font-weight: bold; padding: 10px; border-radius: 5px; font-size: 16px;")
+        self.team_R_indicator.setStyleSheet("background-color: lightgray; color: black; font-weight: bold; padding: 10px; border-radius: 5px; font-size: 16px;")
+        
+        # Highlight active team
+        if active_team == "L":
+            self.team_L_indicator.setStyleSheet("background-color: #4287f5; color: white; font-weight: bold; padding: 10px; border-radius: 5px; font-size: 16px;")
+            if gameWindow.game_phase == "main_play":
+                player_num = gameWindow.current_player_index["L"] + 1
+                self.current_player_indicator.setText(f"Gracz: {player_num}")
+        elif active_team == "R":
+            self.team_R_indicator.setStyleSheet("background-color: #f54242; color: white; font-weight: bold; padding: 10px; border-radius: 5px; font-size: 16px;")
+            if gameWindow.game_phase == "main_play":
+                player_num = gameWindow.current_player_index["R"] + 1
+                self.current_player_indicator.setText(f"Gracz: {player_num}")
+        else:
+            self.current_player_indicator.setText("Gracz: -")
+            
+        # Update game phase
+        self.game_phase_indicator.setText(f"Faza gry: {gameWindow.game_phase}")
 
     def slider_moved(self):
         value_of_slider = self.slider.value()
