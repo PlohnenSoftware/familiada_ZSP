@@ -1,6 +1,6 @@
 import sys
 import random
-from PyQt6.QtWidgets import QApplication, QMainWindow, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QWidget, QLineEdit, QTabWidget, QTextEdit
+from PySide6.QtWidgets import QApplication, QMainWindow, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QWidget, QLineEdit, QTabWidget, QTextEdit
 
 
 class MyWindow(QMainWindow):
@@ -28,7 +28,7 @@ class MyWindow(QMainWindow):
         tab1_layout = QVBoxLayout(self.tab1)
 
         # Create a label
-        self.label = QLabel("Hello, PyQt6!", self)
+        self.label = QLabel("Hello, PySide6!", self)
 
         # Create a horizontal layout for buttons and text input fields
         button_layout = QHBoxLayout()

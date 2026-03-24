@@ -10,3 +10,4 @@ test/
 build/
 download/
 src/prec/*
+*.pdf

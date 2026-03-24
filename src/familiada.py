@@ -1,7 +1,7 @@
 from sys import exit, argv
 from blackboard import ICON_PATH, CWD_PATH
 from logic import Game
-from PyQt6.QtWidgets import (
+from PySide6.QtWidgets import (
     QApplication,
     QMainWindow,
     QFileDialog,
@@ -22,8 +22,8 @@ from PyQt6.QtWidgets import (
     QSizePolicy,
     QScrollArea,
 )
-from PyQt6.QtGui import QCursor, QIcon
-from PyQt6.QtCore import Qt, QTimer
+from PySide6.QtGui import QCursor, QIcon
+from PySide6.QtCore import Qt, QTimer
 
 class ControlRoom(QMainWindow):
     def __init__(self):
@@ -367,7 +367,7 @@ class ControlRoom(QMainWindow):
 
     def choose_file_dialog(self, term) -> str:
         file_filter = "CSV File (*.csv)"
-        filename = QFileDialog.getOpenFileName(parent=self, caption="Wybierz plik", directory=CWD_PATH, filter=file_filter, initialFilter=file_filter)
+        filename = QFileDialog.getOpenFileName(self, "Wybierz plik", CWD_PATH, file_filter, file_filter)
         filename = str(filename[0])
         if filename == "":
             self.display_error_and_exit("Nie wybrano pliku",term)

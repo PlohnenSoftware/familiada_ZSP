@@ -1,5 +1,0 @@
-pygame
-cython
-setuptools
-pyqt6
-icecream
