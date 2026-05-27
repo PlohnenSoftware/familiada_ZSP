@@ -1,4 +1,8 @@
+ve
 venv
+.venv
 __pycache__
 *.pyc
-*.spec
+stare.py
+build
+*.exe

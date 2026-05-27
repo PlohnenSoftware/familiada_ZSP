@@ -1,10 +1,9 @@
 import pygame
-import sys
+from sys import exit
 import tkinter
-import os
 from tkinter import messagebox, ttk, filedialog
 from blackboard import Blackboard as Bb
-from blackboard import dubel_sound, bravo_sound, round_sound, intro_music, ending_music
+from blackboard import dubel_sound, bravo_sound, round_sound, intro_music, ending_music, res_path, CWD_PATH
 
 # The program provides a graphical interface for the game Familiada.
 
@@ -21,24 +20,20 @@ def exit_app(tkwindow):
     tkwindow.destroy()
     pygame.display.quit()
     pygame.quit()
-    sys.exit()
+    exit()
 
 
 def terminate_error(error_description):
     if messagebox.showerror("FAMILIADA ERROR", error_description):
-        sys.exit()
-
+        exit()
 
 # Initialize the main game object
 game1 = Bb(20)
-
-# Read data from the disk
-current_dir = os.path.dirname(os.path.abspath(__file__))
 # lepiej zrobić pulpit na start, do finalnej wersji bo jak sie d exe spakuje to wywala do jakiegoś folderu temp,
 # gdzie jest interpreter pythona przenosny z Pyinstallera 
 # current_dir=os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop')
 
-filename = filedialog.askopenfilename(initialdir=current_dir, title="Wybierz plik z danymi", filetypes=(("csv files", "*.csv"), ("all files", "*.*")))
+filename = filedialog.askopenfilename(initialdir=CWD_PATH, title="Wybierz plik z danymi", filetypes=(("csv files", "*.csv"), ("all files", "*.*")))
 
 if filename == "":
     terminate_error("Nie wybrano pliku")
@@ -102,13 +97,13 @@ with open(filename, "r+") as f:
 pygame.init()
 surface = pygame.display.set_mode((800, 600), pygame.RESIZABLE)
 pygame.display.set_caption("Familiada")
-programIcon = pygame.image.load("familiada.ico")
+programIcon = pygame.image.load(res_path("familiada.ico"))
 pygame.display.set_icon(programIcon)
 
 # Create the second window
 window1 = tkinter.Tk()
 window1.title("Familiada - reżyserka")
-window1.iconbitmap("familiada.ico")
+window1.iconbitmap(res_path("familiada.ico"))
 window1.geometry("650x400")
 style = ttk.Style(window1)
 window1.protocol("WM_DELETE_WINDOW", lambda: exit_app(window1))
@@ -234,7 +229,7 @@ while True:
     font_height = max(round(block_height * 0.75), 2)
 
     # Set the font
-    myfont = pygame.font.Font("familiada.ttf", font_height)
+    myfont = pygame.font.Font(res_path("familiada.ttf"), font_height)
 
     # Draw black rectangles & letters on the surface.
     for i in range(10):
@@ -261,4 +256,4 @@ while True:
 
     # Quit the game if the window is closed
     except pygame.error:
-        sys.exit()
+        exit()
