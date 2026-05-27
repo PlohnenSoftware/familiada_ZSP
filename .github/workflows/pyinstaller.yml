@@ -15,29 +15,39 @@ jobs:
     steps:
       - uses: actions/checkout@v6.0.2
       - name: Package Application using Cythinst64
-        uses: PlohnenSoftware/Cythinst64@v2.2
+        uses: PlohnenSoftware/Cythinst64@dev
         with:
           path: src
           cython_out: prec
           zip_name: familiada.zip
+          sevenzip_name: familiada.7z
           zip_paths: |
             src/dist/windows
             dane.csv
 
-      # Step to upload the zipped folder as a workflow artifact
-      - name: Upload artifact
+      - name: Upload ZIP artifact
         uses: actions/upload-artifact@v7.0.1
         with:
-          name: familiada
+          name: familiada.zip
           path: familiada.zip
           if-no-files-found: error
+          archive: false
 
-      # Step to create a release and upload the zipped folder as an asset
+      - name: Upload 7z artifact
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: familiada.7z
+          path: familiada.7z
+          if-no-files-found: error
+          archive: false
+
       - name: Create Release
         if: startsWith(github.ref, 'refs/tags/v')
         id: create_release
         uses: softprops/action-gh-release@v3.0.0
         with:
-          files: familiada.zip
+          files: |
+            familiada.zip
+            familiada.7z
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
