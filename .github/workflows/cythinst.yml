@@ -1,0 +1,95 @@
+name: Package Familiada App
+
+on:
+  push:
+    tags:
+      - 'v*'
+      - 'tkinter_v*'
+  workflow_dispatch:
+    inputs:
+      variant:
+        description: 'Build variant. Auto uses tkinter for tkinter tags/branch, otherwise the Cython build.'
+        required: true
+        default: auto
+        type: choice
+        options:
+          - auto
+          - pyinstaller
+          - tkinter
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6.0.2
+
+      - name: Select build variant
+        id: variant
+        shell: bash
+        env:
+          REQUESTED_VARIANT: ${{ github.event.inputs.variant || 'auto' }}
+        run: |
+          variant="$REQUESTED_VARIANT"
+          if [ "$variant" = "auto" ]; then
+            case "$GITHUB_REF" in
+              refs/tags/tkinter_v*) variant="tkinter" ;;
+              *)
+                if [ "$GITHUB_REF_NAME" = "tkinterVersion" ]; then
+                  variant="tkinter"
+                else
+                  variant="pyinstaller"
+                fi
+                ;;
+            esac
+          fi
+
+          if [ "$variant" = "tkinter" ]; then
+            cython_out=""
+          else
+            cython_out="prec"
+          fi
+
+          echo "Selected build variant: $variant"
+          echo "variant=$variant" >> "$GITHUB_OUTPUT"
+          echo "cython_out=$cython_out" >> "$GITHUB_OUTPUT"
+
+      - name: Package Application using Cythinst64
+        uses: PlohnenSoftware/Cythinst64@dev
+        with:
+          path: src
+          cython_out: ${{ steps.variant.outputs.cython_out }}
+          zip_name: familiada.zip
+          sevenzip_name: familiada.7z
+          zip_paths: |
+            src/dist/windows
+            dane.csv
+
+      - name: Upload ZIP artifact
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: familiada.zip
+          path: familiada.zip
+          if-no-files-found: error
+          archive: false
+
+      - name: Upload 7z artifact
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: familiada.7z
+          path: familiada.7z
+          if-no-files-found: error
+          archive: false
+
+      - name: Create Release
+        if: startsWith(github.ref, 'refs/tags/')
+        id: create_release
+        uses: softprops/action-gh-release@v3.0.0
+        with:
+          files: |
+            familiada.zip
+            familiada.7z
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
